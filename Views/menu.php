@@ -67,7 +67,7 @@ if (isset($logout))
     $logout = ($logout == '' ? '' : $logout);
 else
     $logout = "";
-
+//seguir
 ?>
 
 <div class="sidebar-wrapper">
