@@ -1,0 +1,675 @@
+<?php
+date_default_timezone_set('America/Panama');
+ require("Config.php");
+ require('Session.php');
+ require('Others/fpdf/fpdf.php');
+
+ error_reporting(E_ALL);
+ ini_set('display_errors', '1');
+
+class Functions extends dba {
+
+
+
+
+
+  public function __construct(){
+       //$this->setConfig();// seteando las configuraciones
+
+ }
+
+
+public function autocommitF(){
+//  $connection = new dba();
+
+$db = dba::getInstance();
+$mysqli = $db->autocommitF();
+
+}
+
+public function commitSet(){
+    //$connection = new dba();
+    $db = dba::getInstance();
+    $mysqli = $db->commitF();
+  //$connection->connet()->commitF();
+}
+
+public function getAuthKey(){
+
+      return "23097d223405d8228642a";
+}
+
+
+public function getcclw(){
+
+    $cclw="747D188671B89D44CA625D708033119511C93A6574F98D31B3C29F6CC584F58CB329AF9819559417CF16102174BC19220BDA88223E64E447132E6122C74ABF24";
+    return $cclw;
+}
+
+public function getCurUrl(){
+
+    $curUrl="https://sandbox.paguelofacil.com/rest/ccprocessing/";
+    return $curUrl;
+
+}
+
+public function exeQuery($sql){
+
+     $db = dba::getInstance();
+     $mysqli = $db->connet();
+
+
+  //$connection = new dba();
+
+//  $result = mysqli_query($connection->connet(), $sql);
+  $result = $mysqli->query($sql);
+
+//$result=$this->connet()->query($sql);
+if($result){
+
+  $result = 1;
+}else {
+
+  $result = "Query Failed! SQL: $sql - Error:  ".mysqli_error($db->connet());
+}
+return $result;
+}
+
+
+public function getKeyPass(){
+    $key="";
+    $sql_2=" SELECT value  FROM config WHERE var='Keypass' limit 1";
+    $sql_2_rs=$this->consulQuery($sql_2);
+    $key=$sql_2_rs[0];
+
+   return $key;
+}
+
+public function consulQuery($sql){
+//cambiar aqui
+//$result=$this->connet()->query($sql);
+$connection = new dba();
+$result = mysqli_query($connection->connet(), $sql);
+if($result){
+
+  $result = mysqli_fetch_array($result);
+
+}else {
+
+  $result = "Query Failed! SQL: $sql - Error:  ".mysqli_error($this->conn);
+}
+//$rows = mysqli_fetch_array($result);
+
+return $result;
+
+}
+
+
+public function getActualProgramDays($programid){
+
+  $sql="SELECT days from program_section_routine where section_id='$programid' order by days desc limit 1";
+  $resul=$this->consulQuery($sql);
+  return $resul[0];
+}
+
+public function consultListQuery($sql){
+    $rowsfiel=array();
+    $connection = new dba();
+    $result = mysqli_query($connection->connet(), $sql);
+  //$result=$this->connet()->query($sql);
+
+  while($member = mysqli_fetch_object($result)) $rowsfiel[] = $member;
+
+
+
+return $rowsfiel;
+}
+
+public function consultListQueryArray($sql){
+  $rowsfiel=array();
+$connection = new dba();
+$result = mysqli_query($connection->connet(), $sql);
+
+while($member = mysqli_fetch_row($result)) $rowsfiel[] = $member;
+
+return $rowsfiel;
+}
+
+public function getTimetoDate($datecurr,$datedba){
+
+    $string="";
+
+    $fecha1 = new DateTime($datedba);//fecha inicial
+	$fecha2 = new DateTime($datecurr);//fecha de cierre
+
+    $intervalo = $fecha1->diff($fecha2);
+	$days=$intervalo->format("%d");
+	$hours =$intervalo->format("%H");
+	$minutes =$intervalo->format("%i");
+
+	if($days!=0){$string= 'Hace '.$days.'dias';}
+
+	if($days==0 && $hours!=0  && $hours !=0){$string = 'Hace '.$hours.' horas';}
+
+	if($days==0 && $hours ==0  &&  $minutes !=0){$string = 'Hace '.$minutes.' minutos ';}
+
+
+    return $string;
+
+}
+
+public function convertoBase64($pathIMG){
+
+  $path =  $pathIMG;
+
+  // Extensión de la imagen
+  $type = pathinfo($path, PATHINFO_EXTENSION);
+
+  // Cargando la imagen
+  $data = file_get_contents($path);
+
+  // Decodificando la imagen en base64
+  $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+  return $base64;
+
+}
+
+public function encodeString($string){
+
+
+    return utf8_encode($string);
+}
+
+public function getId_autoincrement($tablename){
+
+ $id="";
+ $sql="SELECT count(*) from prefix_id_autoincrement where table_name='$tablename' AND status='ACTIVE'";
+ $result=$this->consulQuery($sql);
+ $datetime=date('Y-m-d H:i:s');
+ if($result[0]==0){
+
+
+  $sql="INSERT INTO prefix_id_autoincrement (table_name,counter,tam,zero,updated,status)VALUES('$tablename','1','5','YES','$datetime','ACTIVE')";
+  $this->exeQuery($sql);
+ }
+
+        $sql_in="SELECT counter,prefix,tam,zero FROM prefix_id_autoincrement WHERE table_name ='$tablename' and status='ACTIVE' ";
+        $res_ini=$this->consulQuery($sql_in);
+
+        $counter=$res_ini[0];
+        $prefix=$res_ini[1];
+        $tam=$res_ini[2];
+        $zero=$res_ini[3];
+        $counter+=1;
+
+        $zeros_str="";
+        if($zero=='YES'){
+          $size_id = strlen($counter);
+
+          for ($i=0; $i <($tam-$size_id) ; $i++) {
+            $zeros_str.="0";
+
+          }
+
+          $id=$prefix.$zeros_str.$counter;
+
+        }else{
+
+          $id=$prefix.$counter;
+        }
+
+    $sql="UPDATE prefix_id_autoincrement SET counter='$counter',updated='$datetime'  WHERE table_name ='$tablename' and status='ACTIVE'";
+    $this->exeQuery($sql);
+
+
+
+return $id;
+
+}
+
+public function generate_string($strength = 16) {
+    $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    $input_length = strlen($permitted_chars);
+    $random_string = '';
+    for($i = 0; $i < $strength; $i++) {
+        $random_character = $permitted_chars[mt_rand(0, $input_length - 1)];
+        $random_string .= $random_character;
+    }
+
+    return $random_string;
+}
+
+public function getRatingv1($rating){
+
+    $div='<div class="star-rating">';
+
+     for($i=0;$i<$rating;$i++){
+
+         $div.='<i class="las la-star"></i>';
+     }
+
+     $div.='</div>';
+     return $div;
+}
+
+public function generarToken($longitud){
+
+
+    return bin2hex(openssl_random_pseudo_bytes(($longitud - ($longitud % 2)) / 2));
+}
+
+public function getAvailableProduct($product_id,$talla){
+   $count=0;
+   $sql1="SELECT COUNT(*) FROM products_available WHERE product_id='$product_id' AND talla='$talla' ";
+   $resul=$this->consulQuery($sql1);
+   if($resul[0]>0){
+        $sql2="SELECT (cantidad_entrada-cantidad_salida) as available FROM products_available WHERE product_id='$product_id' AND talla='$talla' ";
+        $resu2=$this->consulQuery($sql2);
+       $count=$resu2[0];
+   }else{
+      $count=0;
+   }
+   return $count;
+}
+
+public function getAvailableProductLibras($product_id,$libras){
+   $count=0;
+   $sql1="SELECT COUNT(*) FROM products_available WHERE product_id='$product_id' AND libras='$libras' ";
+   $resul=$this->consulQuery($sql1);
+   if($resul[0]>0){
+        $sql2="SELECT (cantidad_entrada-cantidad_salida) as available FROM products_available WHERE product_id='$product_id' AND libras='$libras' ";
+        $resu2=$this->consulQuery($sql2);
+       $count=$resu2[0];
+   }else{
+      $count=0;
+   }
+   return $count;
+}
+
+public function getAvailableProductGlobal($product_id){
+    $count=0;
+   $sql1="SELECT COUNT(*) FROM products_available WHERE product_id='$product_id'";
+   $resul=$this->consulQuery($sql1);
+   if($resul[0]>0){
+
+        $sql2="SELECT (sum(cantidad_entrada)-sum(cantidad_salida)) as available FROM products_available WHERE product_id='$product_id'";
+        $resu2=$this->consulQuery($sql2);
+       $count=$resu2[0];
+   }else{
+      $count=0;
+   }
+
+
+    return $count;
+}
+
+public function getAvailableAcesoriosGlobal($product_id){
+    $count=0;
+   $sql1="SELECT COUNT(*) FROM accesories_available WHERE product_id='$product_id'";
+   $resul=$this->consulQuery($sql1);
+   if($resul[0]>0){
+        $sql2="SELECT (sum(cantidad_entrada)-sum(cantidad_salida)) as available FROM accesories_available WHERE product_id='$product_id'";
+        $resu2=$this->consulQuery($sql2);
+       $count=$resu2[0];
+   }else{
+      $count=0;
+   }
+
+
+    return $count;
+}
+
+public function getProductPrice($product_id){
+
+    $slq="SELECT price FROM products WHERE id='$product_id' limit 1";
+    $resul=$this->consulQuery($slq);
+    return $resul[0];
+}
+
+public function getProductItbms($product_id){
+
+    $slq="SELECT itbms FROM products WHERE id='$product_id' limit 1";
+    $resul=$this->consulQuery($slq);
+    return $resul[0];
+}
+
+public function getProductType($product_id){
+
+    $slq="SELECT type FROM products WHERE id='$product_id' limit 1";
+    $resul=$this->consulQuery($slq);
+    return $resul[0];
+
+}
+
+public function generaInvoice($orderid,$urldownload){
+
+//
+// exemple de facture avec mysqli
+// gere le multi-page
+// Ver 1.0 THONGSOUME Jean-Paul
+//
+/*
+date_default_timezone_set('America/Panama');
+header('Content-type: text/html; charset=UTF-8');
+
+
+require_once 'Config/Functions.php';
+$this = new Functions;  //llamando al objeto
+
+
+	require('Others/fpdf/fpdf.php');*/
+
+	$pdf = new FPDF( 'P', 'mm', array("216","280") );
+
+
+
+	$var_id_facture = $orderid;
+
+	// on sup les 2 cm en bas
+	$pdf->SetAutoPagebreak(False);
+	$pdf->SetMargins(0,0,0);
+
+
+		$pdf->AddPage();
+
+		$pdf->Image('Others/Files_site/logo-v02.png', 10, 8, 80, 35);
+
+		$pdf->SetXY( 120, 5 ); $pdf->SetFont( "Arial", "B", 12 );
+		$pdf->Cell( 160, 8, 1 . '/' . 1, 0, 0, 'C');
+
+
+
+		$pdf->SetLineWidth(0.1); $pdf->SetFillColor(192); $pdf->Rect(120, 15, 85, 8, "DF");
+		$pdf->SetXY( 120, 15 ); $pdf->SetFont( "Arial", "B", 12 ); $pdf->Cell( 85, 8, 'Orden #'.$var_id_facture, 0, 0, 'C');
+
+		// nom du fichier final
+		$nom_file = $urldownload."Order_".$orderid.".pdf";
+
+
+		$pdf->SetFont('Arial','',11);
+		$pdf->SetXY( 133, 30 );
+		$pdf->Cell( 60, 8, "Fecha " . date("m/d/Y"), 0, 0, '');
+
+
+		$sql="SELECT * FROM ordenes_company_deatils WHERE orden_id='$var_id_facture' limit 1";
+        $item=(object) $this->consulQuery($sql);
+
+        $carritoid=$item->carrito;
+        $sql2="SELECT * FROM ordenes_company WHERE id='$var_id_facture' limit 1";
+        $item2=(object) $this->consulQuery($sql2);
+
+
+		$pdf->SetFont( "Arial", "B", 12 );
+		$pdf->SetXY( 10, 48 ) ;
+		$pdf->Cell(60, 0, "Datos del Cliente", 0, "L");
+
+		$pdf->SetFont( "Arial", "", 10 );
+		$pdf->SetXY( 10, 55 ) ;
+		$pdf->Cell(60, 0, "Nombre:", 0, "L");
+
+		$pdf->SetXY( 25, 55 ) ;
+		$pdf->Cell(60, 0, $item2->Name.' '.$item2->LastName, 0, "L");
+
+
+
+		$pdf->SetXY( 10, 63 ) ;
+		$pdf->Cell(60, 0, utf8_decode("Teléfono:"), 0, "L");
+
+		$pdf->SetXY( 26, 63 ) ;
+		$pdf->Cell(60, 0, $item->phone, 0, "L");
+
+
+		$pdf->SetXY( 10, 70 ) ;
+		$pdf->Cell(60, 0, utf8_decode("Dirección:"), 0, "L");
+
+		$pdf->SetXY( 27, 70 ) ;
+		$pdf->Cell(60, 0, $item->address, 0, "L");
+
+
+		$pdf->SetXY( 10, 78 ) ;
+		$pdf->Cell(60, 0, utf8_decode("Calle,Apartamento:"), 0, "L");
+
+		$pdf->SetXY( 42, 78 ) ;
+		$pdf->Cell(60, 0, $item->towncity, 0, "L");
+
+
+		$pdf->SetXY( 10, 85 ) ;
+		$pdf->Cell(60, 0, utf8_decode("Ciudad:"), 0, "L");
+
+
+		$citi=$item->citi;
+		$sqlcit="SELECT name FROM cities WHERE id='$citi'";
+		$itemcit=(object)$this->consulQuery($sqlcit);
+
+		$pdf->SetXY( 25, 85 ) ;
+		$pdf->Cell(60, 0, utf8_decode($itemcit->name), 0, "L");
+
+
+		$pdf->SetXY( 10, 92 ) ;
+		$pdf->Cell(60, 0, utf8_decode("Región:"), 0, "L");
+
+
+		$sqlreg="SELECT name FROM cities_region WHERE cities='$citi'";
+		$itemreg=(object) $this->consulQuery($sqlreg);
+		$pdf->SetXY( 25, 92 ) ;
+		$pdf->Cell(60, 0, utf8_decode($itemreg->name), 0, "L");
+
+
+		$pdf->SetFont( "Arial", "B", 12 );
+		$pdf->SetXY( 120, 48 ) ;
+		$pdf->Cell(60, 0, "Datos de Entrega", 0, "L");
+
+		$pdf->SetFont( "Arial", "", 10 );
+
+	    $pdf->SetXY( 120, 55 ) ;
+		$pdf->Cell(60, 0, utf8_decode("Compañia:"), 0, "L");
+
+		$sqlenv="SELECT name FROM envios_company WHERE id='$item->send_to'";
+		$sqlenv_r=(object) $this->consulQuery($sqlenv);
+
+		$pdf->SetXY( 139, 55 ) ;
+		$pdf->Cell(60, 0, utf8_decode($sqlenv_r->name), 0, "L");
+
+
+
+		$pdf->SetXY( 120, 63 ) ;
+		$pdf->Cell(60, 0, utf8_decode("Sucursal:"), 0, "L");
+
+		$sqlenv2="SELECT name FROM envios_company_locations WHERE id='$item->send_to'";
+		$sqlenv_r2=(object) $this->consulQuery($sqlenv2);
+
+		$pdf->SetXY( 139, 63 ) ;
+		$pdf->Cell(60, 0, utf8_decode($sqlenv_r2->name), 0, "L");
+
+		$pdf->SetXY( 120, 71 ) ;
+		$pdf->Cell(60, 0, "Metodo de Pago:", 0, "L");
+
+		$pdf->SetXY( 150, 71 ) ;
+		$pdf->Cell(60, 0, utf8_decode($item2->CardType), 0, "L");
+
+
+
+
+		// adr fact du client
+
+
+		$pdf->SetLineWidth(0.1);
+		$pdf->Rect(5, 110, 200, 70, "D");
+
+
+		$pdf->Line(5, 116, 205, 116);
+
+     	$pdf->Line(130, 110, 130, 180);
+		$pdf->Line(150, 110, 150, 180);
+		$pdf->Line(170, 110, 170, 180);
+		$pdf->Line(187, 110, 187, 180);
+		// titre colonne
+				$pdf->SetFont('Arial','B',10);
+		$pdf->SetXY( 1, 109 );
+
+		$pdf->Cell( 140, 8, utf8_decode("Descripción"), 0, 0, 'C');
+
+		$pdf->SetXY( 129, 109 );
+		$pdf->Cell( 22, 8, "Cantidad", 0, 0, 'C');
+
+		$pdf->SetXY( 148, 109 );
+		$pdf->Cell( 22, 8, "Precio", 0, 0, 'C');
+
+		$pdf->SetXY( 174, 109 );
+		$pdf->Cell( 10, 8, "Itbms", 0, 0, 'C');
+
+		$pdf->SetXY( 185, 109 );
+		$pdf->Cell( 22, 8, "Total", 0, 0, 'C');
+
+
+		$pdf->SetFont('Arial','',10);
+		$sqlpro="SELECT t3.id as id, t3.name as name,t3.type as type,t2.cantidad as cantidad,t2.itbms as itbms,t3.price as price  FROM carrito t1 join carrito_details t2 on t1.id=t2.carrito_id join  products t3 on t2.product_id=t3.id WHERE t1.id='$carritoid'";
+
+		$result_lisc= $this->consultListQuery($sqlpro);//query
+		$salt=111;
+		$totall=0;
+		$itbmsl=0;
+		$subtotal=0;
+
+        foreach($result_lisc as $itemc)
+         {
+              if($itemc->type=='PRODUCT'){
+                  $sqltalla="SELECT talla FROM products_tallas WHERE product_id='$itemc->id' AND status='ACTIVE'";
+                  $resulta=$this->consulQuery($sqltalla);
+
+                   $salt=$salt+7;
+             	$pdf->SetXY( 7, $salt );
+		        $pdf->Cell( 140, 8, utf8_decode($itemc->name).' Talla '.$resulta[0], 0, 0, 'L');
+
+              }else{
+
+                $salt=$salt+7;
+             	$pdf->SetXY( 7, $salt );
+		        $pdf->Cell( 140, 8, utf8_decode($itemc->name), 0, 0, 'L');
+              }
+
+               $pdf->SetXY( 137, $salt );
+		       $pdf->Cell( 140, 8, utf8_decode($itemc->cantidad), 0, 0, 'L');
+
+		       $pdf->SetXY( 30, $salt );
+		       $pdf->Cell( 140, 8, "$".utf8_decode($itemc->price), 0, 0, 'R');
+
+		       $pdf->SetXY( 47, $salt );
+		       $pdf->Cell( 140, 8, "$".utf8_decode($itemc->itbms), 0, 0, 'R');
+		       $itbmsl+=$itemc->itbms;
+                $subtotal+=($itemc->cantidad*$itemc->price);
+        	   $TOTAL=($itemc->cantidad*$itemc->price)+$itemc->itbms;
+
+        	   $pdf->SetXY( 65, $salt );
+		       $pdf->Cell( 140, 8, "$".number_format($TOTAL,2), 0, 0, 'R');
+		        $totall+=$TOTAL;
+         }
+
+
+
+
+
+
+
+		// les articles
+		$pdf->SetFont('Arial','',8);
+		$y = 97;
+
+
+
+			$pdf->SetFont('Arial','B',10);
+			$pdf->SetXY( 155, 185 );
+			$pdf->Cell( 25, 6, "Subtotal", 0, 0, 'R');
+			$pdf->SetXY( 178, 185 );
+			$pdf->Cell( 25, 6, "$".number_format($subtotal,2), 0, 0, 'R');
+
+			$pdf->SetXY( 155, 191 );
+			$pdf->Cell( 25, 6, "Itbms", 0, 0, 'R');
+
+			$pdf->SetXY( 178, 191 );
+			$pdf->Cell( 25, 6, "$".number_format($itbmsl,2), 0, 0, 'R');
+
+
+			 $enviocost="";
+            $sqlp="SELECT price FROM envios_company WHERE id='$item->send_to' ";
+            $result=$this->consulQuery($sqlp);
+            if($result[0]=='0.00'){
+                $enviocost="$".$result[0];
+            }else{
+                $enviocost="$".$result[0];
+                $totall=number_format($totall+$result[0],2);
+            }
+
+			$pdf->SetXY( 155, 198 );
+			$pdf->Cell( 25, 6, "Envio", 0, 0, 'R');
+
+			$pdf->SetXY( 178, 198 );
+			$pdf->Cell( 25, 6, $enviocost, 0, 0, 'R');
+
+
+			$pdf->SetXY( 155, 206 );
+			$pdf->Cell( 25, 6, "Total", 0, 0, 'R');
+
+			    $pdf->SetXY( 178, 206 );
+		    	$pdf->Cell( 25, 6, "$".number_format($totall,2), 0, 0, 'R');
+
+			   $pdf->SetFont('Arial','B',15);
+			   $pdf->SetXY( 118, 220 );
+			    $pdf->Cell( 25, 6, "Gracias Por su Compra", 0, 0, 'R');
+
+
+
+
+
+
+	$pdf->Output("F", $nom_file);
+
+
+
+}
+
+
+public function updateAavilableProduct($product_id,$cantidad,$talla){
+     $datetime=date('Y-m-d H:i:s');
+    if($this->getProductType($product_id)=='PRODUCT'){
+
+        $sql="SELECT cantidad_salida FROM products_available WHERE product_id='$product_id' and talla='$talla'";
+        $resul1=$this->consulQuery($sql);
+        $cantidad_salida=$resul1[0]+$cantidad;
+
+        $sql2="UPDATE products_available SET cantidad_salida='$cantidad_salida',salidate_date='$datetime' WHERE product_id='$product_id' and talla='$talla' ";
+        $this->exeQuery($sql2);
+    }else{
+
+        $sql="SELECT cantidad_salida FROM accesories_available WHERE product_id='$product_id' ";
+        $resul1=$this->consulQuery($sql);
+        $cantidad_salida=$resul1[0]+$cantidad;
+
+        $sql2="UPDATE accesories_available SET cantidad_salida='$cantidad_salida',salidate_date='$datetime' WHERE product_id='$product_id' ";
+        $this->exeQuery($sql2);
+
+    }
+
+}
+
+
+public function getPendingOrders(){
+
+
+    $sql="SELECT count(*) FROM ordenes_company t1 join ordenes_company_deatils t2 on t1.id=t2.orden_id join envios_company t3 on t3.id=t2.send_to WHERE t1.status_interno='PENDIENTE' AND t1.Status='Approved' AND t2.pre_sale='NO'";
+    $result=$this->consulQuery($sql);
+
+    return $result[0];
+}
+
+public function getPendingPreSaleOrders(){
+
+
+    $sql="SELECT count(*) FROM ordenes_company t1 join ordenes_company_deatils t2 on t1.id=t2.orden_id join envios_company t3 on t3.id=t2.send_to WHERE t1.status_interno='PENDIENTE' AND t1.Status='Approved' AND t2.pre_sale='YES'";
+    $result=$this->consulQuery($sql);
+
+    return $result[0];
+}
+
+}//fin de la clase

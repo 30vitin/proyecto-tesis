@@ -1,0 +1,834 @@
+<?php
+require_once 'Config/Functions.php';
+$cls = new Functions;  //llamando al objeto
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+date_default_timezone_set('America/Panama');
+
+$VAR_SESSION = Session::getInstance();
+if($VAR_SESSION->email=="" || $VAR_SESSION->loggedin!=true){
+
+    header("Location:./");
+}
+$order_id=$_GET['order'];
+$sql="SELECT COUNT(*) FROM ordenes_company WHERE id='$order_id'";
+$result=$cls->consulQuery($sql);
+if($result[0]==0){
+    header("Location:./?view=orders");
+}
+$orders="active";
+$activesublink="active-sublink";
+
+
+
+?>
+
+
+<!--
+=========================================================
+Material Dashboard - v2.1.2
+=========================================================
+
+Product Page: https://www.creative-tim.com/product/material-dashboard
+Copyright 2020 Creative Tim (https://www.creative-tim.com)
+Coded by Creative Tim
+
+=========================================================
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="shortcut icon" href="Views/assets_login/images/favicon-01-ol.ico">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>
+   Procesar Orden | Olimpoathletics
+  </title>
+  <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+  <!-- CSS Files -->
+  <link href="Views/assets/css/material-dashboard.css?v=2.1.2" rel="stylesheet" />
+  <!-- CSS Just for demo purpose, don't include it in your project -->
+  <link href="Views/assets/demo/demo.css" rel="stylesheet" />
+  <style>
+          #ht-preloader { background: #ffffff; bottom: 0; height: 100%; left: 0; overflow: hidden !important; position: fixed; right: 0; text-align: center; top: 0; width: 100%; z-index: 99999; }
+.clear-loader { transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); -o-transform: translateX(-50%) translateY(-50%); -ms-transform: translateX(-50%) translateY(-50%); -moz-transform: translateX(-50%) translateY(-50%); z-index: 999; box-sizing: border-box; display: inline-block; left: 50%; position: absolute; text-align: center; top: 50%; }
+.loader { position: absolute; top: 50%; left: 50%; margin: auto; text-align: center; transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); -o-transform: translateX(-50%) translateY(-50%); -ms-transform: translateX(-50%) translateY(-50%); -moz-transform: translateX(-50%) translateY(-50%); }
+.loader span { width: 20px; height: 20px; background-color: #f85438; border-radius: 50%; display: inline-block; animation: motion 3s ease-in-out infinite; }
+.loader p { color: #fe4c1c; margin-top: 5px; font-size: 30px; animation: shake 5s ease-in-out infinite; }
+
+
+
+     img.img-fluid.simple-text.logo-normal {
+        height: 80px !important;
+        width: 88% !important;
+    }
+    .sidebar .logo .simple-text{
+
+            padding: 0px 0px !important;
+    }
+    .sidebar[data-color="purple"] li.active>a{
+            background-color: #fbca08 !important;
+
+    }
+    .sidebar .nav li.active>[data-toggle="collapse"] i{
+        color: #fff !important;
+
+    }
+    .sidebar .nav li.active>a, .sidebar .nav li.active>a i{
+        color: #fff !important;
+    }
+    .btn.btn-primary{
+      background-color: #fbca08 !important;
+      border-color: #fbca08 !important;
+    }
+    .btn.btn-primary:focus, .btn.btn-primary.focus, .btn.btn-primary:hover{
+
+       background-color: #fbca08 !important;
+       border-color: #fbca08 !important;
+    }
+
+    li.nav-item.active-sublink {
+        background-color: rgba(200, 200, 200, 0.2);
+    }
+    .btn.btn-primary.btn-link {
+        color:#fff !important;
+    }
+
+
+    .logo {
+        background: #fff !important;
+    }
+
+    .sidebar-wrapper {
+        background: #fff !important;
+    }
+
+  </style>
+</head>
+
+<body class="">
+    <div id="ht-preloader">
+      <div class="loader clear-loader">
+        <img class="img-fluid" src="Views/assets_login/images/loader.gif" alt="">
+      </div>
+    </div>
+
+  <div class="wrapper ">
+    <div class="sidebar" data-color="purple" data-background-color="white">
+      <!--
+        Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
+
+        Tip 2: you can also add an image using data-image tag
+    -->
+      <div class="logo">
+
+        <img class="img-fluid simple-text logo-normal" src="Others/Files_site/logo-v02.png" alt="">
+
+        </div>
+
+      <?php include "menu.php";?>
+
+    </div>
+    <div class="main-panel">
+      <!-- Navbar -->
+
+     <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
+        <div class="container-fluid">
+          <div class="navbar-wrapper">
+            <a class="navbar-brand" href="javascript:;">Ordenes</a>
+          </div>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="navbar-toggler-icon icon-bar"></span>
+            <span class="navbar-toggler-icon icon-bar"></span>
+            <span class="navbar-toggler-icon icon-bar"></span>
+          </button>
+          <div class="collapse navbar-collapse justify-content-end">
+
+            <ul class="navbar-nav">
+
+
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <!-- End Navbar -->
+      <div class="content">
+        <div class="container-fluid">
+          <div class="row">
+
+            <div class="col-8 col-lg-1"></div>
+
+            <div class="col-md-8">
+              <div class="card ">
+                <div class="card-header card-header-rose card-header-text">
+                  <div class="card-text">
+                    <h4 class="card-title">Orden # <?php echo $order_id;?></h4>
+                  </div>
+                </div>
+                <div class="card-body ">
+
+
+                  <form method="get" action="/" class="form-horizontal">
+                        <input type="hidden" id="order_id" value="<?php echo $order_id;?>">
+                     <?php
+
+                     $sql3="SELECT * FROM ordenes_company WHERE id='$order_id' limit 1";
+                     $item3=(object) $cls->consulQuery($sql3);
+
+
+                    ?>
+                    Fecha: <?php echo $item3->Date;?><br>
+                    Total: $<?php echo $item3->Amount;?>
+
+                     <h4>Datos de Envio</h4>
+                     <hr/>
+                     <?php
+                     $sql2="SELECT * FROM ordenes_company_deatils WHERE orden_id='$order_id' limit 1";
+                     $item=(object) $cls->consulQuery($sql2);
+                     $carritoid=$item->carrito;
+
+                     $sqlenv="SELECT name FROM envios_company WHERE id='$item->send_to'";
+		               $sqlenv_r=(object) $cls->consulQuery($sqlenv);
+                     ?>
+                     <div class="row">
+                      <label class="col-sm-3 col-form-label">Compañia</label>
+                      <div class="col-sm-8">
+                        <div class="form-group">
+
+
+                          <p class="form-control-static"><?php echo $sqlenv_r->name;?></p>
+                        </div>
+                      </div>
+                    </div>
+                     <div class="row">
+                      <label class="col-sm-3 col-form-label">Sucursal a Enviar</label>
+                      <div class="col-sm-8">
+                        <div class="form-group">
+                              <?php
+                            $sqlenv2="SELECT name FROM envios_company_locations WHERE company='$item->send_to'";
+		                    $sqlenv_r2=(object) $cls->consulQuery($sqlenv2);?>
+                          <p class="form-control-static"><?php echo $sqlenv_r2->name;?></p>
+                        </div>
+                      </div>
+                    </div>
+
+                     <div class="row">
+                      <label class="col-sm-3 col-form-label">Nombre</label>
+                      <div class="col-sm-8">
+                        <div class="form-group">
+                          <p class="form-control-static"><?php echo $item3->Name.' '.$item3->LastName?></p>
+                        </div>
+                      </div>
+                    </div>
+
+
+                     <h4>Datos del Cliente</h4>
+                     <hr/>
+                    <div class="row">
+                      <label class="col-sm-3 col-form-label">Telefono</label>
+                      <div class="col-sm-8">
+                        <div class="form-group">
+                          <p class="form-control-static"><?php echo $item->phone?></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <label class="col-sm-3 col-form-label">Dirección</label>
+                      <div class="col-sm-8">
+                        <div class="form-group">
+                          <p class="form-control-static"><?php echo $item->address?></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <label class="col-sm-3 col-form-label">Ciudad</label>
+                      <div class="col-sm-8">
+                        <div class="form-group">
+                            <?php
+                            $citi=$item->citi;
+                    		$sqlcit="SELECT name FROM cities WHERE id='$citi'";
+                    		$itemcit=(object) $cls->consulQuery($sqlcit);?>
+
+                          <p class="form-control-static"><?php echo $itemcit->name;?></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <label class="col-sm-3 col-form-label">Región</label>
+                      <div class="col-sm-8">
+                        <div class="form-group">
+                            <?php
+                            $region=$item->region;
+                            $sqlreg="SELECT name FROM cities_region WHERE id='$region'";
+
+		                    $itemreg=(object) $cls->consulQuery($sqlreg);
+                            ?>
+                          <p class="form-control-static"><?php echo $itemreg->name;?></p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <h4>Productos a Despachar</h4>
+                     <hr/>
+                     <div class="table-responsive">
+                     <table class="table /* table-responsive*/">
+                      <thead class=" text-primary">
+                        <tr>
+
+                          <th>ID</th>
+                          <th>Tipo</th>
+                          <th>Imagen</th>
+                          <th>Descripción</th>
+                          <th>Cantidad</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                          <style>
+
+#myImg {
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#myImg:hover {opacity: 0.7;}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+}
+
+/* Modal Content (image) */
+.modal-content {
+  margin: auto;
+  display: block;
+    width: 58%;
+    max-width: 318px;
+
+}
+
+/* Caption of Modal Image */
+#caption {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+  color: #ccc;
+  padding: 10px 0;
+  height: 150px;
+}
+
+/* Add Animation */
+.modal-content, #caption {
+  -webkit-animation-name: zoom;
+  -webkit-animation-duration: 0.6s;
+  animation-name: zoom;
+  animation-duration: 0.6s;
+}
+
+@-webkit-keyframes zoom {
+  from {-webkit-transform:scale(0)}
+  to {-webkit-transform:scale(1)}
+}
+
+@keyframes zoom {
+  from {transform:scale(0)}
+  to {transform:scale(1)}
+}
+
+/* The Close Button */
+.close {
+  position: absolute;
+
+      top: 45px;
+    right: 27px;
+
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* 100% Image Width on Smaller Screens */
+@media only screen and (max-width: 700px){
+  .modal-content {
+    width: 100%;
+  }
+}
+                          </style>
+                    <?php
+                    $rows=0;
+                    $urlproduct="/Others/Files_products/";
+                     $sqlpro="SELECT t3.id as id, t3.name as name,t3.type as type,t2.cantidad as cantidad,t2.itbms as itbms,t3.price as price,t3.img_portada as img_portada ,t2.talla,t2.libras FROM carrito t1 join carrito_details t2 on t1.id=t2.carrito_id join products t3 on t2.product_id=t3.id  WHERE t1.id='$carritoid'";
+                  		$result_lisc= $cls->consultListQuery($sqlpro);//query
+
+                        foreach($result_lisc as $itemc)
+                         {
+                            $rows++;
+                            $nameproduct="";
+                              if($itemc->type=='PRODUCT'){
+
+                                   $nameproduct= $itemc->name.' : Talla '.$itemc->talla;
+
+                              }else{
+                                  if($itemc->type=='PESAS'){
+                                          $nameproduct= $itemc->name.' : '.$itemc->libras.' Libras';
+
+                                  }else{
+
+                                      $nameproduct= $itemc->name;
+
+                                  }
+
+                              }
+                          ?>
+                    	 <tr>
+
+
+                         <td><?php echo $itemc->id;?></td>
+                         <td><?php echo $itemc->type;?></td>
+                         <td><img id="myImg-<?php echo $rows;?>" class="bigimage" alt="<?php echo $nameproduct;?>"
+                            src="http://admin.olimpoathletics.com<?php echo $urlproduct.$itemc->id.'/'.$itemc->img_portada;?>" alt="..." style="width:55%;max-width:80px;cursor:pointer;"></td>
+                         <!-- The Modal -->
+                            <div id="myModal-<?php echo $rows;?>" class="modal ">
+                              <span class="close" id="<?php echo $rows;?>">&times;</span>
+                              <img class="modal-content" id="img01-<?php echo $rows;?>">
+                              <div id="caption-<?php echo $rows;?>"></div>
+                            </div>
+
+                        <td><?php
+                              echo $nameproduct;
+                              ?></td>
+
+
+                         <td><?php echo $itemc->cantidad;?></td>
+
+                        </tr>
+                        <?php }?>
+
+
+                        <?php
+                        $rows2=0;
+                        $urlprogram="/Others/program/";
+                         $sqlpro="SELECT t3.id as id, t3.name as name,t2.type as type,t2.cantidad as cantidad,t2.itbms as itbms,t3.price as price,	t3.photo_section_single AS photo_section_single,t2.talla,t2.libras FROM carrito t1 join carrito_details t2 on t1.id=t2.carrito_id join program_section t3 on t2.product_id=t3.id  WHERE t1.id='$carritoid'";
+                      		$result_lisc2= $cls->consultListQuery($sqlpro);//query
+
+                            foreach($result_lisc2 as $itemc2)
+                             {
+                                $rows++;
+
+                                $nameproduc2t= $itemc2->name;
+
+                              ?>
+                        	 <tr>
+
+
+                             <td><?php echo $itemc2->id;?></td>
+                             <td><?php echo $itemc2->type;?></td>
+                             <td>
+
+                               <?php
+                                 $urlphoto="Views/assets/img/image_placeholder.jpg";
+
+                                if($itemc2->photo_section_single!=''){?>
+
+                                  <img id="myImg-<?php echo $rows2;?>" class="bigimage" alt="<?php echo $nameproduc2t;?>"
+                                   src="http://admin.olimpoathletics.com<?php echo $urlprogram.$itemc2->id.'/'.$itemc2->photo_section_single;?>" alt="..." style="width:55%;max-width:80px;cursor:pointer;">
+
+                                <?php }else{?>
+
+                                  <img id="myImg-<?php echo $rows2;?>" class="bigimage" alt="<?php echo $nameproduc2t;?>"
+                                   src="<?php echo $urlphoto;?>" alt="..." style="width:55%;max-width:80px;cursor:pointer;">
+
+                                <?php }?>
+
+                               </td>
+                             <!-- The Modal -->
+                                <div id="myModal-<?php echo $rows2;?>" class="modal ">
+                                  <span class="close" id="<?php echo $rows2;?>">&times;</span>
+                                  <img class="modal-content" id="img01-<?php echo $rows2;?>">
+                                  <div id="caption-<?php echo $rows2;?>"></div>
+                                </div>
+
+                            <td><?php
+                                  echo $nameproduc2t;
+                                  ?></td>
+
+
+                             <td><?php echo $itemc2->cantidad;?></td>
+
+                            </tr>
+                            <?php }?>
+
+                      </tbody>
+                    </table>
+                     </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label>Comentario</label>
+                          <div class="form-group bmd-form-group">
+                              <?php
+                              $sqlst="SELECT status_interno,comentario FROM ordenes_company WHERE id='$order_id' ";
+                              $resulst=$cls->consulQuery($sqlst);
+                              $readonly="";
+                              $comentario="";
+                              if($resulst[0]=='ENTREGADO'){
+                                  $readonly="readonly";
+                                  $comentario=$resulst[1];
+                              }
+
+                              ?>
+                            <label class="bmd-label-floating"> Escriba aqui su comentario...</label>
+                            <textarea class="form-control" rows="5" id="comentario" <?php echo $readonly;?>><?php echo $comentario;?></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <?php if($resulst[0]=='PENDIENTE'){?>
+                     <button type="submit" class="btn btn-primary pull-right btn-send-order">Pasar a entregado</button>
+                    <div class="clearfix"></div>
+                    <?php }?>
+
+                  </form>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+
+        </div>
+      </div>
+      <footer class="footer">
+        <div class="container-fluid">
+          <nav class="float-left">
+            <ul>
+              <li>
+
+              </li>
+              <li>
+
+              </li>
+              <li>
+
+              </li>
+              <li>
+
+              </li>
+            </ul>
+          </nav>
+          <div class="copyright float-right">
+              Copyright
+            &copy;
+            <script>
+              document.write(new Date().getFullYear())
+            </script>
+            olimpoathletics Todos los derechos reservados.
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!--   Core JS Files   -->
+  <script src="Views/assets/js/core/jquery.min.js"></script>
+  <script src="Views/assets/js/core/popper.min.js"></script>
+  <script src="Views/assets/js/core/bootstrap-material-design.min.js"></script>
+  <script src="Views/assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+  <!-- Plugin for the momentJs  -->
+  <script src="Views/assets/js/plugins/moment.min.js"></script>
+  <!--  Plugin for Sweet Alert -->
+  <script src="Views/assets/js/plugins/sweetalert2.js"></script>
+  <!-- Forms Validations Plugin -->
+  <script src="Views/assets/js/plugins/jquery.validate.min.js"></script>
+  <!-- Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
+  <script src="Views/assets/js/plugins/jquery.bootstrap-wizard.js"></script>
+  <!--	Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
+  <script src="Views/assets/js/plugins/bootstrap-selectpicker.js"></script>
+  <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ -->
+  <script src="Views/assets/js/plugins/bootstrap-datetimepicker.min.js"></script>
+  <!--  DataTables.net Plugin, full documentation here: https://datatables.net/  -->
+  <!--<script src="Views/assets/js/plugins/jquery.dataTables.min.js"></script>-->
+  <!--	Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs  -->
+  <script src="Views/assets/js/plugins/bootstrap-tagsinput.js"></script>
+  <!-- Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput -->
+  <!--<script src="Views/assets/js/plugins/jasny-bootstrap.min.js"></script>-->
+  <!--  Full Calendar Plugin, full documentation here: https://github.com/fullcalendar/fullcalendar    -->
+  <script src="Views/assets/js/plugins/fullcalendar.min.js"></script>
+  <!-- Vector Map plugin, full documentation here: http://jvectormap.com/documentation/ -->
+  <script src="Views/assets/js/plugins/jquery-jvectormap.js"></script>
+  <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+  <script src="Views/assets/js/plugins/nouislider.min.js"></script>
+  <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support SweetAlert -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
+  <!-- Library for adding dinamically elements -->
+  <script src="Views/assets/js/plugins/arrive.min.js"></script>
+
+
+
+
+  <!-- Chartist JS -->
+  <script src="Views/assets/js/plugins/chartist.min.js"></script>
+  <!--  Notifications Plugin    -->
+  <script src="Views/assets/js/plugins/bootstrap-notify.js"></script>
+  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="Views/assets/js/material-dashboard.js?v=2.1.2" type="text/javascript"></script>
+  <!-- Material Dashboard DEMO methods, don't include it in your project! -->
+  <script src="Views/assets/demo/demo.js"></script>
+
+  <script src="Views/assets/js/admin-js.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      $().ready(function() {
+        $sidebar = $('.sidebar');
+
+        $sidebar_img_container = $sidebar.find('.sidebar-background');
+
+        $full_page = $('.full-page');
+
+        $sidebar_responsive = $('body > .navbar-collapse');
+
+        window_width = $(window).width();
+
+        fixed_plugin_open = $('.sidebar .sidebar-wrapper .nav li.active a p').html();
+
+        if (window_width > 767 && fixed_plugin_open == 'Dashboard') {
+          if ($('.fixed-plugin .dropdown').hasClass('show-dropdown')) {
+            $('.fixed-plugin .dropdown').addClass('open');
+          }
+
+        }
+
+        $('.fixed-plugin a').click(function(event) {
+          // Alex if we click on switch, stop propagation of the event, so the dropdown will not be hide, otherwise we set the  section active
+          if ($(this).hasClass('switch-trigger')) {
+            if (event.stopPropagation) {
+              event.stopPropagation();
+            } else if (window.event) {
+              window.event.cancelBubble = true;
+            }
+          }
+        });
+
+        $('.fixed-plugin .active-color span').click(function() {
+          $full_page_background = $('.full-page-background');
+
+          $(this).siblings().removeClass('active');
+          $(this).addClass('active');
+
+          var new_color = $(this).data('color');
+
+          if ($sidebar.length != 0) {
+            $sidebar.attr('data-color', new_color);
+          }
+
+          if ($full_page.length != 0) {
+            $full_page.attr('filter-color', new_color);
+          }
+
+          if ($sidebar_responsive.length != 0) {
+            $sidebar_responsive.attr('data-color', new_color);
+          }
+        });
+
+        $('.fixed-plugin .background-color .badge').click(function() {
+          $(this).siblings().removeClass('active');
+          $(this).addClass('active');
+
+          var new_color = $(this).data('background-color');
+
+          if ($sidebar.length != 0) {
+            $sidebar.attr('data-background-color', new_color);
+          }
+        });
+
+        $('.fixed-plugin .img-holder').click(function() {
+          $full_page_background = $('.full-page-background');
+
+          $(this).parent('li').siblings().removeClass('active');
+          $(this).parent('li').addClass('active');
+
+
+          var new_image = $(this).find("img").attr('src');
+
+          if ($sidebar_img_container.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
+            $sidebar_img_container.fadeOut('fast', function() {
+              $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
+              $sidebar_img_container.fadeIn('fast');
+            });
+          }
+
+          if ($full_page_background.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
+            var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
+
+            $full_page_background.fadeOut('fast', function() {
+              $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
+              $full_page_background.fadeIn('fast');
+            });
+          }
+
+          if ($('.switch-sidebar-image input:checked').length == 0) {
+            var new_image = $('.fixed-plugin li.active .img-holder').find("img").attr('src');
+            var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
+
+            $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
+            $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
+          }
+
+          if ($sidebar_responsive.length != 0) {
+            $sidebar_responsive.css('background-image', 'url("' + new_image + '")');
+          }
+        });
+
+        $('.switch-sidebar-image input').change(function() {
+          $full_page_background = $('.full-page-background');
+
+          $input = $(this);
+
+          if ($input.is(':checked')) {
+            if ($sidebar_img_container.length != 0) {
+              $sidebar_img_container.fadeIn('fast');
+              $sidebar.attr('data-image', '#');
+            }
+
+            if ($full_page_background.length != 0) {
+              $full_page_background.fadeIn('fast');
+              $full_page.attr('data-image', '#');
+            }
+
+            background_image = true;
+          } else {
+            if ($sidebar_img_container.length != 0) {
+              $sidebar.removeAttr('data-image');
+              $sidebar_img_container.fadeOut('fast');
+            }
+
+            if ($full_page_background.length != 0) {
+              $full_page.removeAttr('data-image', '#');
+              $full_page_background.fadeOut('fast');
+            }
+
+            background_image = false;
+          }
+        });
+
+        $('.switch-sidebar-mini input').change(function() {
+          $body = $('body');
+
+          $input = $(this);
+
+          if (md.misc.sidebar_mini_active == true) {
+            $('body').removeClass('sidebar-mini');
+            md.misc.sidebar_mini_active = false;
+
+            $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
+
+          } else {
+
+            $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
+
+            setTimeout(function() {
+              $('body').addClass('sidebar-mini');
+
+              md.misc.sidebar_mini_active = true;
+            }, 300);
+          }
+
+          // we simulate the window Resize so the charts will get updated in realtime.
+          var simulateWindowResize = setInterval(function() {
+            window.dispatchEvent(new Event('resize'));
+          }, 180);
+
+          // we stop the simulation of Window Resize after the animations are completed
+          setTimeout(function() {
+            clearInterval(simulateWindowResize);
+          }, 1000);
+
+        });
+      });
+    });
+  </script>
+  <script>
+    $(document).ready(function() {
+      // Javascript method's body can be found in assets/js/demos.js
+      md.initDashboardPageCharts();
+
+    });
+     $(window).on('load', function() {
+         preloader();
+
+        });
+        function preloader() {
+           $('#ht-preloader').fadeOut();
+        };
+
+
+  </script>
+  <script>
+
+  $('.bigimage').on('click', function(event) {
+      event.preventDefault();
+       var idl=this.id;
+
+      var str = idl;
+      var res = str.replace("myImg-", "");
+
+      var modal = document.getElementById("myModal-"+res);
+      var modalImg = document.getElementById("img01-"+res);
+      var captionText = document.getElementById("caption-"+res);
+
+     modal.style.display = "block";
+     img = document.getElementById(idl);
+     modalImg.src = img.src;
+     captionText.innerHTML = img.alt;
+
+      // Get the image and insert it inside the modal - use its "alt" text as a caption
+
+
+        // Get the <span> element that closes the modal
+
+
+  });
+
+        $('.close').on('click', function(event) {
+            event.preventDefault();
+            var id=this.id;
+            $("#myModal-"+id).css("display","none");
+        });
+        // When the user clicks on <span> (x), close the modal
+
+      // Get the modal
+
+
+  </script>
+</body>
+
+</html>

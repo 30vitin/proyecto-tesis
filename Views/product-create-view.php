@@ -1,0 +1,713 @@
+<?php
+require_once 'Config/Functions.php';
+$cls = new Functions;  //llamando al objeto
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+date_default_timezone_set('America/Panama');
+
+$VAR_SESSION = Session::getInstance();
+if($VAR_SESSION->username=="" || $VAR_SESSION->loggedin!=true){
+
+    header("Location:./");
+}
+
+
+$inventory="active";
+$productos="active-sublink";
+
+
+?>
+
+
+<!--
+=========================================================
+Material Dashboard - v2.1.2
+=========================================================
+
+Product Page: https://www.creative-tim.com/product/material-dashboard
+Copyright 2020 Creative Tim (https://www.creative-tim.com)
+Coded by Creative Tim
+
+=========================================================
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="shortcut icon" href="Views/assets_login/images/favicon-01-ol.ico">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>
+        Crear Peoducto | Cafeteria
+   </title>
+  <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+  <!-- CSS Files -->
+  <link href="Views/assets/css/material-dashboard.css?v=2.1.2" rel="stylesheet" />
+  <!-- CSS Just for demo purpose, don't include it in your project -->
+  <link href="Views/assets/demo/demo.css" rel="stylesheet" />
+  <style>
+          #ht-preloader { background: #ffffff; bottom: 0; height: 100%; left: 0; overflow: hidden !important; position: fixed; right: 0; text-align: center; top: 0; width: 100%; z-index: 99999; }
+.clear-loader { transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); -o-transform: translateX(-50%) translateY(-50%); -ms-transform: translateX(-50%) translateY(-50%); -moz-transform: translateX(-50%) translateY(-50%); z-index: 999; box-sizing: border-box; display: inline-block; left: 50%; position: absolute; text-align: center; top: 50%; }
+.loader { position: absolute; top: 50%; left: 50%; margin: auto; text-align: center; transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); -o-transform: translateX(-50%) translateY(-50%); -ms-transform: translateX(-50%) translateY(-50%); -moz-transform: translateX(-50%) translateY(-50%); }
+.loader span { width: 20px; height: 20px; background-color: #f85438; border-radius: 50%; display: inline-block; animation: motion 3s ease-in-out infinite; }
+.loader p { color: #fe4c1c; margin-top: 5px; font-size: 30px; animation: shake 5s ease-in-out infinite; }
+
+
+
+     img.img-fluid.simple-text.logo-normal {
+        height: 80px !important;
+        width: 88% !important;
+    }
+    .sidebar .logo .simple-text{
+
+            padding: 0px 0px !important;
+    }
+    .sidebar[data-color="purple"] li.active>a{
+            background-color: #fbca08 !important;
+
+    }
+    .sidebar .nav li.active>[data-toggle="collapse"] i{
+        color: #fff !important;
+
+    }
+    .sidebar .nav li.active>a, .sidebar .nav li.active>a i{
+        color: #fff !important;
+    }
+    .btn.btn-primary{
+      background-color: #fbca08 !important;
+      border-color: #fbca08 !important;
+    }
+    .btn.btn-primary:focus, .btn.btn-primary.focus, .btn.btn-primary:hover{
+
+       background-color: #fbca08 !important;
+       border-color: #fbca08 !important;
+    }
+
+    li.nav-item.active-sublink {
+        background-color: rgba(200, 200, 200, 0.2);
+    }
+    .btn.btn-primary.btn-link {
+        color:#fff !important;
+    }
+
+
+    .logo {
+        background: #fff !important;
+    }
+
+    .sidebar-wrapper {
+        background: #fff !important;
+    }
+
+
+  .fileinput-exists .fileinput-new,.fileinput-new .fileinput-exists {
+    display: none;
+}
+.fileinput-new.input-group .btn-file,.fileinput-new .input-group .btn-file {
+    border-radius: 0 4px 4px 0;
+}
+
+.fileinput-new.input-group .btn-file.btn-sm,.fileinput-new .input-group .btn-file.btn-sm,.fileinput-new.input-group .btn-file.btn-xs,.fileinput-new .input-group .btn-file.btn-xs,.fileinput-new.input-group .btn-group-sm>.btn-file.btn,.fileinput-new .input-group .btn-group-sm>.btn-file.btn {
+    border-radius: 0 3px 3px 0;
+}
+
+.fileinput-new.input-group .btn-file.btn-lg,.fileinput-new .input-group .btn-file.btn-lg,.fileinput-new.input-group .btn-group-lg>.btn-file.btn,.fileinput-new .input-group .btn-group-lg>.btn-file.btn {
+    border-radius: 0 6px 6px 0;
+}
+
+.btn-file>input{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    font-size: 23px;
+    cursor: pointer;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    direction: ltr;
+}
+
+.fileinput .thumbnail>img {
+    max-height: 100%;
+    width: 100%;
+}
+  .fileinput-preview.fileinput-exists.thumbnail {
+    height: 148px !important;
+}
+.fileinput-new.thumbnail {
+    height: 148px !important;
+}
+
+#myProgress {
+width: 100%;
+background-color: #F2F3F4;
+}
+
+#myBar {
+width: 1%;
+height: 30px;
+background-color: #F1C40F;
+}
+  </style>
+</head>
+
+<body class="">
+    <div id="ht-preloader">
+      <div class="loader clear-loader">
+        <img class="img-fluid" src="Views/assets_login/images/loader.gif" alt="">
+
+        <div id="myBar" style="display:none;"></div></div>
+
+      </div>
+    </div>
+
+  <div class="wrapper ">
+    <div class="sidebar" data-color="purple" data-background-color="white">
+      <!--
+        Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
+
+        Tip 2: you can also add an image using data-image tag
+    -->
+      <div class="logo">
+
+        <img class="img-fluid simple-text logo-normal" src="Others/Files_site/logo-v02.png" alt="">
+
+        </div>
+
+      <?php include "menu.php";?>
+
+    </div>
+    <div class="main-panel">
+      <!-- Navbar -->
+
+     <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
+        <div class="container-fluid">
+          <div class="navbar-wrapper">
+            <a class="navbar-brand" href="javascript:;">Productos</a>
+          </div>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="navbar-toggler-icon icon-bar"></span>
+            <span class="navbar-toggler-icon icon-bar"></span>
+            <span class="navbar-toggler-icon icon-bar"></span>
+          </button>
+          <div class="collapse navbar-collapse justify-content-end">
+
+            <ul class="navbar-nav">
+
+
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <!-- End Navbar -->
+      <div class="content">
+        <div class="container-fluid">
+          <div class="row">
+
+            <div class="col-8 col-lg-1"></div>
+
+            <div class="col-md-12">
+              <div class="card ">
+                <div class="card-header card-header-rose card-header-text">
+                  <div class="card-text">
+                    <h4 class="card-title">Crear Nuevo Producto </h4>
+                  </div>
+                </div>
+                <div class="card-body ">
+
+
+                  <form method="get" action="/" class="form-horizontal" id="formprofile">
+
+                        <input type="hidden" name="a" value="CREATE-PRODUCT-INFO">
+
+
+                     <h4>Datos Generales</h4>
+                     <hr/>
+                    <div class="row">
+                      <label class="col-sm-2 col-form-label">Nombre</label>
+                      <div class="col-sm-10">
+                        <div class="form-group bmd-form-group">
+                          <input type="text" class="form-control validate" name="name" value="" id="name" placeholder="Nombre">
+                          <small  class="form-text text-muted name-error" style="color:red !important;"></small>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <label class="col-sm-2 col-form-label">Descripción</label>
+                      <div class="col-sm-10">
+                        <div class="form-group bmd-form-group">
+
+                          <textarea class="form-control validate" rows="5" name="description" id="description" placeholder="Descripcion"></textarea>
+                          <small  class="form-text text-muted description-error" style="color:red !important;"></small>
+                        </div>
+                      </div>
+                    </div>
+                      <div class="row">
+                          <label class="col-sm-2 col-form-label">Proovedor</label>
+                          <div class="col-sm-10">
+                              <div class="form-group bmd-form-group">
+
+                                  <select class="form-control validate" name="provider" id="provider">
+                                      <option value="">-Seleccione-</option>
+
+
+
+                                  </select>
+                                  <small  class="form-text text-muted category-error" style="color:red !important;"></small>
+                              </div>
+                          </div>
+                      </div>
+
+                    <div class="row">
+                      <label class="col-sm-2 col-form-label">Categoría</label>
+                      <div class="col-sm-10">
+                        <div class="form-group bmd-form-group">
+
+                             <select class="form-control validate" name="category" id="category">
+                              <option value="">-Seleccione-</option>
+
+
+
+                            </select>
+                          <small  class="form-text text-muted category-error" style="color:red !important;"></small>
+                        </div>
+                      </div>
+                    </div>
+
+                      <div class="row">
+                          <label class="col-sm-2 col-form-label">Unidad para compra</label>
+                          <div class="col-sm-10">
+                              <div class="form-group bmd-form-group">
+
+                                  <select class="form-control validate" name="uni" id="unidad_para_compra">
+                                      <option value="UND">UND</option>
+                                      <option value="DOCENA">DOCENA</option>
+                                      <option value="PAQUETE">PAQUETE</option>
+                                      <option value="LIBRAS">LIBRAS</option>
+                                      <option value="BULTOS">BULTOS</option>
+
+                                  </select>
+                                  <small  class="form-text text-muted unidad_para_compra-error" style="color:red !important;"></small>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="row">
+                          <label class="col-sm-2 col-form-label">Unidad para almacen</label>
+                          <div class="col-sm-10">
+                              <div class="form-group bmd-form-group">
+
+                                  <select class="form-control validate" name="uni" id="unidad_para_almacen">
+                                      <option value="UND">UND</option>
+                                      <option value="DOCENA">DOCENA</option>
+                                      <option value="PAQUETE">PAQUETE</option>
+                                      <option value="LIBRAS">LIBRAS</option>
+                                      <option value="BULTOS">BULTOS</option>
+
+                                  </select>
+                                  <small  class="form-text text-muted unidad_para_almacen-error" style="color:red !important;"></small>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="row">
+                          <label class="col-sm-2 col-form-label">Cantidad de unidad para almacen</label>
+                          <div class="col-sm-10">
+                              <div class="form-group bmd-form-group">
+
+                                  <input type="text" class="form-control validate" name="unidad_almacen" value="" id="unidad_almacen" placeholder="Nombre">
+                                  <small  class="form-text text-muted unidad_almacen-error" style="color:red !important;"></small>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="row">
+                          <label class="col-sm-2 col-form-label">Código externo</label>
+                          <div class="col-sm-10">
+                              <div class="form-group bmd-form-group">
+
+                                  <input type="text" class="form-control " name="code_extern" value="" id="code_extern" placeholder="Nombre">
+                              </div>
+                          </div>
+                      </div>
+
+
+
+
+                    <div class="row">
+                      <label class="col-sm-2 col-form-label">Precio</label>
+                      <div class="col-sm-10">
+                        <div class="form-group bmd-form-group">
+
+                            <input type="number" class="form-control validate"  min="0" max="4" step="0.2" value="0.00" name="price" id="price"/>
+
+                          <small  class="form-text text-muted price-error" style="color:red !important;"></small>
+                        </div>
+                      </div>
+                    </div>
+
+
+
+                     <h4>Imagen del Producto </h4>
+                     <hr/>
+
+
+                <div class="row">
+
+
+                   <?php
+                   $rowpht=0;?>
+
+
+                     <?php for ($i=$rowpht;$i<1;$i++){?>
+
+                        <div class="col-md-4 col-sm-4">
+
+                          <div class="fileinput fileinput-new text-center" data-provides="fileinput">
+                            <div class="fileinput-new thumbnail">
+
+                              <img src="Views/assets/img/image_placeholder.jpg" alt="...">
+                            </div>
+                            <div class="fileinput-preview fileinput-exists thumbnail"></div>
+                            <div>
+                              <span class="btn btn-rose btn-round btn-file">
+                                <span class="fileinput-new">Select image</span>
+                                <span class="fileinput-exists">Change</span>
+                                <input type="file" name="img_portada[]" accept=".png, .jpg, .jpeg">
+                              </span>
+                              <a href="#img-mis-<?php echo $i;?>" class="btn btn-danger btn-round fileinput-exists" data-dismiss="fileinput"><i class="fa fa-times"></i> Remove</a>
+                            </div>
+                          </div>
+                        </div>
+
+
+                    <?php }?>
+
+
+
+                  </div>
+
+
+                          <button type="submit" class="btn btn-primary pull-right btn-update-product">Crear Producto</button>
+                          <div class="clearfix"></div>
+
+                  </form>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+
+        </div>
+      </div>
+      <footer class="footer">
+        <div class="container-fluid">
+          <nav class="float-left">
+            <ul>
+              <li>
+
+              </li>
+              <li>
+
+              </li>
+              <li>
+
+              </li>
+              <li>
+
+              </li>
+            </ul>
+          </nav>
+          <div class="copyright float-right">
+              Copyright
+            &copy;
+            <script>
+              document.write(new Date().getFullYear())
+            </script>
+            olimpoathletics Todos los derechos reservados.
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!--   Core JS Files   -->
+  <script src="Views/assets/js/core/jquery.min.js"></script>
+  <script src="Views/assets/js/core/popper.min.js"></script>
+  <script src="Views/assets/js/core/bootstrap-material-design.min.js"></script>
+  <script src="Views/assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+  <!-- Plugin for the momentJs  -->
+  <script src="Views/assets/js/plugins/moment.min.js"></script>
+  <!--  Plugin for Sweet Alert -->
+  <script src="Views/assets/js/plugins/sweetalert2.js"></script>
+  <!-- Forms Validations Plugin -->
+  <script src="Views/assets/js/plugins/jquery.validate.min.js"></script>
+  <!-- Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
+  <script src="Views/assets/js/plugins/jquery.bootstrap-wizard.js"></script>
+  <!--	Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
+
+  <!--	Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs  -->
+  <script src="Views/assets/js/plugins/bootstrap-tagsinput.js"></script>
+  <!--
+  Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/4.0.0/js/jasny-bootstrap.min.js"></script>
+  <!--  Full Calendar Plugin, full documentation here: https://github.com/fullcalendar/fullcalendar    -->
+
+  <!-- Vector Map plugin, full documentation here: http://jvectormap.com/documentation/ -->
+  <script src="Views/assets/js/plugins/jquery-jvectormap.js"></script>
+  <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+  <script src="Views/assets/js/plugins/nouislider.min.js"></script>
+  <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support SweetAlert -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
+  <!-- Library for adding dinamically elements -->
+  <script src="Views/assets/js/plugins/arrive.min.js"></script>
+
+
+
+  <!--  Notifications Plugin    -->
+  <script src="Views/assets/js/plugins/bootstrap-notify.js"></script>
+  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="Views/assets/js/material-dashboard.js?v=2.1.2" type="text/javascript"></script>
+  <!-- Material Dashboard DEMO methods, don't include it in your project! -->
+  <script src="Views/assets/demo/demo.js"></script>
+
+  <script src="Views/assets/js/admin-js.js?id=12"></script>
+
+  <script>
+    $(document).ready(function() {
+      $().ready(function() {
+        $sidebar = $('.sidebar');
+
+        $sidebar_img_container = $sidebar.find('.sidebar-background');
+
+        $full_page = $('.full-page');
+
+        $sidebar_responsive = $('body > .navbar-collapse');
+
+        window_width = $(window).width();
+
+        fixed_plugin_open = $('.sidebar .sidebar-wrapper .nav li.active a p').html();
+
+        if (window_width > 767 && fixed_plugin_open == 'Dashboard') {
+          if ($('.fixed-plugin .dropdown').hasClass('show-dropdown')) {
+            $('.fixed-plugin .dropdown').addClass('open');
+          }
+
+        }
+
+        $('.fixed-plugin a').click(function(event) {
+          // Alex if we click on switch, stop propagation of the event, so the dropdown will not be hide, otherwise we set the  section active
+          if ($(this).hasClass('switch-trigger')) {
+            if (event.stopPropagation) {
+              event.stopPropagation();
+            } else if (window.event) {
+              window.event.cancelBubble = true;
+            }
+          }
+        });
+
+        $('.fixed-plugin .active-color span').click(function() {
+          $full_page_background = $('.full-page-background');
+
+          $(this).siblings().removeClass('active');
+          $(this).addClass('active');
+
+          var new_color = $(this).data('color');
+
+          if ($sidebar.length != 0) {
+            $sidebar.attr('data-color', new_color);
+          }
+
+          if ($full_page.length != 0) {
+            $full_page.attr('filter-color', new_color);
+          }
+
+          if ($sidebar_responsive.length != 0) {
+            $sidebar_responsive.attr('data-color', new_color);
+          }
+        });
+
+        $('.fixed-plugin .background-color .badge').click(function() {
+          $(this).siblings().removeClass('active');
+          $(this).addClass('active');
+
+          var new_color = $(this).data('background-color');
+
+          if ($sidebar.length != 0) {
+            $sidebar.attr('data-background-color', new_color);
+          }
+        });
+
+        $('.fixed-plugin .img-holder').click(function() {
+          $full_page_background = $('.full-page-background');
+
+          $(this).parent('li').siblings().removeClass('active');
+          $(this).parent('li').addClass('active');
+
+
+          var new_image = $(this).find("img").attr('src');
+
+          if ($sidebar_img_container.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
+            $sidebar_img_container.fadeOut('fast', function() {
+              $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
+              $sidebar_img_container.fadeIn('fast');
+            });
+          }
+
+          if ($full_page_background.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
+            var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
+
+            $full_page_background.fadeOut('fast', function() {
+              $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
+              $full_page_background.fadeIn('fast');
+            });
+          }
+
+          if ($('.switch-sidebar-image input:checked').length == 0) {
+            var new_image = $('.fixed-plugin li.active .img-holder').find("img").attr('src');
+            var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
+
+            $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
+            $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
+          }
+
+          if ($sidebar_responsive.length != 0) {
+            $sidebar_responsive.css('background-image', 'url("' + new_image + '")');
+          }
+        });
+
+        $('.switch-sidebar-image input').change(function() {
+          $full_page_background = $('.full-page-background');
+
+          $input = $(this);
+
+          if ($input.is(':checked')) {
+            if ($sidebar_img_container.length != 0) {
+              $sidebar_img_container.fadeIn('fast');
+              $sidebar.attr('data-image', '#');
+            }
+
+            if ($full_page_background.length != 0) {
+              $full_page_background.fadeIn('fast');
+              $full_page.attr('data-image', '#');
+            }
+
+            background_image = true;
+          } else {
+            if ($sidebar_img_container.length != 0) {
+              $sidebar.removeAttr('data-image');
+              $sidebar_img_container.fadeOut('fast');
+            }
+
+            if ($full_page_background.length != 0) {
+              $full_page.removeAttr('data-image', '#');
+              $full_page_background.fadeOut('fast');
+            }
+
+            background_image = false;
+          }
+        });
+
+        $('.switch-sidebar-mini input').change(function() {
+          $body = $('body');
+
+          $input = $(this);
+
+          if (md.misc.sidebar_mini_active == true) {
+            $('body').removeClass('sidebar-mini');
+            md.misc.sidebar_mini_active = false;
+
+            $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
+
+          } else {
+
+            $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
+
+            setTimeout(function() {
+              $('body').addClass('sidebar-mini');
+
+              md.misc.sidebar_mini_active = true;
+            }, 300);
+          }
+
+          // we simulate the window Resize so the charts will get updated in realtime.
+          var simulateWindowResize = setInterval(function() {
+            window.dispatchEvent(new Event('resize'));
+          }, 180);
+
+          // we stop the simulation of Window Resize after the animations are completed
+          setTimeout(function() {
+            clearInterval(simulateWindowResize);
+          }, 1000);
+
+        });
+      });
+    });
+  </script>
+  <script>
+    $(document).ready(function() {
+      // Javascript method's body can be found in assets/js/demos.js
+      md.initDashboardPageCharts();
+
+    });
+     $(window).on('load', function() {
+         preloader();
+
+        });
+        function preloader() {
+           $('#ht-preloader').fadeOut();
+        };
+
+
+  </script>
+  <script>
+
+  $('.bigimage').on('click', function(event) {
+      event.preventDefault();
+       var idl=this.id;
+
+      var str = idl;
+      var res = str.replace("myImg-", "");
+
+      var modal = document.getElementById("myModal-"+res);
+      var modalImg = document.getElementById("img01-"+res);
+      var captionText = document.getElementById("caption-"+res);
+
+     modal.style.display = "block";
+     img = document.getElementById(idl);
+     modalImg.src = img.src;
+     captionText.innerHTML = img.alt;
+
+      // Get the image and insert it inside the modal - use its "alt" text as a caption
+
+
+        // Get the <span> element that closes the modal
+
+
+  });
+
+        $('.close').on('click', function(event) {
+            event.preventDefault();
+            var id=this.id;
+            $("#myModal-"+id).css("display","none");
+        });
+        // When the user clicks on <span> (x), close the modal
+
+      // Get the modal
+
+
+  </script>
+</body>
+
+</html>
