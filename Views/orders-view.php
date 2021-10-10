@@ -6,13 +6,13 @@ ini_set('display_errors', '1');
 date_default_timezone_set('America/Panama');
 
 $VAR_SESSION = Session::getInstance();
-if($VAR_SESSION->email=="" || $VAR_SESSION->loggedin!=true){
- 
+if($VAR_SESSION->username=="" || $VAR_SESSION->loggedin!=true){
+
     header("Location:./");
 }
 
-$orders="active";
-$activesublink="active-sublink";
+$sales="active";
+$pedidos="active-sublink";
 
 
 if(isset($_POST['page'])){
@@ -45,7 +45,7 @@ The above copyright notice and this permission notice shall be included in all c
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <title>
-    Ordenes | Olimpoathletics
+    Pedidos | Cafeteria
   </title>
   <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
   <!--     Fonts and icons     -->
@@ -146,7 +146,7 @@ The above copyright notice and this permission notice shall be included in all c
      <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
         <div class="container-fluid">
           <div class="navbar-wrapper">
-            <a class="navbar-brand" href="javascript:;">Ordenes</a>
+            <a class="navbar-brand" href="javascript:;">Pedidos</a>
           </div>
           <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
             <span class="sr-only">Toggle navigation</span>
@@ -174,61 +174,96 @@ The above copyright notice and this permission notice shall be included in all c
             <div class="col-md-8">
               <div class="card">
                 <div class="card-header card-header-primary">
-                  <h4 class="card-title ">Pedidos por Entregar</h4>
-                  <p class="card-category"> Listado de los pedidos por entregar</p>
+                  <h4 class="card-title ">Pedidos</h4>
+                  <p class="card-category"> Listado de los pedidos</p>
                 </div>
                 <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <form class="navbar-form col-md-5" action="#" method="post">
+                                  <span class="bmd-form-group"><div class="input-group no-border">
+
+                                        <input type="text" name="search"
+                                               value="<?php if (isset($_POST['search']) && $_POST['search'] != "") {
+                                                   echo $_POST['search'];
+                                               } ?>" class="form-control" placeholder="Consultar por id...">
+                                        <button type="submit" class="btn btn-white btn-round btn-just-icon">
+                                          <i class="material-icons">search</i>
+                                          <div class="ripple-container"></div>
+                                        </button>
+                                      </div>
+                                  </span>
+                            </form>
+                        </div>
+                        <div class="col-md-5">
+
+                            <a href="./?view=orders-create" class="btn btn-primary">
+                                Registrar Pedido
+                            </a>
+                        </div>
+
+                    </div>
                   <div class="table-responsive">
                     <table class="table /* table-responsive*/">
                       <thead class=" text-primary">
                         <tr>
-                      <th>Acción</th>
+
                       <th>ID</th>
+                      <th>Factura</th>
+                      <th>Cliente</th>
                       <th>Fecha</th>
-                      <th>Envio</th>
-                      <th>Total</th>
-                      <th>Status</th>
+                      <th>Acción</th>
+
+
                       </tr>
                       </thead>
                       <tbody>
 
                   <?php
-                  $sqlcn="SELECT count(*) FROM ordenes_company t1 join ordenes_company_deatils t2 on t1.id=t2.orden_id join envios_company t3 on t3.id=t2.send_to WHERE t1.status_interno='PENDIENTE' AND t1.Status='Approved' ";
+                  $sqlcn="SELECT count(*) FROM orders t1";
 
                $num_total_rows=$cls->consulQuery($sqlcn);
 
-               $sqllm="SELECT value from config_global where id='15'";
-               $limitPage=$cls->consulQuery($sqllm);
-               $num_pages = ceil($num_total_rows[0] / $limitPage[0]);
-               $from =(($page * $limitPage[0]) - $limitPage[0]);
+                  $limitPageTable = 15;
 
-                    $sql="SELECT t1.id as id,t3.name as envio,t1.Amount as total,t1.Date as date,t1.status_interno as status_interno FROM ordenes_company t1 join ordenes_company_deatils t2 on t1.id=t2.orden_id join envios_company t3 on t3.id=t2.send_to WHERE t1.status_interno='PENDIENTE' AND t1.Status='Approved' limit ".$from.",".$limitPage[0];
+                  $num_pages = ceil($num_total_rows[0] / $limitPageTable);
+               $from =(($page * $limitPageTable) - $limitPageTable);
+
+                    $sql="SELECT t1.id,t1.bills,t1.customer FROM orders t1 order by t1.created_at desc limit ".$from.",".$limitPageTable;
                     $result_lis= $cls->consultListQuery($sql);//query
                     $rows=0;
                 	foreach($result_lis as $item)
                 	{$rows++?>
 
                     	 <tr>
-                         <td class="td-actions">
-                              <button type="button" rel="tooltip" title="" class="btn btn-primary btn-link btn-sm" data-original-title="Procesar Orden" onclick="location.href='./?view=orders-process&order=<?php echo $item->id;?>'">
-                                <i class="material-icons">edit</i>
-                              <div class="ripple-container"></div>
-                              </button>
 
-                          </td>
 
                          <td><?php echo $item->id;?></td>
-                         <td><?php echo $item->date;?></td>
-                         <td><?php echo $item->envio;?></td>
-                         <td class="text-primary">$<?php echo $item->total;?></td>
-                         <td class="text-danger"><?php echo $item->status_interno;?></td>
+                         <td><?php echo $item->bills;?></td>
+                         <td><?php echo $item->customer;?></td>
+                             <td class="td-actions">
+
+
+                                 <a href="./?view=orders-edit&order_id=<?php echo $item->id; ?>"
+                                    class="btn btn-primary btn-link btn-sm" data-dismiss="fileinput"><i
+                                             class="material-icons">edit</i>
+                                     <div class="ripple-container"></div>
+                                 </a>
+
+                             </td>
                         </tr>
 
                 	<?php }?>
 
                     <?php if($rows==0){?>
+                            <tr>
+                                <td colspan="6">
+                                    No se encontraron resultados!.
 
-                       <h6>No se encontraron resultados!.</h6>
+                                </td>
+
+                            </tr>
+
                     <?php }?>
 
 

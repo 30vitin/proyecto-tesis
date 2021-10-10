@@ -6,15 +6,27 @@ ini_set('display_errors', '1');
 date_default_timezone_set('America/Panama');
 
 $VAR_SESSION = Session::getInstance();
-if($VAR_SESSION->username=="" || $VAR_SESSION->loggedin!=true){
+if ($VAR_SESSION->username == "" || $VAR_SESSION->loggedin != true) {
 
     header("Location:./");
 }
 
 
-$inventory="active";
-$categoria="active-sublink";
+// consultar
 
+if (!isset($_GET['id'])) {
+    header("Location:" . $_SERVER['HTTP_REFERER']);
+}
+$id = $_GET['id'];
+
+$sql = "SELECT id, name from products_category where id = '$id' AND status ='ACTIVO'  limit 1";
+$response = $cls->consulQuery($sql);
+if(!$response){
+    header("Location:" . $_SERVER['HTTP_REFERER']);
+}
+
+$inventory = "active";
+$categoria = "active-sublink";
 
 ?>
 
@@ -34,155 +46,125 @@ The above copyright notice and this permission notice shall be included in all c
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
-  <link rel="shortcut icon" href="Views/assets_login/images/favicon-01-ol.ico">
+    <meta charset="utf-8"/>
+    <link rel="shortcut icon" href="Views/assets_login/images/favicon-01-ol.ico">
 
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <title>
-    Crear Categoría | Cafeteria
-  </title>
-  <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
-  <!--     Fonts and icons     -->
-  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
-  <!-- CSS Files -->
-  <link href="Views/assets/css/material-dashboard.css?v=2.1.2" rel="stylesheet" />
-  <!-- CSS Just for demo purpose, don't include it in your project -->
-  <link href="Views/assets/demo/demo.css" rel="stylesheet" />
-  <link href="Views/assets/css/styles.css?ref=2" rel="stylesheet">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>
+        Editar Categoría | Cafeteria
+    </title>
+    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport'/>
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    <!-- CSS Files -->
+    <link href="Views/assets/css/material-dashboard.css?v=2.1.2" rel="stylesheet"/>
+    <!-- CSS Just for demo purpose, don't include it in your project -->
+    <link href="Views/assets/demo/demo.css" rel="stylesheet"/>
+    <link href="Views/assets/css/styles.css?ref=2" rel="stylesheet">
 </head>
 
 <body class="">
-    <div id="ht-preloader">
-      <div class="loader clear-loader">
+<div id="ht-preloader">
+    <div class="loader clear-loader">
         <img class="img-fluid" src="Views/assets_login/images/loader.gif" alt="">
-      </div>
     </div>
+</div>
 
-  <div class="wrapper ">
+<div class="wrapper ">
     <div class="sidebar" data-color="purple" data-background-color="white">
-      <!--
-        Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
+        <!--
+          Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
 
-        Tip 2: you can also add an image using data-image tag
-    -->
-        <?php include "logo.php";?>
+          Tip 2: you can also add an image using data-image tag
+      -->
+        <?php include "logo.php"; ?>
 
-      <?php include "menu.php";?>
+        <?php include "menu.php"; ?>
 
     </div>
     <div class="main-panel">
-      <!-- Navbar -->
-        <?php include "navbar.php";?>
+        <!-- Navbar -->
+        <?php include "navbar.php"; ?>
 
-      <!-- End Navbar -->
-      <div class="content">
-        <div class="container-fluid">
-          <div class="row">
+        <!-- End Navbar -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
 
-            <div class="col-8 col-lg-1"></div>
+                    <div class="col-8 col-lg-1"></div>
 
-            <div class="col-md-8">
-              <div class="card ">
-                <div class="card-header card-header-rose card-header-text">
-                  <div class="card-text">
-                    <h4 class="card-title">Generales Categoría  <i class="spinner-border spinner-border-sm"></i></h4>
-                  </div>
-                </div>
-                <div class="card-body ">
+                    <div class="col-md-8">
+                        <div class="card ">
+                            <div class="card-header card-header-rose card-header-text">
+                                <div class="card-text">
+                                    <h4 class="card-title">Editar Categoría #<?php echo $response['id'];?> <i
+                                                class="spinner-border spinner-border-sm"></i></h4>
+                                </div>
+                            </div>
+                            <div class="card-body ">
 
-                    <div class="row">
-                        <div class="col-md-12 ">
-                            <button type="button" class="btn btn-primary pull-right btn-send-form" data-form="form">Crear Categoria</button>
+                                <div class="row">
+                                    <div class="col-md-12 ">
+                                        <button type="button" class="btn btn-danger pull-right btn-delete-form"
+                                                data-form="form" data-id="<?php echo $response['id'];?>" data-action="DELETE-CATEGORY" data-text="¿Estas seguro de eliminar esta categoría?">Eliminar
+                                        </button>
+                                        <button type="button" class="btn btn-primary pull-right btn-send-form"
+                                                data-form="form">Guardar
+                                        </button>
 
+                                    </div>
+
+                                </div>
+
+                                <form class="form-horizontal" id="form">
+
+                                    <input type="hidden" name="a" value="UPDATE-CATEGORY">
+                                    <input type="hidden" name="id" value="<?php echo $response['id'];?>">
+
+                                    <?php include 'alert-form.php';?>
+
+
+                                    <h4>Datos Generales</h4>
+                                    <hr/>
+                                    <div class="row">
+                                        <label class="col-sm-2 col-form-label">Nombre</label>
+                                        <div class="col-sm-10">
+                                            <div class="form-group bmd-form-group">
+                                                <input type="text" class="form-control validate" name="name" value="<?php echo $response['name'];?>"
+                                                       id="name" placeholder="Nombre">
+                                                <small class="form-text text-muted name-error"
+                                                       style="color:red !important;"></small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="clearfix"></div>
+
+                                </form>
+                            </div>
                         </div>
-
                     </div>
 
-                    <form  class="form-horizontal" id="form">
-
-                        <input type="hidden" name="a" value="CREATE-CATEGORY">
-
-                        <?php include 'alert-form.php';?>
-
-
-
-                        <h4>Datos Generales</h4>
-                     <hr/>
-                     <div class="row">
-                      <label class="col-sm-2 col-form-label">Nombre</label>
-                      <div class="col-sm-10">
-                        <div class="form-group bmd-form-group">
-                          <input type="text" class="form-control validate" name="name" value="" id="name" placeholder="Nombre">
-                          <small  class="form-text text-muted name-error" style="color:red !important;"></small>
-                        </div>
-                      </div>
-                    </div>
-
-
-
-                    <div class="clearfix"></div>
-
-                  </form>
                 </div>
-              </div>
+
+
             </div>
-
-          </div>
-
-
-
         </div>
-      </div>
-        <?php include "footer.php";?>
+        <?php include "footer.php"; ?>
     </div>
-  </div>
+</div>
 
-  <!--   Core JS Files   -->
-  <script src="Views/assets/js/core/jquery.min.js"></script>
-  <script src="Views/assets/js/core/popper.min.js"></script>
-  <script src="Views/assets/js/core/bootstrap-material-design.min.js"></script>
-  <script src="Views/assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
-  <!-- Plugin for the momentJs  -->
-  <script src="Views/assets/js/plugins/moment.min.js"></script>
-  <!--  Plugin for Sweet Alert -->
-  <script src="Views/assets/js/plugins/sweetalert2.js"></script>
-  <!-- Forms Validations Plugin -->
-  <script src="Views/assets/js/plugins/jquery.validate.min.js"></script>
-  <!-- Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
+<?php include "scripts/scripts.php"; ?>
 
 
-  <!--
-  Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/4.0.0/js/jasny-bootstrap.min.js"></script>
-  <!--  Full Calendar Plugin, full documentation here: https://github.com/fullcalendar/fullcalendar    -->
-
-  <!-- Vector Map plugin, full documentation here: http://jvectormap.com/documentation/ -->
-  <script src="Views/assets/js/plugins/jquery-jvectormap.js"></script>
-  <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
-  <script src="Views/assets/js/plugins/nouislider.min.js"></script>
-  <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support SweetAlert -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
-  <!-- Library for adding dinamically elements -->
-  <script src="Views/assets/js/plugins/arrive.min.js"></script>
-
-
-
-  <!--  Notifications Plugin    -->
-  <script src="Views/assets/js/plugins/bootstrap-notify.js"></script>
-  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="Views/assets/js/material-dashboard.js?v=2.1.2" type="text/javascript"></script>
-  <!-- Material Dashboard DEMO methods, don't include it in your project! -->
-  <script src="Views/assets/demo/demo.js"></script>
-
-  <script src="Views/assets/js/admin-js.js?id=16"></script>
-
-
-  <script>
-    $(document).ready(function() {
-      // Javascript method's body can be found in assets/js/demos.js
-      md.initDashboardPageCharts();
-        $().ready(function() {
+<script>
+    $(document).ready(function () {
+        // Javascript method's body can be found in assets/js/demos.js
+        md.initDashboardPageCharts();
+        $().ready(function () {
             $sidebar = $('.sidebar');
 
             $sidebar_img_container = $sidebar.find('.sidebar-background');
@@ -202,7 +184,7 @@ The above copyright notice and this permission notice shall be included in all c
 
             }
 
-            $('.fixed-plugin a').click(function(event) {
+            $('.fixed-plugin a').click(function (event) {
                 // Alex if we click on switch, stop propagation of the event, so the dropdown will not be hide, otherwise we set the  section active
                 if ($(this).hasClass('switch-trigger')) {
                     if (event.stopPropagation) {
@@ -213,7 +195,7 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             });
 
-            $('.fixed-plugin .active-color span').click(function() {
+            $('.fixed-plugin .active-color span').click(function () {
                 $full_page_background = $('.full-page-background');
 
                 $(this).siblings().removeClass('active');
@@ -234,7 +216,7 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             });
 
-            $('.fixed-plugin .background-color .badge').click(function() {
+            $('.fixed-plugin .background-color .badge').click(function () {
                 $(this).siblings().removeClass('active');
                 $(this).addClass('active');
 
@@ -245,7 +227,7 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             });
 
-            $('.fixed-plugin .img-holder').click(function() {
+            $('.fixed-plugin .img-holder').click(function () {
                 $full_page_background = $('.full-page-background');
 
                 $(this).parent('li').siblings().removeClass('active');
@@ -255,7 +237,7 @@ The above copyright notice and this permission notice shall be included in all c
                 var new_image = $(this).find("img").attr('src');
 
                 if ($sidebar_img_container.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
-                    $sidebar_img_container.fadeOut('fast', function() {
+                    $sidebar_img_container.fadeOut('fast', function () {
                         $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
                         $sidebar_img_container.fadeIn('fast');
                     });
@@ -264,7 +246,7 @@ The above copyright notice and this permission notice shall be included in all c
                 if ($full_page_background.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
                     var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
 
-                    $full_page_background.fadeOut('fast', function() {
+                    $full_page_background.fadeOut('fast', function () {
                         $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
                         $full_page_background.fadeIn('fast');
                     });
@@ -283,7 +265,7 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             });
 
-            $('.switch-sidebar-image input').change(function() {
+            $('.switch-sidebar-image input').change(function () {
                 $full_page_background = $('.full-page-background');
 
                 $input = $(this);
@@ -315,7 +297,7 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             });
 
-            $('.switch-sidebar-mini input').change(function() {
+            $('.switch-sidebar-mini input').change(function () {
                 $body = $('body');
 
                 $input = $(this);
@@ -330,7 +312,7 @@ The above copyright notice and this permission notice shall be included in all c
 
                     $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
 
-                    setTimeout(function() {
+                    setTimeout(function () {
                         $('body').addClass('sidebar-mini');
 
                         md.misc.sidebar_mini_active = true;
@@ -338,12 +320,12 @@ The above copyright notice and this permission notice shall be included in all c
                 }
 
                 // we simulate the window Resize so the charts will get updated in realtime.
-                var simulateWindowResize = setInterval(function() {
+                var simulateWindowResize = setInterval(function () {
                     window.dispatchEvent(new Event('resize'));
                 }, 180);
 
                 // we stop the simulation of Window Resize after the animations are completed
-                setTimeout(function() {
+                setTimeout(function () {
                     clearInterval(simulateWindowResize);
                 }, 1000);
 
@@ -351,16 +333,17 @@ The above copyright notice and this permission notice shall be included in all c
         });
 
     });
-     $(window).on('load', function() {
-         preloader();
+    $(window).on('load', function () {
+        preloader();
 
-     });
+    });
+
     function preloader() {
         $('#ht-preloader').fadeOut();
     };
 
 
-  </script>
+</script>
 
 </body>
 

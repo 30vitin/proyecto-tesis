@@ -1,513 +1,270 @@
 "use strict";
 
 
-$(document).ready(function() {
+$(document).ready(function () {
+//send form
+    $('.btn-send-form').on('click', function () {
 
-$('.remove-image').on('click',function(event){
+        var instance = this;
+        BtnLoading(instance);
+        var formid = $(instance).data('form');
 
-  $("#ht-preloader").css("display", "block");
-  var id = this.id;
-  event.preventDefault();
+        var form = $("#" + formid);
+        if (documentValidate()) {
 
 
-  var parametros = {
-           "a":"DELETE-IMAGE-PRODUCT-SINGLE",
-           "id":id
-     };
+            $.ajax({
 
-  $.ajax({
+                data: form.serialize(),
+                url: "./?action=admin",
+                type: "POST",
+                dataType: "JSON",
+                success: function (data) {
 
-     data: parametros,
-     url: "./?action=admin",
-     type: "POST",
-     dataType: "JSON",
-     success:function(data){
-       console.log(data)
-       if(data.type=='success'){
-            location.reload();
+                    BtnReset(instance)
+                    if (data.success) {
+                        form[0].reset();
+                        Swal.fire(
+                            '¡Listo!',
+                            data.mens,
+                            'success'
+                        )
 
-         }else{
-              $("#ht-preloader").css("display", "none");
-              Swal.fire(data.mens)
+                        $('.new-alert-success').removeClass('alert-success-none');
+                        $('.new-alert-error').addClass('alert-error-none');
 
-           }
-        //Swal.fire(data.mens)
+                        if (data.url) {
+                            $('.new-alert-success').html('<div class="row col-md-12">' +
+                                '<div class="col-md-12">' +
+                                '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
+                                '</div>' +
+                                ' <div class="col-md-12">' +
+                                '<h4>' + data.mens + '</h4>' +
+                                '</div>' +
+                                ' <div class="col-md-12">' +
+                                '<a href="' + data.url + '">' +
+                                '<i class="material-icons">arrow_forward</i> Ir a ' + data.post_name + ' #' + data.id + ' </a>' +
+                                '</div>' +
+                                '</div>');
+                        } else {
+                            $('.new-alert-success').html('<div class="row col-md-12">' +
+                                '<div class="col-md-12">' +
+                                '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
+                                '</div>' +
+                                ' <div class="col-md-12">' +
+                                '<h4>' + data.mens + '</h4>' +
+                                '</div>' +
+                                ' <div class="col-md-12">' +
 
-  },
-  error: function(XMLHttpRequest, textStatus, errorThrown) {
-   console.log("Status: "+textStatus+" Error: "+XMLHttpRequest.responseText);
+                                '</div>' +
+                                '</div>');
 
-  }
+                        }
 
-  });
 
-})
+                    } else {
+                        $("#ht-preloader").css("display", "none");
+                        $('.new-alert-error').removeClass('alert-error-none');
+                        $('.new-alert-success').addClass('alert-success-none');
 
-$('.btn-send').on('click', function(event) {
-  event.preventDefault();
+                        Swal.fire('¡Alerta!', data.mens, 'error')
+                        $('.new-alert-error').html('<div class="row">' +
+                            '<div class="col-md-12">' +
+                            '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-error" data-add="alert-error-none">x</button>' +
+                            '</div>' +
+                            ' <div class="col-md-12">' +
+                            '<h4>' + data.mens + '</h4>' +
+                            '</div>' +
+                            '</div>');
 
-  if(documentValidate()){
+                    }
 
-       $("#ht-preloader").css("display", "block");
-         $.ajax({
 
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    BtnReset(instance)
+                    console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
+
+                }
+
+            });
+
+
+        } else {
+            Swal.fire(
+                'Alerta!',
+                'Favor validar los campos obligatorios.',
+                'error'
+            )
+            BtnReset(instance)
+        }
+
+    });
+
+    $('.btn-delete-form').on('click', function () {
+        var instance = this;
+        var id = $(this).data('id');
+        var action = $(this).data('action');
+        var text = $(this).data('text');
+        Swal.fire({
+            title: (text) ? text : '¿Estas seguro de eliminar este elemento?',
+
+            showCancelButton: true,
+            confirmButtonText: 'Si, Eliminar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.value) {
+
+                $.ajax({
+
+                    data: {a:action,id:id},
+                    url: "./?action=admin",
+                    type: "POST",
+                    dataType: "JSON",
+                    success: function (data) {
+
+                        BtnReset(instance)
+                        let timerInterval
+                        Swal.fire({
+                            title: 'Procensando',
+                            html: 'Eliminando registro',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            didOpen: () => {
+                                Swal.showLoading()
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval)
+                            }
+                        }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                location.href = data.url;
+                            }
+                        })
+
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        BtnReset(instance)
+                        console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
+
+                    }
+
+                });
+
+                /**/
+
+            }
+        })
+
+    });
+
+
+    $('.remove-image').on('click', function (event) {
+
+        $("#ht-preloader").css("display", "block");
+        var id = this.id;
+        event.preventDefault();
+
+
+        var parametros = {
+            "a": "DELETE-IMAGE-PRODUCT-SINGLE",
+            "id": id
+        };
+
+        $.ajax({
+
+            data: parametros,
             url: "./?action=admin",
             type: "POST",
-            data:$("#form1").serialize(),
             dataType: "JSON",
-            success:function(data){
+            success: function (data) {
+                console.log(data)
+                if (data.type == 'success') {
+                    location.reload();
 
-              $("#ht-preloader").css("display", "none");
-
-               Swal.fire(data.mens)
-
-         },
-         error: function(XMLHttpRequest, textStatus, errorThrown) {
-          console.log("Status: "+textStatus+" Error: "+XMLHttpRequest.responseText);
-
-         }
-
-         });
-
-
-  }
-
-
-});
-
-$('.btn-send-order').on('click', function(event) {
-  event.preventDefault();
-
-    if($("#order_id").val()!==''){
-         $("#ht-preloader").css("display", "block");
-         var parametros = {
-                  "a":"SEND-READY-ORDER",
-                  "order_id":$("#order_id").val(),
-                  "comment":$("#comentario").val()
-            };
-         $.ajax({
-
-                 data:  parametros, //datos que se envian a traves de ajax
-                 url: "./?action=admin",
-                 type: "POST",
-                 dataType: "JSON",
-                  success:function(data){
-
-                    console.log(data);
-
-                    if(data.type=='success'){
-                           location.href=data.url;
-
-                      }else{
-                           $("#ht-preloader").css("display", "none");
-                           Swal.fire(data.mens)
-
-                        }
-
-
-                    },
-                  error: function(XMLHttpRequest, textStatus, errorThrown) {
-                  console.log("Status: "+textStatus+" Error: "+XMLHttpRequest.responseText);
+                } else {
+                    $("#ht-preloader").css("display", "none");
+                    Swal.fire(data.mens)
 
                 }
-
-                });
-    }
-
-});
-
-$('.prev-page').on('click', function(event) {
-    var page=Number($("#page").val())-1;
-     $("#page").val(page);
-    $("#form-filter").submit();
-});
-
-$('.next-page').on('click', function(event) {
-    var page=Number($("#page").val())+1;
-
-     $("#page").val(page);
-
-    $("#form-filter").submit();
-});
-
-$('.btn-add-talla').on('click', function(event) {
-  event.preventDefault();
-
-Swal.fire({
-text: "Escriba la talla:",
-input: 'text',
-showCancelButton: true ,
-confirmButtonColor: 'blue'
-}).then((result) => {
-
-
-if (result.value) {
-     $("#ht-preloader").css("display", "block");
-    var parametros = {
-                  "a":"ADD-TALLA",
-                  "talla":result.value,
-                  "product_id":$("#product_id").val()
-            };
-
-    $.ajax({
-
-                 data:  parametros, //datos que se envian a traves de ajax
-                 url: "./?action=admin",
-                 type: "POST",
-                 dataType: "JSON",
-                  success:function(data){
-
-                    //console.log(data);
-
-                    if(data.type=='success'){
-
-                           location.reload();
-
-                      }else{
-                             $("#ht-preloader").css("display", "none");
-                           Swal.fire(data.mens)
-
-                        }
-
-
-                    },
-                  error: function(XMLHttpRequest, textStatus, errorThrown) {
-                  console.log("Status: "+textStatus+" Error: "+XMLHttpRequest.responseText);
-
-                }
-
-                });
-
-}});
-
-
-});
-
-$('.add-glosary-links').on('click', function(event) {
-  event.preventDefault();
-
-    var lines = Number($("#rowsGlosario").val())+1;
-
-    $("#rowsGlosario").val(lines);
-    Swal.fire({
-      title: 'Complete Formulario',
-      showCancelButton: true,
-
-      html:'<input type="text" id="swal-input1" class="swal2-input" placeholder="Nombre"><span id="mens" style="color:red;font-size:15px;"></span>' +
-           '<input type="text" id="swal-input2" class="swal2-input" placeholder="Link de video">',
-
-      preConfirm: function () {
-         return new Promise(function (resolve) {
-           let todoListsFormatted = []
-           if ($('#swal-input1').val() == '' || $('#swal-input2').val() == '') {
-                          document.getElementById('mens').innerHTML="Los campos son obligatorios";
-                          $(".swal2-confirm").prop('disabled', false);
-
-              } else {
-
-                  todoListsFormatted.push({
-                     name: $('#swal-input1').val(),
-                     link: $('#swal-input2').val()
-                   })
-                  resolve(todoListsFormatted);
-            }
-         })
-       },
-       onOpen: function () {
-        $('#swal-input1').focus()
-      }
-    }).then((result) => {
-
-
-          var myJSON = JSON.parse(JSON.stringify(result));
-          $( ".gloasaryContent" ).append('<tr id="ln-'+lines+'">'+
-                     '<td><input type="hidden" name="idGlosary[]" value="">'+
-                     '<input type="hidden" name="namesGlosary[]" value="'+myJSON['value'][0].name+'" >'+myJSON['value'][0].name+'</td>'+
-                    '<td><input type="hidden" name="linksGlosary[]" value="'+myJSON['value'][0].link+'" >'+myJSON['value'][0].link+'</td>'+
-                    '<td><button type="button" class="btn btn-danger pull-right" onclick=deleteLine("ln-'+lines+'")><i class="material-icons">clear</i></button></td>'+
-                    '</tr>' );
-
-
-    });
-
-
-});
-
-$('.btn-add-libras').on('click', function(event) {
-  event.preventDefault();
-
-Swal.fire({
-text: "Escriba la cantidad en libras:",
-input: 'number',
-showCancelButton: true ,
-confirmButtonColor: 'blue'
-}).then((result) => {
-
-
-if (result.value) {
-     $("#ht-preloader").css("display", "block");
-    var parametros = {
-                  "a":"ADD-LIBRAS",
-                  "libras":result.value,
-                  "product_id":$("#product_id").val()
-            };
-
-    $.ajax({
-
-                 data:  parametros, //datos que se envian a traves de ajax
-                 url: "./?action=admin",
-                 type: "POST",
-                 dataType: "JSON",
-                  success:function(data){
-
-                    //console.log(data);
-
-                    if(data.type=='success'){
-
-                           location.reload();
-
-                      }else{
-                             $("#ht-preloader").css("display", "none");
-                           Swal.fire(data.mens)
-
-                        }
-
-
-                    },
-                  error: function(XMLHttpRequest, textStatus, errorThrown) {
-                  console.log("Status: "+textStatus+" Error: "+XMLHttpRequest.responseText);
-
-                }
-
-                });
-
-}});
-
-
-});
-
-$('#typeproduct').on('change', function(event) {
-  event.preventDefault();
-  var value=$('#typeproduct').val();
-  if(value!=""){
-
-      var parametros = {
-                  "a":"GET-CAT-TYPE",
-                  "value":value
-            };
-
-         $.ajax({
-
-                 data:  parametros, //datos que se envian a traves de ajax
-                 url: "./?action=admin",
-                 type: "POST",
-                 dataType: "JSON",
-                  success:function(data){
-
-                     $('#category_createpr').html(data.html);
-
-
-                    },
-                  error: function(XMLHttpRequest, textStatus, errorThrown) {
-                  console.log("Status: "+textStatus+" Error: "+XMLHttpRequest.responseText);
-
-                }
-
-                });
-  }
-
-
-});
-
-$('.btn-update-product').on('click', function(event) {
-  event.preventDefault();
-  $('#btn-sect1-1').attr("disabled", true);
-
-  //$( ".clear-loader" ).append('<div id="myProgress"><div id="myBar"></div></div>' );
-    if(document.getElementById('myBar')){
-
-      document.getElementById('myBar').style.display="block";
-
-    }
-  if(documentValidate()){
-
-          $("#ht-preloader").css("display", "block");
-         var form = $('#formprofile')[0];
-
-	     var formData = new FormData(form);
-
-
-
-         $.ajax({
-
-                 url: "./?action=admin",
-                 type: "POST",
-                 processData: false,
-			     contentType: false,
-                 dataType: "JSON",
-                 data: formData,
-                  success:function(data){
-
-                      if(data.type=='success'){
-
-
-                           if(data.url!=''){
-                               location.href=data.url;
-                           }else{
-                               location.reload();
-                           }
-
-                      }else{
-                        $('#btn-sect1-1').attr("disabled", false);
-
-                             $("#ht-preloader").css("display", "none");
-                           Swal.fire(data.mens)
-
-                        }
-
-                    },
-                  error: function(XMLHttpRequest, textStatus, errorThrown) {
-                  console.log("Status: "+textStatus+" Error: "+XMLHttpRequest.responseText);
-
-                },
-                xhr: function() {
-                   var xhr = new window.XMLHttpRequest();
-
-                   xhr.upload.addEventListener("progress", function(evt) {
-                     if (evt.lengthComputable) {
-                       var percentComplete = evt.loaded / evt.total;
-                       percentComplete = parseInt(percentComplete * 100);
-                       console.log("Progreso: "+ percentComplete +"%")
-                       //var elem = document.getElementById("myBar");
-                      // elem.append=percentComplete +"%";
-
-                       move(percentComplete)
-
-                       if (percentComplete === 100) {
-
-                       }
-
-                     }
-                   }, false);
-
-                   return xhr;
-                 },
-
-                });
-
-
-  }
-
-
-});
-
-$('.btn-modal-form').on('click', function(event) {
-  event.preventDefault();
-
-        var id = this.id;
-          $("#ht-preloader").css("display", "block");
-
-
-
-         $.ajax({
-
-
-                 url: "./?action=admin",
-                 type: "POST",
-                 data:$("#form-"+id).serialize(),
-                 dataType: "JSON",
-                 success:function(data){
-                    console.log(data)
-                      if(data.type=='success'){
-
-
-                           if(data.url!=''){
-                               location.href=data.url;
-                           }else{
-                               location.reload();
-                           }
-
-                      }else{
-                        $('#btn-sect1-1').attr("disabled", false);
-
-                             $("#ht-preloader").css("display", "none");
-                           Swal.fire(data.mens)
-
-                        }
-
-                    },
-                  error: function(XMLHttpRequest, textStatus, errorThrown) {
-                  console.log("Status: "+textStatus+" Error: "+XMLHttpRequest.responseText);
-
-                },
-                xhr: function() {
-                   var xhr = new window.XMLHttpRequest();
-
-                   xhr.upload.addEventListener("progress", function(evt) {
-                     if (evt.lengthComputable) {
-                       var percentComplete = evt.loaded / evt.total;
-                       percentComplete = parseInt(percentComplete * 100);
-                       console.log("Progreso: "+ percentComplete +"%")
-                       //var elem = document.getElementById("myBar");
-                      // elem.append=percentComplete +"%";
-
-
-                       if (percentComplete === 100) {
-
-                       }
-
-                     }
-                   }, false);
-
-                   return xhr;
-                 },
-
-                });
-
-
-
-
-
-});
-
-function move(width) {
-  console.log(width)
-
-    var elem = document.getElementById("myBar");
-    elem.innerHTML=width +"%";
-    elem.style.width = width + "%";
-
-
-
-}
-
-
-function documentValidate(){
-
-        var check=true;
-     $.each($('.validate'), function(index, value) {
-
-         //console.log($(value).val()+' '+this.id);
-
-
-         if($(value).val()==''){
-             $("."+this.id+'-error').html("This field is required!");
-             check=false;
-         }else{
-             $("."+this.id+'-error').html("");
-         }
-         if($(value).attr("name")=='email'){
-
-            if(!validarEmail($(value).val())){
-               $("."+this.id+'-error').html("Insert a valid email!");
-               check=false;
-            }else{
+                //Swal.fire(data.mens)
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
 
             }
-         }
+
+        });
+
+    })
+
+    $('.prev-page').on('click', function (event) {
+        var page = Number($("#page").val()) - 1;
+        $("#page").val(page);
+        $("#form-filter").submit();
+    });
+
+    $('.next-page').on('click', function (event) {
+        var page = Number($("#page").val()) + 1;
+
+        $("#page").val(page);
+
+        $("#form-filter").submit();
+    });
+
+    $('#alert-form').on('click', '.close-alert-div', function () {
+        var target = $(this).data('target')
+        var add = $(this).data('add')
+        $('.' + target).addClass(add)
+    });
+
+    $('#input-filtres').on('keyup',function(){
+
+        var datainput =  $(this).val()
+        if(datainput.length>3){
+
+
+        }
 
     });
-    return check;
-}
+    function documentValidate() {
+
+        var check = true;
+        $.each($('.validate'), function (index, value) {
+
+            //console.log($(value).val()+' '+this.id);
+
+
+            if ($(value).val() == '') {
+                $("." + this.id + '-error').html("This field is required!");
+                check = false;
+            } else {
+                $("." + this.id + '-error').html("");
+            }
+            if ($(value).attr("name") == 'email') {
+
+                if (!validarEmail($(value).val())) {
+                    $("." + this.id + '-error').html("Insert a valid email!");
+                    check = false;
+                } else {
+
+                }
+            }
+
+        });
+        return check;
+    }
+
+    function BtnLoading(elem) {
+        $(elem).attr("data-original-text", $(elem).html());
+        $(elem).prop("disabled", true);
+        $(elem).html('Enviado...');
+    }
+
+    function BtnReset(elem) {
+        $(elem).prop("disabled", false);
+        $(elem).html($(elem).attr("data-original-text"));
+    }
 
 });

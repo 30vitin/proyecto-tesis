@@ -1,11 +1,11 @@
 <?php
 
-
 require_once 'Config/Functions.php';
-require("Others/class.phpmailer.php");
+$VAR_SESSION = Session::getInstance();
+
 $cls = new Functions;  //llamando al objeto
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+//error_reporting(E_ALL);
+//ini_set('display_errors', '1');
 date_default_timezone_set('America/Panama');
 
 $time = time();
@@ -13,6 +13,92 @@ $datetime = date('Y-m-d H:i:s');
 
 
 $mensaje = array();
+
+/**
+ * INVENTARIO
+ *
+ */
+#Error #001: id no enviados
+
+if (isset($_POST['a']) && $_POST['a'] == 'CREATE-CATEGORY') {
+    $cls->autocommitF();
+    if (isset($_POST['name'])) {
+        $id = $cls->getId_autoincrement("products_category");
+
+        $name = $_POST['name'];
+
+        $sql = "INSERT INTO products_category (id,name,created_by,created_at)
+                values('$id','$name','$VAR_SESSION->username', '$datetime')";
+        $res = $cls->exeQuery($sql);
+        if ($res) {
+
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'mens' => 'Categoría registrada con exito.', 'url' => './?view=category-edit&id=' . $id, "post_name" => "Categoría", "id" => $id);
+
+        } else {
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res);
+
+        }
+
+    } else {
+        $mensaje = array('success' => false, 'mens' => 'El campo nombre es obligatorio');
+    }
+}
+if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-CATEGORY') {
+    $cls->autocommitF();
+    if (isset($_POST['name'])) {
+
+        if (isset($_POST['id'])) {
+
+            $name = $_POST['name'];
+            $id = $_POST['id'];
+
+            $sql = "UPDATE products_category set name='$name',updated_by='$VAR_SESSION->username' WHERE id ='$id' ";
+            $res = $cls->exeQuery($sql);
+            if ($res) {
+                $cls->commitSet();
+                $mensaje = array('success' => true, 'mens' => 'Categoría actualizada con exito.');
+
+            } else {
+                $cls->exeQuery('ROLLBACK');
+                $mensaje = array('success' => false, 'mens' => $res);
+
+            }
+        } else {
+
+            $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
+        }
+
+    } else {
+        $mensaje = array('success' => false, 'mens' => 'El campo nombre es obligatorio');
+    }
+}
+if (isset($_POST['a']) && $_POST['a'] == 'DELETE-CATEGORY') {
+    $cls->autocommitF();
+
+
+    if (isset($_POST['id'])) {
+
+        $id = $_POST['id'];
+
+        $sql = "UPDATE products_category set status='DELETE',updated_by='$VAR_SESSION->username' WHERE id ='$id' ";
+        $res = $cls->exeQuery($sql);
+        if ($res) {
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'url' => './?view=category-products');
+
+        } else {
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res);
+
+        }
+    } else {
+
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
+    }
+
+}
 
 if (isset($_POST['a']) && $_POST['a'] == 'LOGIN') {
     $key = $cls->getAuthKey();
@@ -42,7 +128,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'LOGIN') {
                 $VAR_SESSION->loggedin = true;
                 $SESSIONID = session_id();
                 session_write_close();
-
 
 
                 if ($CPASS) {

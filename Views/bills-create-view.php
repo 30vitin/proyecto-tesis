@@ -6,14 +6,14 @@ ini_set('display_errors', '1');
 date_default_timezone_set('America/Panama');
 
 $VAR_SESSION = Session::getInstance();
-if($VAR_SESSION->username=="" || $VAR_SESSION->loggedin!=true){
+if ($VAR_SESSION->username == "" || $VAR_SESSION->loggedin != true) {
 
     header("Location:./");
 }
 
 
-$purchase="active";
-$proveedor="active-sublink";
+$sales = "active";
+$facturas = "active-sublink";
 
 
 ?>
@@ -34,54 +34,112 @@ The above copyright notice and this permission notice shall be included in all c
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <link rel="shortcut icon" href="Views/assets_login/images/favicon-01-ol.ico">
 
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Crear Proveedor | Cafeteria
+        Crear Factura | Cafeteria
     </title>
-    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport'/>
     <!--     Fonts and icons     -->
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <!-- CSS Files -->
-    <link href="Views/assets/css/material-dashboard.css?v=2.1.2" rel="stylesheet" />
+    <link href="Views/assets/css/material-dashboard.css?v=2.1.2" rel="stylesheet"/>
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link href="Views/assets/demo/demo.css" rel="stylesheet" />
+    <link href="Views/assets/demo/demo.css" rel="stylesheet"/>
     <style>
-        #ht-preloader { background: #ffffff; bottom: 0; height: 100%; left: 0; overflow: hidden !important; position: fixed; right: 0; text-align: center; top: 0; width: 100%; z-index: 99999; }
-        .clear-loader { transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); -o-transform: translateX(-50%) translateY(-50%); -ms-transform: translateX(-50%) translateY(-50%); -moz-transform: translateX(-50%) translateY(-50%); z-index: 999; box-sizing: border-box; display: inline-block; left: 50%; position: absolute; text-align: center; top: 50%; }
-        .loader { position: absolute; top: 50%; left: 50%; margin: auto; text-align: center; transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); -o-transform: translateX(-50%) translateY(-50%); -ms-transform: translateX(-50%) translateY(-50%); -moz-transform: translateX(-50%) translateY(-50%); }
-        .loader span { width: 20px; height: 20px; background-color: #f85438; border-radius: 50%; display: inline-block; animation: motion 3s ease-in-out infinite; }
-        .loader p { color: #fe4c1c; margin-top: 5px; font-size: 30px; animation: shake 5s ease-in-out infinite; }
+        #ht-preloader {
+            background: #ffffff;
+            bottom: 0;
+            height: 100%;
+            left: 0;
+            overflow: hidden !important;
+            position: fixed;
+            right: 0;
+            text-align: center;
+            top: 0;
+            width: 100%;
+            z-index: 99999;
+        }
 
+        .clear-loader {
+            transform: translateX(-50%) translateY(-50%);
+            -webkit-transform: translateX(-50%) translateY(-50%);
+            -o-transform: translateX(-50%) translateY(-50%);
+            -ms-transform: translateX(-50%) translateY(-50%);
+            -moz-transform: translateX(-50%) translateY(-50%);
+            z-index: 999;
+            box-sizing: border-box;
+            display: inline-block;
+            left: 50%;
+            position: absolute;
+            text-align: center;
+            top: 50%;
+        }
+
+        .loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: auto;
+            text-align: center;
+            transform: translateX(-50%) translateY(-50%);
+            -webkit-transform: translateX(-50%) translateY(-50%);
+            -o-transform: translateX(-50%) translateY(-50%);
+            -ms-transform: translateX(-50%) translateY(-50%);
+            -moz-transform: translateX(-50%) translateY(-50%);
+        }
+
+        .loader span {
+            width: 20px;
+            height: 20px;
+            background-color: #f85438;
+            border-radius: 50%;
+            display: inline-block;
+            animation: motion 3s ease-in-out infinite;
+        }
+
+        .loader p {
+            color: #fe4c1c;
+            margin-top: 5px;
+            font-size: 30px;
+            animation: shake 5s ease-in-out infinite;
+        }
 
 
         img.img-fluid.simple-text.logo-normal {
             height: 80px !important;
             width: 88% !important;
         }
-        .sidebar .logo .simple-text{
+
+        .sidebar .logo .simple-text {
 
             padding: 0px 0px !important;
         }
-        .sidebar[data-color="purple"] li.active>a{
+
+        .sidebar[data-color="purple"] li.active > a {
             background-color: #fbca08 !important;
 
         }
-        .sidebar .nav li.active>[data-toggle="collapse"] i{
+
+        .sidebar .nav li.active > [data-toggle="collapse"] i {
             color: #fff !important;
 
         }
-        .sidebar .nav li.active>a, .sidebar .nav li.active>a i{
+
+        .sidebar .nav li.active > a, .sidebar .nav li.active > a i {
             color: #fff !important;
         }
-        .btn.btn-primary{
+
+        .btn.btn-primary {
             background-color: #fbca08 !important;
             border-color: #fbca08 !important;
         }
-        .btn.btn-primary:focus, .btn.btn-primary.focus, .btn.btn-primary:hover{
+
+        .btn.btn-primary:focus, .btn.btn-primary.focus, .btn.btn-primary:hover {
 
             background-color: #fbca08 !important;
             border-color: #fbca08 !important;
@@ -90,8 +148,9 @@ The above copyright notice and this permission notice shall be included in all c
         li.nav-item.active-sublink {
             background-color: rgba(200, 200, 200, 0.2);
         }
+
         .btn.btn-primary.btn-link {
-            color:#fff !important;
+            color: #fff !important;
         }
 
 
@@ -104,22 +163,23 @@ The above copyright notice and this permission notice shall be included in all c
         }
 
 
-        .fileinput-exists .fileinput-new,.fileinput-new .fileinput-exists {
+        .fileinput-exists .fileinput-new, .fileinput-new .fileinput-exists {
             display: none;
         }
-        .fileinput-new.input-group .btn-file,.fileinput-new .input-group .btn-file {
+
+        .fileinput-new.input-group .btn-file, .fileinput-new .input-group .btn-file {
             border-radius: 0 4px 4px 0;
         }
 
-        .fileinput-new.input-group .btn-file.btn-sm,.fileinput-new .input-group .btn-file.btn-sm,.fileinput-new.input-group .btn-file.btn-xs,.fileinput-new .input-group .btn-file.btn-xs,.fileinput-new.input-group .btn-group-sm>.btn-file.btn,.fileinput-new .input-group .btn-group-sm>.btn-file.btn {
+        .fileinput-new.input-group .btn-file.btn-sm, .fileinput-new .input-group .btn-file.btn-sm, .fileinput-new.input-group .btn-file.btn-xs, .fileinput-new .input-group .btn-file.btn-xs, .fileinput-new.input-group .btn-group-sm > .btn-file.btn, .fileinput-new .input-group .btn-group-sm > .btn-file.btn {
             border-radius: 0 3px 3px 0;
         }
 
-        .fileinput-new.input-group .btn-file.btn-lg,.fileinput-new .input-group .btn-file.btn-lg,.fileinput-new.input-group .btn-group-lg>.btn-file.btn,.fileinput-new .input-group .btn-group-lg>.btn-file.btn {
+        .fileinput-new.input-group .btn-file.btn-lg, .fileinput-new .input-group .btn-file.btn-lg, .fileinput-new.input-group .btn-group-lg > .btn-file.btn, .fileinput-new .input-group .btn-group-lg > .btn-file.btn {
             border-radius: 0 6px 6px 0;
         }
 
-        .btn-file>input{
+        .btn-file > input {
             position: absolute;
             top: 0;
             right: 0;
@@ -133,13 +193,15 @@ The above copyright notice and this permission notice shall be included in all c
             direction: ltr;
         }
 
-        .fileinput .thumbnail>img {
+        .fileinput .thumbnail > img {
             max-height: 100%;
             width: 100%;
         }
+
         .fileinput-preview.fileinput-exists.thumbnail {
             height: 148px !important;
         }
+
         .fileinput-new.thumbnail {
             height: 148px !important;
         }
@@ -162,7 +224,8 @@ The above copyright notice and this permission notice shall be included in all c
     <div class="loader clear-loader">
         <img class="img-fluid" src="Views/assets_login/images/loader.gif" alt="">
 
-        <div id="myBar" style="display:none;"></div></div>
+        <div id="myBar" style="display:none;"></div>
+    </div>
 
 </div>
 </div>
@@ -180,7 +243,7 @@ The above copyright notice and this permission notice shall be included in all c
 
         </div>
 
-        <?php include "menu.php";?>
+        <?php include "menu.php"; ?>
 
     </div>
     <div class="main-panel">
@@ -189,9 +252,10 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" href="javascript:;">Proveedor</a>
+                    <a class="navbar-brand" href="javascript:;">Factura</a>
                 </div>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index"
+                        aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="navbar-toggler-icon icon-bar"></span>
                     <span class="navbar-toggler-icon icon-bar"></span>
@@ -218,7 +282,7 @@ The above copyright notice and this permission notice shall be included in all c
                         <div class="card ">
                             <div class="card-header card-header-rose card-header-text">
                                 <div class="card-text">
-                                    <h4 class="card-title">Crear Nuevo Proveedor </h4>
+                                    <h4 class="card-title">Crear Nueva Factura </h4>
                                 </div>
                             </div>
                             <div class="card-body ">
@@ -232,82 +296,159 @@ The above copyright notice and this permission notice shall be included in all c
                                     <h4>Datos Generales</h4>
                                     <hr/>
                                     <div class="row">
-                                        <label class="col-sm-2 col-form-label">Nombre</label>
-                                        <div class="col-sm-10">
-                                            <div class="form-group bmd-form-group">
-                                                <input type="text" class="form-control validate" name="name" value="" id="name" placeholder="Nombre">
-                                                <small  class="form-text text-muted name-error" style="color:red !important;"></small>
+                                        <div class="col-md-6">
+                                            <div class="col-md-12">
+                                                <label class="col-form-label">Cargar Cotización</label>
+
+                                                <div class="form-group bmd-form-group">
+                                                    <select name="purchase_order" id="quote"
+                                                            class="form-control">-Seleccione-</select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class=" col-form-label">Cliente</label>
+
+                                                <div class="form-group bmd-form-group">
+                                                    <input type="text" class="form-control validate" name="customer" value=""
+                                                           id="customer" placeholder="Cliente">
+                                                    <small class="form-text text-muted customer-error"
+                                                           style="color:red !important;"></small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="col-md-12">
+                                                <label class="col-form-label">Comentario</label>
+
+                                                <div class="form-group bmd-form-group">
+
+                                                    <textarea class="form-control" placeholder="Comentario" name="comment">
+
+                                                    </textarea>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <style>
 
-                                    <div class="row">
-                                        <label class="col-sm-2 col-form-label">Email</label>
-                                        <div class="col-sm-10">
-                                            <div class="form-group bmd-form-group">
-                                                <input type="email" class="form-control validate" name="email" value="" id="email" placeholder="Email">
+                                        #myImg {
+                                            border-radius: 5px;
+                                            cursor: pointer;
+                                            transition: 0.3s;
+                                        }
 
-                                                <small  class="form-text text-muted email-error" style="color:red !important;"></small>
-                                            </div>
-                                        </div>
+                                        #myImg:hover {opacity: 0.7;}
+
+                                        /* The Modal (background) */
+                                        .modal {
+                                            display: none; /* Hidden by default */
+                                            position: fixed; /* Stay in place */
+                                            z-index: 1; /* Sit on top */
+                                            padding-top: 100px; /* Location of the box */
+                                            left: 0;
+                                            top: 0;
+                                            width: 100%; /* Full width */
+                                            height: 100%; /* Full height */
+                                            overflow: auto; /* Enable scroll if needed */
+                                            background-color: rgb(0,0,0); /* Fallback color */
+                                            background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+                                        }
+
+                                        /* Modal Content (image) */
+                                        .modal-content {
+                                            margin: auto;
+                                            display: block;
+                                            width: 58%;
+                                            max-width: 318px;
+
+                                        }
+
+                                        /* Caption of Modal Image */
+                                        #caption {
+                                            margin: auto;
+                                            display: block;
+                                            width: 80%;
+                                            max-width: 700px;
+                                            text-align: center;
+                                            color: #ccc;
+                                            padding: 10px 0;
+                                            height: 150px;
+                                        }
+
+                                        /* Add Animation */
+                                        .modal-content, #caption {
+                                            -webkit-animation-name: zoom;
+                                            -webkit-animation-duration: 0.6s;
+                                            animation-name: zoom;
+                                            animation-duration: 0.6s;
+                                        }
+
+                                        @-webkit-keyframes zoom {
+                                            from {-webkit-transform:scale(0)}
+                                            to {-webkit-transform:scale(1)}
+                                        }
+
+                                        @keyframes zoom {
+                                            from {transform:scale(0)}
+                                            to {transform:scale(1)}
+                                        }
+
+                                        /* The Close Button */
+                                        .close {
+                                            position: absolute;
+
+                                            top: 45px;
+                                            right: 27px;
+
+                                            color: #f1f1f1;
+                                            font-size: 40px;
+                                            font-weight: bold;
+                                            transition: 0.3s;
+                                        }
+
+                                        .close:hover,
+                                        .close:focus {
+                                            color: #bbb;
+                                            text-decoration: none;
+                                            cursor: pointer;
+                                        }
+
+                                        /* 100% Image Width on Smaller Screens */
+                                        @media only screen and (max-width: 700px){
+                                            .modal-content {
+                                                width: 100%;
+                                            }
+                                        }
+                                    </style>
+                                    <div class="table-responsive">
+                                        <table class="table /* table-responsive*/">
+                                            <thead class=" text-primary">
+                                            <tr>
+
+                                                <th>ID</th>
+                                                <th>Nombre</th>
+                                                <th>UoM Unid</th>
+                                                <th>Unidades</th>
+                                                <th>Costo</th>
+                                                <th>Total</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+
+                                            </tr>
+
+                                            </tbody>
+                                        </table>
                                     </div>
-                                    <div class="row">
-                                        <label class="col-sm-2 col-form-label">Teléfono 1</label>
-                                        <div class="col-sm-10">
-                                            <div class="form-group bmd-form-group">
-                                                <input type="text" class="form-control validate" name="telephone1" value="" id="telephone1" placeholder="Teléfono 1">
 
-                                                <small  class="form-text text-muted telephone1-error" style="color:red !important;"></small>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <label class="col-sm-2 col-form-label">Teléfono 2</label>
-                                        <div class="col-sm-10">
-                                            <div class="form-group bmd-form-group">
-                                                <input type="text" class="form-control " name="telephone2" value="" id="telephone2" placeholder="Teléfono 2">
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-
-                                    <div class="row">
-                                        <label class="col-sm-2 col-form-label">Fax</label>
-                                        <div class="col-sm-10">
-                                            <div class="form-group bmd-form-group">
-
-                                                <input type="text" class="form-control " name="fax" value="" id="fax"  placeholder="Fax">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <label class="col-sm-2 col-form-label">Cuenta</label>
-                                        <div class="col-sm-10">
-                                            <div class="form-group bmd-form-group">
-
-                                                <input type="text" class="form-control " name="account" value="" id="account"  placeholder="Cuenta">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <label class="col-sm-2 col-form-label">Dirección</label>
-                                        <div class="col-sm-10">
-                                            <div class="form-group bmd-form-group">
-
-                                                <input type="text" class="form-control " name="address" value="" id="address"  placeholder="Dirección">
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-
-
-
-                                    <button type="submit" class="btn btn-primary pull-right btn-send">Crear Producto</button>
+                                    <button type="submit" class="btn btn-primary pull-right btn-send">Registrar
+                                    </button>
                                     <div class="clearfix"></div>
 
                                 </form>
@@ -316,7 +457,6 @@ The above copyright notice and this permission notice shall be included in all c
                     </div>
 
                 </div>
-
 
 
             </div>
@@ -384,7 +524,6 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
 <script src="Views/assets/js/plugins/arrive.min.js"></script>
 
 
-
 <!--  Notifications Plugin    -->
 <script src="Views/assets/js/plugins/bootstrap-notify.js"></script>
 <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
@@ -395,8 +534,8 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
 <script src="Views/assets/js/admin-js.js?id=12"></script>
 
 <script>
-    $(document).ready(function() {
-        $().ready(function() {
+    $(document).ready(function () {
+        $().ready(function () {
             $sidebar = $('.sidebar');
 
             $sidebar_img_container = $sidebar.find('.sidebar-background');
@@ -416,7 +555,7 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
 
             }
 
-            $('.fixed-plugin a').click(function(event) {
+            $('.fixed-plugin a').click(function (event) {
                 // Alex if we click on switch, stop propagation of the event, so the dropdown will not be hide, otherwise we set the  section active
                 if ($(this).hasClass('switch-trigger')) {
                     if (event.stopPropagation) {
@@ -427,7 +566,7 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
                 }
             });
 
-            $('.fixed-plugin .active-color span').click(function() {
+            $('.fixed-plugin .active-color span').click(function () {
                 $full_page_background = $('.full-page-background');
 
                 $(this).siblings().removeClass('active');
@@ -448,7 +587,7 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
                 }
             });
 
-            $('.fixed-plugin .background-color .badge').click(function() {
+            $('.fixed-plugin .background-color .badge').click(function () {
                 $(this).siblings().removeClass('active');
                 $(this).addClass('active');
 
@@ -459,7 +598,7 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
                 }
             });
 
-            $('.fixed-plugin .img-holder').click(function() {
+            $('.fixed-plugin .img-holder').click(function () {
                 $full_page_background = $('.full-page-background');
 
                 $(this).parent('li').siblings().removeClass('active');
@@ -469,7 +608,7 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
                 var new_image = $(this).find("img").attr('src');
 
                 if ($sidebar_img_container.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
-                    $sidebar_img_container.fadeOut('fast', function() {
+                    $sidebar_img_container.fadeOut('fast', function () {
                         $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
                         $sidebar_img_container.fadeIn('fast');
                     });
@@ -478,7 +617,7 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
                 if ($full_page_background.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
                     var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
 
-                    $full_page_background.fadeOut('fast', function() {
+                    $full_page_background.fadeOut('fast', function () {
                         $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
                         $full_page_background.fadeIn('fast');
                     });
@@ -497,7 +636,7 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
                 }
             });
 
-            $('.switch-sidebar-image input').change(function() {
+            $('.switch-sidebar-image input').change(function () {
                 $full_page_background = $('.full-page-background');
 
                 $input = $(this);
@@ -529,7 +668,7 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
                 }
             });
 
-            $('.switch-sidebar-mini input').change(function() {
+            $('.switch-sidebar-mini input').change(function () {
                 $body = $('body');
 
                 $input = $(this);
@@ -544,7 +683,7 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
 
                     $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
 
-                    setTimeout(function() {
+                    setTimeout(function () {
                         $('body').addClass('sidebar-mini');
 
                         md.misc.sidebar_mini_active = true;
@@ -552,12 +691,12 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
                 }
 
                 // we simulate the window Resize so the charts will get updated in realtime.
-                var simulateWindowResize = setInterval(function() {
+                var simulateWindowResize = setInterval(function () {
                     window.dispatchEvent(new Event('resize'));
                 }, 180);
 
                 // we stop the simulation of Window Resize after the animations are completed
-                setTimeout(function() {
+                setTimeout(function () {
                     clearInterval(simulateWindowResize);
                 }, 1000);
 
@@ -566,15 +705,16 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
     });
 </script>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         // Javascript method's body can be found in assets/js/demos.js
         md.initDashboardPageCharts();
 
     });
-    $(window).on('load', function() {
+    $(window).on('load', function () {
         preloader();
 
     });
+
     function preloader() {
         $('#ht-preloader').fadeOut();
     };
@@ -583,16 +723,16 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
 </script>
 <script>
 
-    $('.bigimage').on('click', function(event) {
+    $('.bigimage').on('click', function (event) {
         event.preventDefault();
-        var idl=this.id;
+        var idl = this.id;
 
         var str = idl;
         var res = str.replace("myImg-", "");
 
-        var modal = document.getElementById("myModal-"+res);
-        var modalImg = document.getElementById("img01-"+res);
-        var captionText = document.getElementById("caption-"+res);
+        var modal = document.getElementById("myModal-" + res);
+        var modalImg = document.getElementById("img01-" + res);
+        var captionText = document.getElementById("caption-" + res);
 
         modal.style.display = "block";
         img = document.getElementById(idl);
@@ -607,10 +747,10 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
 
     });
 
-    $('.close').on('click', function(event) {
+    $('.close').on('click', function (event) {
         event.preventDefault();
-        var id=this.id;
-        $("#myModal-"+id).css("display","none");
+        var id = this.id;
+        $("#myModal-" + id).css("display", "none");
     });
     // When the user clicks on <span> (x), close the modal
 

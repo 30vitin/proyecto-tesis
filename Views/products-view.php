@@ -196,7 +196,7 @@ The above copyright notice and this permission notice shall be included in all c
                         </div>
                         <div class="col-md-5">
 
-                            <a href="/?view=product-create" class="btn btn-primary">
+                            <a href="./?view=product-create" class="btn btn-primary">
                                 Registrar producto
                             </a>
                         </div>

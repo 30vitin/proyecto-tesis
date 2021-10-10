@@ -99,8 +99,15 @@ else
             </a>
             <div class="collapse" id="sales" style="">
                 <ul class="nav">
+                    <li class="nav-item <?php echo $cotizacion; ?>">
+                        <a class="nav-link" href="./?view=quotes">
+                            <span class="sidebar-mini"> CO </span>
+                            <span class="sidebar-normal"> Cotizaciones </span>
+                        </a>
+                    </li>
+
                     <li class="nav-item <?php echo $facturas; ?> ">
-                        <a class="nav-link" href="./?view=orders">
+                        <a class="nav-link" href="./?view=bills">
                             <span class="sidebar-mini"> FA </span>
                             <span class="sidebar-normal"> Facturas </span>
                         </a>
@@ -108,18 +115,12 @@ else
 
 
                     <li class="nav-item <?php echo $pedidos; ?> ">
-                        <a class="nav-link" href="./?view=orders-pre-sales">
+                        <a class="nav-link" href="./?view=orders">
                             <span class="sidebar-mini"> PE </span>
                             <span class="sidebar-normal"> Pedidos</span>
                         </a>
                     </li>
 
-                    <li class="nav-item <?php echo $cotizacion; ?>">
-                        <a class="nav-link" href="./?view=orders-all">
-                            <span class="sidebar-mini"> CO </span>
-                            <span class="sidebar-normal"> Cotizaciones </span>
-                        </a>
-                    </li>
 
                 </ul>
             </div>
@@ -136,7 +137,7 @@ else
             <div class="collapse" id="purchase" style="">
                 <ul class="nav">
                     <li class="nav-item <?php echo $proveedor; ?> ">
-                        <a class="nav-link" href="./?view=provider-create">
+                        <a class="nav-link" href="./?view=providers">
                             <span class="sidebar-mini"> PR </span>
                             <span class="sidebar-normal"> Proveedor </span>
                         </a>
@@ -144,14 +145,14 @@ else
 
 
                     <li class="nav-item <?php echo $requisicion; ?> ">
-                        <a class="nav-link" href="./?view=orders-pre-sales">
+                        <a class="nav-link" href="./?view=purchase-requests">
                             <span class="sidebar-mini"> RE </span>
                             <span class="sidebar-normal"> Requisición</span>
                         </a>
                     </li>
 
                     <li class="nav-item <?php echo $ordenescompra; ?>">
-                        <a class="nav-link" href="./?view=orders-all">
+                        <a class="nav-link" href="./?view=purchase-order">
                             <span class="sidebar-mini"> OC </span>
                             <span class="sidebar-normal"> Ordenes de Compra </span>
                         </a>
