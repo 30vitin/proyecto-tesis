@@ -3,7 +3,10 @@
 <script>
     $(document).ready(function () {
         if($('#table')){
-
+            var targets = [1];
+            if($('.column-image').length>0 && $('.column-image').data('target')){
+                targets = $('.column-image').data('target');
+            }
             if($('.column-image').length>0){
                 $('#table').DataTable({
                     language: {
@@ -22,7 +25,7 @@
 
                     },
                     autoWidth: false, // might need this
-                    columnDefs: [{   width: 25,orderable: false,targets: 1 },]
+                    columnDefs: [{   width: 25,orderable: false,targets: targets},]
                 });
             }else{
                 $('#table').DataTable({

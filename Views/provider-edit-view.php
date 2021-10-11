@@ -12,7 +12,7 @@ $id = $_GET['id'];
 $sql = "SELECT name,email,telephone1,telephone2,fax,account,address FROM providers WHERE id='$id' and status='ACTIVO'";
 $response = $cls->consulQuery($sql);
 if (!$response) {
-    header("Location:" . $_SERVER['HTTP_REFERER']);
+    header("Location:javascript:window.history.go(-2);");
 }
 
 

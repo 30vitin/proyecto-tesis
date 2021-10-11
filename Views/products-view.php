@@ -80,7 +80,7 @@ if (isset($_POST['page'])) {
                                             <th>Precio</th>
                                             <th>Acción</th>
                                         </tr>
-                                        </tr>
+
                                         </thead>
                                         <tbody>
                                         <?php

@@ -188,7 +188,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PRODUCT') {
             }
 
 
-        }else{
+        } else {
 
             $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #002');
 
@@ -242,13 +242,13 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PRODUCT') {
 
         $image_name = "";
 
-        if(!empty($file) && !$file['error']){
+        if (!empty($file) && !$file['error']) {
             $currentimage = "SELECT img_portada from products WHERE id = '$id'";
             $resp = $cls->consulQuery($currentimage);
-            if($resp && isset($resp['img_portada'])){
+            if ($resp && isset($resp['img_portada'])) {
 
-                $path = $cls->getVarData('product-image').'/'.$id.'/'.$resp['img_portada'];
-                if(file_exists($path)){
+                $path = $cls->getVarData('product-image') . '/' . $id . '/' . $resp['img_portada'];
+                if (file_exists($path)) {
                     unlink($path);
                 }
 
@@ -261,10 +261,10 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PRODUCT') {
 
             $image_name = $file_res['filename'];
             $resql1 = true;
-            if($image_name !=""){
-                $sql1 ="UPDATE products set img_portada ='$image_name' WHERE id = '$id'";
+            if ($image_name != "") {
+                $sql1 = "UPDATE products set img_portada ='$image_name' WHERE id = '$id'";
                 $res1 = $cls->exeQuery($sql1);
-                if(!$res1){
+                if (!$res1) {
                     $resql1 = false;
                 }
             }
@@ -290,12 +290,12 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PRODUCT') {
 
             } else {
                 $cls->exeQuery('ROLLBACK');
-                $mensaje = array('success' => false, 'mens' => ($res !="") ? $res : 'Pongase en contacto con su adminsitrador de sistema #003');
+                $mensaje = array('success' => false, 'mens' => ($res != "") ? $res : 'Pongase en contacto con su adminsitrador de sistema #003');
 
             }
 
 
-        }else{
+        } else {
 
             $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #002');
 
@@ -331,6 +331,17 @@ if (isset($_POST['a']) && $_POST['a'] == 'DELETE-PRODUCT') {
     }
 
 }
+if (isset($_POST['a']) && $_POST['a'] == 'GET-PRODUCTS') {
+
+    $whereIds = "";
+    if (isset($_POST['ids'])) {
+        $whereIds = "AND t1.id in(" . implode(",", $_POST['ids']) . ")";
+
+    }
+    $sql = "SELECT t1.id as id,t1.name as name,t2.name as category,t1.price as price,t1.status as status,t1.img_portada,t1.unidad_para_compra,t1.unidad_almacen,t1.unidad_para_almacen FROM products t1 left join products_category t2 on t1.category = t2.id WHERE t1.status = 'ACTIVO' $whereIds order by t1.created_at desc";
+    $result_lis = $cls->consultListQuery($sql);//query
+    $mensaje = $result_lis;
+}
 
 
 if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PROVIDER') {
@@ -355,7 +366,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PROVIDER') {
         $account = $_POST['account'];
         $address = $_POST['address'];
 
-        $sql ="INSERT INTO providers (id,
+        $sql = "INSERT INTO providers (id,
                        name,
                        email,
                        telephone1,
@@ -413,7 +424,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PROVIDER') {
         $account = $_POST['account'];
         $address = $_POST['address'];
 
-        $sql ="UPDATE providers
+        $sql = "UPDATE providers
                        SET name='$name',
                        email ='$email',
                        telephone1 = '$telephone1',
@@ -461,8 +472,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'DELETE-PROVIDER') {
     }
 
 }
-
-
 
 
 if (isset($_POST['a']) && $_POST['a'] == 'LOGIN') {
@@ -538,7 +547,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'LOGIN') {
     $mensaje = array('type' => $type, 'mens' => $mens, 'url' => $url);
 
 }
-
 
 
 echo json_encode($mensaje);

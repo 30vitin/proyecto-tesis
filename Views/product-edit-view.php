@@ -219,7 +219,7 @@ $productos = "active-sublink";
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="col-form-label">Cantidad de unidad para almacen</label>
+                                            <label class="col-form-label">Cantidad de unidad por compra</label>
                                             <div class="form-group bmd-form-group">
                                                 <input type="number" class="form-control validate" name="unidad_almacen"
                                                        value="<?php echo $response['unidad_almacen']; ?>" min="1"

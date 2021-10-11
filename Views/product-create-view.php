@@ -53,7 +53,7 @@ $productos = "active-sublink";
 
                                 <div class="row">
                                     <div class="col-md-12 ">
-                                        <button type="button" class="btn btn-primary pull-right btn-send-form-file" data-form="form">Guardar Producto</button>
+                                        <button type="button" class="btn btn-primary pull-right btn-send-form-file" data-reset="true" data-form="form">Guardar Producto</button>
 
                                     </div>
 
@@ -175,7 +175,7 @@ $productos = "active-sublink";
                                                 </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="col-form-label">Cantidad de unidad para almacen</label>
+                                            <label class="col-form-label">Cantidad de unidad por compra</label>
                                             <div class="form-group bmd-form-group">
                                                 <input type="number" class="form-control validate" name="unidad_almacen"
                                                            value="" min="1" id="unidad_almacen" placeholder="Cantidad de unidad">

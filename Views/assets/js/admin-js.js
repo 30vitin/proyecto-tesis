@@ -27,7 +27,7 @@ $(document).ready(function () {
                     if (data.success) {
 
 
-                        if(reset){
+                        if (reset) {
 
                             form[0].reset();
 
@@ -43,18 +43,18 @@ $(document).ready(function () {
                         manageShowAlertFormError(false);
 
                         if (data.url) {
-                                $('.new-alert-success').html('<div class="row col-md-12">' +
-                                    '<div class="col-md-12">' +
-                                    '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
-                                    '</div>' +
-                                    ' <div class="col-md-12">' +
-                                    '<h4>' + data.mens + '</h4>' +
-                                    '</div>' +
-                                    ' <div class="col-md-12">' +
-                                    '<a href="' + data.url + '">' +
-                                    '<i class="material-icons">arrow_forward</i> Ir a ' + data.post_name + ' #' + data.id + ' </a>' +
-                                    '</div>' +
-                                    '</div>');
+                            $('.new-alert-success').html('<div class="row col-md-12">' +
+                                '<div class="col-md-12">' +
+                                '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
+                                '</div>' +
+                                ' <div class="col-md-12">' +
+                                '<h4>' + data.mens + '</h4>' +
+                                '</div>' +
+                                ' <div class="col-md-12">' +
+                                '<a href="' + data.url + '">' +
+                                '<i class="material-icons">arrow_forward</i> Ir a ' + data.post_name + ' #' + data.id + ' </a>' +
+                                '</div>' +
+                                '</div>');
                         } else {
                             $('.new-alert-success').html('<div class="row col-md-12">' +
                                 '<div class="col-md-12">' +
@@ -110,7 +110,6 @@ $(document).ready(function () {
         }
 
     });
-
     $('.btn-send-form-file').on('click', function (e) {
         e.preventDefault()
         var instance = this;
@@ -135,15 +134,14 @@ $(document).ready(function () {
                     console.log(data)
                     BtnReset(instance)
                     if (data.success) {
-                        if(reset){
+                        if (reset) {
 
                             $(formid)[0].reset();
-                            if($('.select2')){
+                            if ($('.select2')) {
                                 $(".select2").val('').trigger("change");
                             }
 
                         }
-
 
 
                         Swal.fire(
@@ -226,8 +224,6 @@ $(document).ready(function () {
         }
 
     });
-
-
     $('.btn-delete-form').on('click', function () {
         var instance = this;
         var id = $(this).data('id');
@@ -244,7 +240,7 @@ $(document).ready(function () {
 
                 $.ajax({
 
-                    data: {a:action,id:id},
+                    data: {a: action, id: id},
                     url: "./?action=admin",
                     type: "POST",
                     dataType: "JSON",
@@ -284,8 +280,6 @@ $(document).ready(function () {
         })
 
     });
-
-
     $('.remove-image').on('click', function (event) {
 
         $("#ht-preloader").css("display", "block");
@@ -326,6 +320,7 @@ $(document).ready(function () {
 
     })
 
+
     $('.prev-page').on('click', function (event) {
         var page = Number($("#page").val()) - 1;
         $("#page").val(page);
@@ -346,15 +341,134 @@ $(document).ready(function () {
         $('.' + target).addClass(add)
     });
 
-    $('#input-filtres').on('keyup',function(){
+    //openModal products
+    $('.btn-product-table-line').on('click', function () {
 
-        var datainput =  $(this).val()
-        if(datainput.length>3){
+        var current_id = $('input[name="product_id[]"]').map(function () {
+            return this.value; // $(this).val()
+        }).get();
+
+        $('#modalProduct').modal('show')
+        $.ajax({
+
+            data: {a: 'GET-PRODUCTS'},
+            url: "./?action=admin",
+            type: "POST",
+            dataType: "JSON",
+            success: function (data) {
+
+                if (data.length > 0) {
+
+                    if ($('#table')) {
+                        var table = $('#table').DataTable();
+                        table.clear();
+
+                        $.each(data, function (index, value) {
+                            if ((jQuery.inArray(value.id, current_id))) {
+                                table.row.add([
+                                    '<input class="checked-table" type="checkbox" value="' + value.id + '" >',
+                                    value.id,
+                                    value.name,
+                                    value.category,
+                                    value.price
+                                ]).draw(false);
+
+                            }
+
+                        });
+                    }
+
+
+                }
+
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
+
+            }
+
+        });
+    });
+
+    $('.btn-add-product-table').on('click', function () {
+
+        //checked-table
+        $('#modalProduct').modal('hide')
+
+        var ids = [];
+        if ($('#table')) {
+
+        }
+        var table = $('#table').DataTable();
+        table.$('td > input:checkbox').each(function () {
+            if (this.checked) {
+                ids.push($(this).val());
+            }
+        });
+        if (ids.length > 0) {
+            $.ajax({
+
+                data: {a: 'GET-PRODUCTS', ids: ids},
+                url: "./?action=admin",
+                type: "POST",
+                dataType: "JSON",
+                success: function (data) {
+                    if (data.length > 0) {
+                        $.each(data, function (index, value) {
+
+                            var html = '<tr id="line-'+value.id+'">';
+
+                            html+='<td><button type="button" class="btn btn-danger pull-center remove-line btn-sm" ' +
+                                'data-id="'+value.id+'"> <i class="material-icons">close</i></button></td>';
+
+                            html+='<td><label for="form-control-label">'+value.name+'</label><input type="hidden" ' +
+                                'name="product_id[]" class="form-control" value="'+value.id+'"></td>';
+
+                            html+='<td><label for="form-control-label">'+value.unidad_para_compra+'</label></td>';
+
+                            html+='<td><input type="number" name="units[]" class="form-control units-line" value="0"></td>';
+
+                            html+='<td><input type="number" class="form-control price-line" min="0" max="4"\n' +
+                                'step="0.2" value="'+value.price+'" name="costs" /></td>';
+
+                            html+='<td><input type="number" class="form-control total-line" min="0" max="4"\n' +
+                                'step="0.2" value="0.00" name="total" /></td>';
+
+                            html += '</tr>';
+                            $('.table-data-add').append(html);
+
+                        });
+
+                    }
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
+
+                }
+
+            });
+
+        }
+
+    })
+
+    $('.table-data-add').on('click','.remove-line',function(){
+        $('#line-'+$(this).data('id')).remove()
+    });
+
+    $('#input-filtres').on('keyup', function () {
+
+        var datainput = $(this).val()
+        if (datainput.length > 3) {
 
 
         }
 
     });
+
     function documentValidate() {
 
         var check = true;
@@ -394,28 +508,29 @@ $(document).ready(function () {
         $(elem).html($(elem).attr("data-original-text"));
     }
 
-    function manageShowAlertFormSuccess(active= false){
+    function manageShowAlertFormSuccess(active = false) {
 
-        if(active){
+        if (active) {
 
             $('.new-alert-success').removeClass('alert-success-none');
             $('.new-alert-success').addClass('d-flex col-md-8 alert pt-3');
             $('.new-alert-error').addClass('alert-error-none');
 
-        }else{
+        } else {
 
             $('.new-alert-success').removeClass('d-flex col-md-8 alert pt-3');
             $('.new-alert-success').addClass('alert-success-none');
         }
     }
-    function manageShowAlertFormError(active= false){
-        if(active){
+
+    function manageShowAlertFormError(active = false) {
+        if (active) {
 
             $('.new-alert-error').removeClass('alert-error-none');
             $('.new-alert-error').addClass('d-flex col-md-8 pt-3');
             $('.new-alert-success').addClass('alert-success-none');
 
-        }else{
+        } else {
 
             $('.new-alert-error').removeClass('d-flex col-md-8 pt-3');
             $('.new-alert-error').addClass('alert-success-none');
