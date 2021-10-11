@@ -1,10 +1,12 @@
+
+
 <div class="row " id="alert-form">
     <div class="col-md-2"></div>
-    <div class="d-flex col-md-8 alert new-alert-danger pt-3 alert-error-none"
+    <div class="new-alert-error alert-error-none"
          rol="alert">
 
     </div>
-    <div class="d-flex col-md-8 alert new-alert-success pt-3 alert-success-none"
+    <div class="pt-3 new-alert-success alert-success-none"
          rol="alert">
 
     </div>

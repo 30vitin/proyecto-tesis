@@ -3,10 +3,21 @@ require_once 'Config/Functions.php';
 $cls = new Functions;  //llamando al objeto
 include 'utils.php';
 
+
+if (!isset($_GET['id'])) {
+    header("Location:" . $_SERVER['HTTP_REFERER']);
+}
+
+$id = $_GET['id'];
+$sql = "SELECT name,email,telephone1,telephone2,fax,account,address FROM providers WHERE id='$id' and status='ACTIVO'";
+$response = $cls->consulQuery($sql);
+if (!$response) {
+    header("Location:" . $_SERVER['HTTP_REFERER']);
+}
+
+
 $purchase = "active";
 $proveedor = "active-sublink";
-
-
 ?>
 
 <!DOCTYPE html>
@@ -17,7 +28,7 @@ $proveedor = "active-sublink";
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Crear Proveedor | Cafeteria
+        Editar Proveedor | Cafeteria
     </title>
     <?php include "styles.php"; ?>
 
@@ -46,22 +57,30 @@ $proveedor = "active-sublink";
                         <div class="card ">
                             <div class="card-header card-header-rose card-header-text">
                                 <div class="card-text">
-                                    <h4 class="card-title">Crear Nuevo Proveedor </h4>
+                                    <h4 class="card-title">Editar Proveedor #<?php echo $id;?></h4>
                                 </div>
                             </div>
                             <div class="card-body ">
 
                                 <div class="row">
                                     <div class="col-md-12 ">
-                                        <button type="button" class="btn btn-primary pull-right btn-send-form" data-form="form" data-reset="true"> Guardar Proveedor</button>
+                                        <button type="button" class="btn btn-danger pull-right btn-delete-form"
+                                                data-form="form" data-id="<?php echo $id; ?>"
+                                                data-action="DELETE-PROVIDER"
+                                                data-text="¿Estas seguro de eliminar este proveedor?">Eliminar
+                                        </button>
+                                        <button type="button" class="btn btn-primary pull-right btn-send-form-file"
+                                                data-form="form" data-reset="false">Guardar
+                                        </button>
 
                                     </div>
 
                                 </div>
+
                                 <form  class="form-horizontal" id="form" onkeydown="return event.key != 'Enter';"  action="">
 
-                                    <input type="hidden" name="a" value="CREATE-PROVIDER">
-
+                                    <input type="hidden" name="a" value="UPDATE-PROVIDER">
+                                    <input type="hidden" name="id" value="<?php echo $id; ?>">
                                     <?php include 'alert-form.php';?>
 
 
@@ -71,7 +90,7 @@ $proveedor = "active-sublink";
                                         <div class="col-md-6">
                                             <label class="col-form-label">Nombre</label>
                                             <div class="form-group bmd-form-group">
-                                                <input type="text" class="form-control validate" name="name" value=""
+                                                <input type="text" class="form-control validate" name="name" value="<?php echo $response['name'];?>"
                                                        id="name" placeholder="Nombre">
                                                 <small class="form-text text-muted name-error"
                                                        style="color:red !important;"></small>
@@ -80,10 +99,10 @@ $proveedor = "active-sublink";
                                         <div class="col-md-6">
                                             <label class="col-form-label">Email</label>
                                             <div class="form-group bmd-form-group">
-                                                    <input type="email" class="form-control " name="email" value=""
-                                                           id="email" placeholder="Email">
+                                                <input type="email" class="form-control " name="email" value="<?php echo $response['email'];?>"
+                                                       id="email" placeholder="Email">
 
-                                                </div>
+                                            </div>
 
                                         </div>
 
@@ -94,7 +113,7 @@ $proveedor = "active-sublink";
                                             <label class="col-form-label">Teléfono 1</label>
                                             <div class="form-group bmd-form-group">
                                                 <input type="text" class="form-control validate" name="telephone1"
-                                                       value="" id="telephone1" placeholder="Teléfono 1">
+                                                       value="<?php echo $response['telephone1'];?>" id="telephone1" placeholder="Teléfono 1">
 
                                                 <small class="form-text text-muted telephone1-error"
                                                        style="color:red !important;"></small>
@@ -105,9 +124,9 @@ $proveedor = "active-sublink";
                                             <label class="col-form-label">Teléfono 2</label>
 
                                             <div class="form-group bmd-form-group">
-                                                    <input type="text" class="form-control " name="telephone2" value=""
-                                                           id="telephone2" placeholder="Teléfono 2">
-                                                </div>
+                                                <input type="text" class="form-control " name="telephone2" value="<?php echo $response['telephone2'];?>"
+                                                       id="telephone2" placeholder="Teléfono 2">
+                                            </div>
 
                                         </div>
                                         <div class="col-md-4">
@@ -115,9 +134,9 @@ $proveedor = "active-sublink";
 
                                             <div class="form-group bmd-form-group">
 
-                                                    <input type="text" class="form-control " name="fax" value="" id="fax"
-                                                           placeholder="Fax">
-                                                </div>
+                                                <input type="text" class="form-control " name="fax" value="<?php echo $response['fax'];?>" id="fax"
+                                                       placeholder="Fax">
+                                            </div>
 
                                         </div>
                                     </div>
@@ -128,7 +147,7 @@ $proveedor = "active-sublink";
                                         <div class="col-sm-10">
                                             <div class="form-group bmd-form-group">
 
-                                                <input type="text" class="form-control " name="account" value=""
+                                                <input type="text" class="form-control " name="account" value="<?php echo $response['account'];?>"
                                                        id="account" placeholder="Cuenta">
                                             </div>
                                         </div>
@@ -139,7 +158,7 @@ $proveedor = "active-sublink";
                                         <div class="col-sm-10">
                                             <div class="form-group bmd-form-group">
 
-                                                <input type="text" class="form-control " name="address" value=""
+                                                <input type="text" class="form-control " name="address" value="<?php echo $response['address'];?>"
                                                        id="address" placeholder="Dirección">
                                             </div>
                                         </div>

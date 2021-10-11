@@ -9,7 +9,7 @@ require('Others/fpdf/fpdf.php');
 
 class Functions extends dba
 {
-
+    private $maximumFileTam = 2097152;
 
     public function __construct()
     {
@@ -19,7 +19,6 @@ class Functions extends dba
 
     public function autocommitF()
     {
-//  $connection = new dba();
 
         $db = dba::getInstance();
         $mysqli = $db->autocommitF();
@@ -28,10 +27,9 @@ class Functions extends dba
 
     public function commitSet()
     {
-        //$connection = new dba();
         $db = dba::getInstance();
         $mysqli = $db->commitF();
-        //$connection->connet()->commitF();
+
     }
 
     public function getAuthKey()
@@ -44,9 +42,40 @@ class Functions extends dba
     {
 
         $datos = array(
-            "limitPage"=>15
+            "limitPage"=>15,
+            "product-image"=>"Others/Files_products",
+            "default-image"=>"Views/assets/img/image_placeholder.jpg"
         );
         return $datos[$key];
+    }
+
+    public function uploadFile(array $file,$path){
+        $check = true;
+        $file_name_final = "";
+        if (!empty($file) && !$file['error']) {
+
+            $file_name = uniqid();
+            $original_name = $file['name'];
+
+            $file_size = $file['size'];
+            $file_tmp = $file['tmp_name'];
+            $file_type = $file['type'];
+
+            if ($file_size > $this->maximumFileTam) {
+                $check = false;
+            }
+            if ($check) {
+                if (!file_exists($path)) {
+                    mkdir($path, 0777);
+                }
+                $file_name_final = $file_name . '.' . pathinfo($original_name, PATHINFO_EXTENSION);
+                move_uploaded_file($file_tmp, $path . '/' . $file_name_final );
+            }
+
+        }
+
+        $mensaje = array("success" => $check,"filename"=>$file_name_final);
+        return json_decode(json_encode($mensaje),true);
     }
 
 
@@ -57,11 +86,7 @@ class Functions extends dba
         $mysqli = $db->connet();
 
 
-        //$connection = new dba();
-
-        //$result = mysqli_query($this->connet(), $sql);
         $result = $mysqli->query($sql);
-        //$result=$this->connet()->query($sql);
         if ($result) {
 
             $result = 1;
@@ -76,7 +101,7 @@ class Functions extends dba
 
     public function getKeyPass()
     {
-        $key = "";
+
         $sql_2 = " SELECT value  FROM config WHERE var='Keypass' limit 1";
         $sql_2_rs = $this->consulQuery($sql_2);
         $key = $sql_2_rs[0];

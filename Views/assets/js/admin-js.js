@@ -3,11 +3,12 @@
 
 $(document).ready(function () {
 //send form
-    $('.btn-send-form').on('click', function () {
-
+    $('.btn-send-form').on('click', function (e) {
+        e.preventDefault()
         var instance = this;
         BtnLoading(instance);
         var formid = $(instance).data('form');
+        var reset = $(instance).data('reset');
 
         var form = $("#" + formid);
         if (documentValidate()) {
@@ -22,16 +23,137 @@ $(document).ready(function () {
                 success: function (data) {
 
                     BtnReset(instance)
+
                     if (data.success) {
-                        form[0].reset();
+
+
+                        if(reset){
+
+                            form[0].reset();
+
+
+                        }
                         Swal.fire(
                             '¡Listo!',
                             data.mens,
                             'success'
                         )
 
-                        $('.new-alert-success').removeClass('alert-success-none');
-                        $('.new-alert-error').addClass('alert-error-none');
+                        manageShowAlertFormSuccess(true);
+                        manageShowAlertFormError(false);
+
+                        if (data.url) {
+                                $('.new-alert-success').html('<div class="row col-md-12">' +
+                                    '<div class="col-md-12">' +
+                                    '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
+                                    '</div>' +
+                                    ' <div class="col-md-12">' +
+                                    '<h4>' + data.mens + '</h4>' +
+                                    '</div>' +
+                                    ' <div class="col-md-12">' +
+                                    '<a href="' + data.url + '">' +
+                                    '<i class="material-icons">arrow_forward</i> Ir a ' + data.post_name + ' #' + data.id + ' </a>' +
+                                    '</div>' +
+                                    '</div>');
+                        } else {
+                            $('.new-alert-success').html('<div class="row col-md-12">' +
+                                '<div class="col-md-12">' +
+                                '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
+                                '</div>' +
+                                ' <div class="col-md-12">' +
+                                '<h4>' + data.mens + '</h4>' +
+                                '</div>' +
+                                ' <div class="col-md-12">' +
+
+                                '</div>' +
+                                '</div>');
+
+                        }
+
+
+                    } else {
+                        manageShowAlertFormSuccess(false);
+                        manageShowAlertFormError(true);
+
+                        $("#ht-preloader").css("display", "none");
+
+                        Swal.fire('¡Alerta!', data.mens, 'error')
+                        $('.new-alert-error').html('<div class="row">' +
+                            '<div class="col-md-12">' +
+                            '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-error" data-add="alert-error-none">x</button>' +
+                            '</div>' +
+                            ' <div class="col-md-12">' +
+                            '<h4>' + data.mens + '</h4>' +
+                            '</div>' +
+                            '</div>');
+
+                    }
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    BtnReset(instance)
+                    manageShowAlertFormSuccess(false);
+                    console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
+
+                }
+
+            });
+
+
+        } else {
+            Swal.fire(
+                'Alerta!',
+                'Favor validar los campos obligatorios.',
+                'error'
+            )
+            BtnReset(instance)
+        }
+
+    });
+
+    $('.btn-send-form-file').on('click', function (e) {
+        e.preventDefault()
+        var instance = this;
+        BtnLoading(instance);
+        var formid = $(instance).data('form');
+        var reset = $(instance).data('reset');
+
+        if (documentValidate()) {
+
+            let formdata = new FormData(document.getElementById(formid));
+            formdata.append('file', $('#file')[0]);
+            $.ajax({
+
+                data: formdata,
+                url: "./?action=admin",
+                type: "POST",
+                contentType: false,
+                processData: false,
+                cache: false,
+                dataType: "JSON",
+                success: function (data) {
+                    console.log(data)
+                    BtnReset(instance)
+                    if (data.success) {
+                        if(reset){
+
+                            $(formid)[0].reset();
+                            if($('.select2')){
+                                $(".select2").val('').trigger("change");
+                            }
+
+                        }
+
+
+
+                        Swal.fire(
+                            '¡Listo!',
+                            data.mens,
+                            'success'
+                        )
+
+                        manageShowAlertFormSuccess(true);
+                        manageShowAlertFormError(false);
 
                         if (data.url) {
                             $('.new-alert-success').html('<div class="row col-md-12">' +
@@ -63,9 +185,12 @@ $(document).ready(function () {
 
 
                     } else {
+
+
+                        //manageShowAlertFormSuccess(false);
+                        manageShowAlertFormError(true);
+
                         $("#ht-preloader").css("display", "none");
-                        $('.new-alert-error').removeClass('alert-error-none');
-                        $('.new-alert-success').addClass('alert-success-none');
 
                         Swal.fire('¡Alerta!', data.mens, 'error')
                         $('.new-alert-error').html('<div class="row">' +
@@ -79,10 +204,11 @@ $(document).ready(function () {
 
                     }
 
-
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     BtnReset(instance)
+                    manageShowAlertFormSuccess(false);
+                    manageShowAlertFormError(false);
                     console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
 
                 }
@@ -100,6 +226,7 @@ $(document).ready(function () {
         }
 
     });
+
 
     $('.btn-delete-form').on('click', function () {
         var instance = this;
@@ -267,4 +394,32 @@ $(document).ready(function () {
         $(elem).html($(elem).attr("data-original-text"));
     }
 
+    function manageShowAlertFormSuccess(active= false){
+
+        if(active){
+
+            $('.new-alert-success').removeClass('alert-success-none');
+            $('.new-alert-success').addClass('d-flex col-md-8 alert pt-3');
+            $('.new-alert-error').addClass('alert-error-none');
+
+        }else{
+
+            $('.new-alert-success').removeClass('d-flex col-md-8 alert pt-3');
+            $('.new-alert-success').addClass('alert-success-none');
+        }
+    }
+    function manageShowAlertFormError(active= false){
+        if(active){
+
+            $('.new-alert-error').removeClass('alert-error-none');
+            $('.new-alert-error').addClass('d-flex col-md-8 pt-3');
+            $('.new-alert-success').addClass('alert-success-none');
+
+        }else{
+
+            $('.new-alert-error').removeClass('d-flex col-md-8 pt-3');
+            $('.new-alert-error').addClass('alert-success-none');
+
+        }
+    }
 });
