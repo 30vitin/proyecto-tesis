@@ -5,12 +5,24 @@ $(document).ready(function () {
 //send form
 
     var data_table = [];
-    var currentUnits = 0;
-    var currentCosts = 0;
-    var currentTotal = 0;
     if($('.table-data-edit').length>0){
         getDataToTable($('.table-data-edit').data('id'))
     }
+    $('.change-and-consult').on('change',function(){
+        var request_id = $(this).val();
+        var settings =  $(this).data('setting')
+        var inputs = settings.split(',');
+        data_table = [];
+        getDataToTable(request_id)
+        $("#"+$(this).data("form"))[0].reset();
+        $('.table-data-add').html('')
+        $('#total-table').html('0.00')
+
+
+
+        console.log(inputs)
+
+    });
 
     $('.btn-send-form').on('click', function (e) {
         e.preventDefault()
@@ -782,10 +794,6 @@ $(document).ready(function () {
             total += Number(value.data.total)
 
         });
-        currentUnits = units;
-        currentCosts = costs;
-        currentTotal = total;
-
 
         if($('#total-table')){
             $('#total-table').html("$ "+Number(total).toFixed(2));

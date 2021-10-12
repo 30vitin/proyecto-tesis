@@ -643,7 +643,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-REQUEST-DETAILS') {
 
     }
 }
-
 if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-REQUEST') {
     $cls->autocommitF();
 
@@ -670,6 +669,11 @@ if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-REQUEST') {
 
 }
 
+
+if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PURCHASE-ORDER') {
+    $cls->autocommitF();
+    $mensaje = $_POST;
+}
 
 if (isset($_POST['a']) && $_POST['a'] == 'LOGIN') {
     $key = $cls->getAuthKey();

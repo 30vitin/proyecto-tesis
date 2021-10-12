@@ -82,8 +82,11 @@ $ordenescompra = "active-sublink";
                                                     $sql_CT = "SELECT id from purchase_requests WHERE status='ACTIVO'";
                                                     $result_CT = $cls->consultListQuery($sql_CT);//query
                                                     ?>
-                                                    <select class="form-control validate select2" name="purchase_request"
-                                                            id="purchase_request">
+                                                    <select class="form-control validate select2 change-and-consult" name="purchase_request"
+                                                            id="purchase_request"
+                                                            data-action="GET-PURCHASE-REQUEST"
+                                                            data-form="form"
+                                                            data-setting="date,provider,comment">
                                                         <option value="">-Seleccione-</option>
                                                         <?php
                                                         foreach ($result_CT as $item) { ?>
@@ -139,7 +142,7 @@ $ordenescompra = "active-sublink";
                                                 <div class="form-group bmd-form-group">
 
                                                     <textarea class="form-control" placeholder="Comentario"
-                                                              name="comment">
+                                                              name="comment" id="comment">
 
                                                     </textarea>
                                                 </div>
