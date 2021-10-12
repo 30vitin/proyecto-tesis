@@ -121,7 +121,7 @@ $ordenescompra = "active-sublink";
                                                     ?>
                                                     <select class="form-control validate select2 select-form" name="provider"
                                                             id="provider">
-                                                        <option value="-1">-Seleccione-</option>
+                                                        <option value="">-Seleccione-</option>
                                                         <?php
                                                         foreach ($result_CT as $item) { ?>
 
