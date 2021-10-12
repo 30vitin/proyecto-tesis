@@ -5,7 +5,7 @@ include 'utils.php';
 
 
 if (!isset($_GET['id'])) {
-    header("Location:" . $_SERVER['HTTP_REFERER']);
+    header("Location:javascript:window.history.go(-2);");
 }
 
 $id = $_GET['id'];

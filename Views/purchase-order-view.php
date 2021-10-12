@@ -84,7 +84,7 @@ if (isset($_POST['page'])) {
                                         </thead>
                                         <tbody>
                                         <?php
-                                        $sql = "SELECT t1.id, t1.purchase_request, t1.date,t1.status FROM purchase_orders t1 WHERE t1.status <>'DELETE'  order by t1.created_at desc ";
+                                        $sql = "SELECT t1.id, t1.purchase_request,t2.name as provider, t1.date,t1.status FROM purchase_orders t1 join providers t2 on t1.provider = t2.id WHERE t1.status <>'DELETE'  order by t1.created_at desc ";
 
 
                                         $result_lis = $cls->consultListQuery($sql);//query

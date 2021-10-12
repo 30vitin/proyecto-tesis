@@ -4,7 +4,7 @@ $cls = new Functions;  //llamando al objeto
 include 'utils.php';
 
 if (!isset($_GET['id'])) {
-    header("Location:" . $_SERVER['HTTP_REFERER']);
+    header("Location:javascript:window.history.go(-2);");
 }
 $id = $_GET['id'];
 
@@ -12,7 +12,7 @@ $sql = "SELECT name,description,category,price,img_portada,code_extern,
         unidad_para_compra,unidad_almacen,unidad_para_almacen,provider FROM products WHERE id='$id' and status='ACTIVO'";
 $response = $cls->consulQuery($sql);
 if (empty($response)) {
-    header("Location:" . $_SERVER['HTTP_REFERER']);
+    header("Location:javascript:window.history.go(-2);");
 }
 
 $inventory = "active";

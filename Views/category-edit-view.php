@@ -6,14 +6,14 @@ include 'utils.php';
 // consultar
 
 if (!isset($_GET['id'])) {
-    header("Location:" . $_SERVER['HTTP_REFERER']);
+    header("Location:javascript:window.history.go(-2);");
 }
 $id = $_GET['id'];
 
 $sql = "SELECT id, name from products_category where id = '$id' AND status ='ACTIVO'  limit 1";
 $response = $cls->consulQuery($sql);
 if(!$response){
-    header("Location:" . $_SERVER['HTTP_REFERER']);
+    header("Location:javascript:window.history.go(-2);");
 }
 
 $inventory = "active";
@@ -26,8 +26,6 @@ $categoria = "active-sublink";
 
 <head>
     <meta charset="utf-8"/>
-    <link rel="shortcut icon" href="Views/assets_login/images/favicon-01-ol.ico">
-
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
         Editar Categoría | Cafeteria

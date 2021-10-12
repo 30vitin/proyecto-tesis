@@ -524,7 +524,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PURCHASE-REQUEST') {
         if($check){
 
             $cls->commitSet();
-            $mensaje = array('success' => true, 'mens' => 'Requisició de compra registrada con exito.', 'url' => './?view=purchase-requests-edit&id=' . $id, "post_name" => "Requisición de compra", "id" => $id);
+            $mensaje = array('success' => true, 'mens' => 'Requisición de compra registrada con exito.', 'url' => './?view=purchase-requests-edit&id=' . $id, "post_name" => "Requisición de compra", "id" => $id);
 
         }else{
 
@@ -672,7 +672,77 @@ if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-REQUEST') {
 
 if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PURCHASE-ORDER') {
     $cls->autocommitF();
+    $check = true;
+    if (!isset($_POST['date'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo fecha es obligatorio');
+    }
+    if (!isset($_POST['provider'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo proveedor es obligatorio');
+    }
+    if(!isset($_POST['data_table'])){
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Debe completar todos los campos de la tabla de productos');
+    }
+    $id = $cls->getId_autoincrement("purchase_requests");
     $mensaje = $_POST;
+    $date = $_POST['date'];
+    $provider = $_POST['provider'];
+    $comment = trim($_POST['comment']);
+    $purchase_request = trim($_POST['purchase_request']);
+    $sql1="INSERT INTO purchase_orders (id,
+                             date,
+                             provider,
+                             purchase_request,
+                             comment,
+                             created_at,
+                             created_by)
+                             values(
+                                    '$id',
+                                    '$date',
+                                    '$provider',
+                                    '$purchase_request',
+                                    '$comment',
+                                    '$datetime',
+                                    '$VAR_SESSION->username')";
+    $res = $cls->exeQuery($sql1);
+    if($res){
+        $data_table = json_decode($_POST['data_table']);
+        $check = true; // check data table
+        foreach ($data_table as $data){
+
+            if($data->costs > 0 && $data->total > 0 && $data->unit){
+
+                $sql2="INSERT INTO purchase_orders_details (purchase_order,product_id,costs,units,total)values('$id','$data->product_id','$data->costs','$data->unit','$data->total')";
+                $res2 = $cls->exeQuery($sql2);
+                if (!$res2) {
+                    $check = false;
+                }
+
+            }else{
+
+                $check = false;
+
+            }
+        }
+
+        if($check){
+
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'mens' => 'Orden de compra registrada con exito.', 'url' => './?view=purchase-order-edit&id=' . $id, "post_name" => "Orden de compra", "id" => $id);
+
+        }else{
+
+            $mensaje = array('success' => false, 'mens' => 'Hubo un error al insertar los detalles de la tabla de productos.');
+
+        }
+    }else {
+        $cls->exeQuery('ROLLBACK');
+        $mensaje = array('success' => false, 'mens' => $res);
+
+    }
+
 }
 if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-REQUEST-TO-ORDER') {
 

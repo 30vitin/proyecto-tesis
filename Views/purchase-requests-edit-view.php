@@ -5,10 +5,10 @@ include 'utils.php';
 
 
 if (!isset($_GET['id'])) {
-    header("Location:" . $_SERVER['HTTP_REFERER']);
+    header("Location:javascript:window.history.go(-2);");
 }
 $id = $_GET['id'];
-$sql = "SELECT date,provider,comment,status FROM purchase_requests WHERE id='$id' and status<>'CLOSED'";
+$sql = "SELECT date,provider,comment,status FROM purchase_requests WHERE id='$id' and status<>'DELETE'";
 
 $response = $cls->consulQuery($sql);
 if (!$response) {
@@ -69,7 +69,7 @@ $requisicion = "active-sublink";
                         <div class="card ">
                             <div class="card-header card-header-rose card-header-text">
                                 <div class="card-text">
-                                    <h4 class="card-title">Eitar Requisición # <?php echo $id;?> </h4>
+                                    <h4 class="card-title">Editar Requisición # <?php echo $id;?> </h4>
                                 </div>
                             </div>
                             <div class="card-body ">
@@ -181,7 +181,7 @@ $requisicion = "active-sublink";
                                                     <th>Total</th>
                                                 </tr>
                                                 </thead>
-                                                <tbody class="table-data-add table-data-edit" data-id="<?php echo $id;?>">
+                                                <tbody class="table-data-add table-data-edit" data-id="<?php echo $id;?>" data-action="GET-PURCHASE-REQUEST-DETAILS">
 
                                                 </tbody>
                                                 <tfoot>

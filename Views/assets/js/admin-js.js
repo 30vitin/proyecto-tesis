@@ -5,63 +5,81 @@ $(document).ready(function () {
 //send form
 
     var data_table = [];
-    if($('.table-data-edit').length>0){
-        getDataToTable($('.table-data-edit').data('id'))
+    if ($('.table-data-edit').length > 0) {
+        getDataToTable($('.table-data-edit').data('action'),$('.table-data-edit').data('id'))
     }
-    $('.change-and-consult').on('change',function(){
+    $('.change-and-consult').on('change', function () {
         var instance = this;
         var request_id = $(instance).val();
-        data_table = [];
+        if(request_id){
+            data_table = [];
+            $.ajax({
 
-        $.ajax({
+                data: {a: $(instance).data("action"), id: $(instance).val()},
+                url: "./?action=admin",
+                type: "POST",
+                dataType: "JSON",
+                success: function (data) {
+                    if ($("#" + $(instance).data("form")).length > 0) {
+                        $("#" + $(instance).data("form"))[0].reset();
+                    }
+                    if ($('.table-data-add').length > 0) {
+                        $('.table-data-add').html('')
+                    }
+                    if ($('#total-table').length > 0) {
+                        $('#total-table').html('0.00')
 
-            data: {a:$(instance).data("action"),id:$(instance).val()},
-            url: "./?action=admin",
-            type: "POST",
-            dataType: "JSON",
-            success: function (data) {
-                if($("#"+$(instance).data("form")).length>0){
-                    $("#"+$(instance).data("form"))[0].reset();
-                }
-                if($('.table-data-add').length>0){
-                    $('.table-data-add').html('')
-                }
-                if($('#total-table').length>0){
-                    $('#total-table').html('0.00')
+                    }
+                    if ($('.table-data-add').length > 0) {
+                        getDataToTable($('.table-data-add').data('action'),request_id)
+                    }
+                    if (data.data.length > 0) {
 
-                }
-                if($('.table-data-add').length>0){
-                    getDataToTable(request_id)
-                }
-                if(data.data.length>0){
+                        jQuery(data.data).each(function (index, value) {
 
-                    jQuery(data.data).each(function (index, value) {
+                            if (value.type == 'input') {
+                                if ($('#' + value.id).length > 0) {
+                                    $('#' + value.id).val(value.value)
 
-                        if(value.type =='input'){
-                            if($('#'+value.id).length>0){
-                                $('#'+value.id).val(value.value)
-
+                                }
                             }
-                        }
-                        if(value.type =='select'){
-                            if($('#'+value.id).length>0){
-                               $('#'+value.id).val(value.value).change();
+                            if (value.type == 'select') {
+                                if ($('#' + value.id).length > 0) {
+                                    $('#' + value.id).val(value.value).change();
+                                }
                             }
-                        }
 
-                    });
+                        });
+
+                    }
+                    $(instance).val(data.id)
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
 
                 }
-                $(instance).val(data.id)
 
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
+            });
+        }else{
+
+            if ($("#" + $(instance).data("form")).length > 0) {
+                $("#" + $(instance).data("form"))[0].reset();
+            }
+            if ($('.table-data-add').length > 0) {
+                $('.table-data-add').html('')
+            }
+            if ($('#total-table').length > 0) {
+                $('#total-table').html('0.00')
 
             }
+            //TODO 
+            console.log('ok')
+            //jQuery(".select-form  option[value='-1']").attr("selected", "selected");
+            $("#provider option:contains('-1')").attr('selected', true);
 
-        });
 
+        }
 
     });
 
@@ -302,7 +320,7 @@ $(document).ready(function () {
                     TableData.push(value.data)
                 });
                 var formData = new FormData(document.getElementById(formid));
-                formData.append("data_table",JSON.stringify(TableData))
+                formData.append("data_table", JSON.stringify(TableData))
 
 
                 $.ajax({
@@ -317,70 +335,74 @@ $(document).ready(function () {
                     success: function (data) {
                         console.log(data)
                         BtnReset(instance)
-                         if (data.success) {
+                        if (data.success) {
 
 
-                             if (reset) {
-                                 $("#"+formid)[0].reset();
-                                 $('.table-data-add').html('')
-                                 $('#total-table').html('0.00')
-
-                             }
-                             Swal.fire(
-                                 '¡Listo!',
-                                 data.mens,
-                                 'success'
-                             )
-
-                             manageShowAlertFormSuccess(true);
-                             manageShowAlertFormError(false);
-
-                             if (data.url) {
-                                 $('.new-alert-success').html('<div class="row col-md-12">' +
-                                     '<div class="col-md-12">' +
-                                     '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
-                                     '</div>' +
-                                     ' <div class="col-md-12">' +
-                                     '<h4><i class="material-icons">check</i> ' + data.mens + '</h4>' +
-                                     '</div>' +
-                                     ' <div class="col-md-12">' +
-                                     '<a href="' + data.url + '">' +
-                                     '<i class="material-icons">arrow_forward</i> Ir a ' + data.post_name + ' #' + data.id + ' </a>' +
-                                     '</div>' +
-                                     '</div>');
-                             } else {
-                                 $('.new-alert-success').html('<div class="row col-md-12">' +
-                                     '<div class="col-md-12">' +
-                                     '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
-                                     '</div>' +
-                                     ' <div class="col-md-12">' +
-                                     '<h4>' + data.mens + '</h4>' +
-                                     '</div>' +
-                                     ' <div class="col-md-12">' +
-
-                                     '</div>' +
-                                     '</div>');
-
-                             }
+                            if (reset) {
+                                $("#" + formid)[0].reset();
+                                $('.table-data-add').html('')
+                                $('#total-table').html('0.00')
+                                if ($('.change-and-consult').length > 0) {
+                                    $('.change-and-consult').val('').change()
+                                }
 
 
-                         } else {
-                             manageShowAlertFormSuccess(false);
-                             manageShowAlertFormError(true);
+                            }
+                            Swal.fire(
+                                '¡Listo!',
+                                data.mens,
+                                'success'
+                            )
 
-                             $("#ht-preloader").css("display", "none");
+                            manageShowAlertFormSuccess(true);
+                            manageShowAlertFormError(false);
 
-                             Swal.fire('¡Alerta!', data.mens, 'error')
-                             $('.new-alert-error').html('<div class="row">' +
-                                 '<div class="col-md-12">' +
-                                 '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-error" data-add="alert-error-none">x</button>' +
-                                 '</div>' +
-                                 ' <div class="col-md-12">' +
-                                 '<h4><i class="material-icons">warning</i> ' + data.mens + '</h4>' +
-                                 '</div>' +
-                                 '</div>');
+                            if (data.url) {
+                                $('.new-alert-success').html('<div class="row col-md-12">' +
+                                    '<div class="col-md-12">' +
+                                    '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
+                                    '</div>' +
+                                    ' <div class="col-md-12">' +
+                                    '<h4><i class="material-icons">check</i> ' + data.mens + '</h4>' +
+                                    '</div>' +
+                                    ' <div class="col-md-12">' +
+                                    '<a href="' + data.url + '">' +
+                                    '<i class="material-icons">arrow_forward</i> Ir a ' + data.post_name + ' #' + data.id + ' </a>' +
+                                    '</div>' +
+                                    '</div>');
+                            } else {
+                                $('.new-alert-success').html('<div class="row col-md-12">' +
+                                    '<div class="col-md-12">' +
+                                    '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
+                                    '</div>' +
+                                    ' <div class="col-md-12">' +
+                                    '<h4>' + data.mens + '</h4>' +
+                                    '</div>' +
+                                    ' <div class="col-md-12">' +
 
-                         }
+                                    '</div>' +
+                                    '</div>');
+
+                            }
+
+
+                        } else {
+                            manageShowAlertFormSuccess(false);
+                            manageShowAlertFormError(true);
+
+                            $("#ht-preloader").css("display", "none");
+
+                            Swal.fire('¡Alerta!', data.mens, 'error')
+                            $('.new-alert-error').html('<div class="row">' +
+                                '<div class="col-md-12">' +
+                                '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-error" data-add="alert-error-none">x</button>' +
+                                '</div>' +
+                                ' <div class="col-md-12">' +
+                                '<h4><i class="material-icons">warning</i> ' + data.mens + '</h4>' +
+                                '</div>' +
+                                '</div>');
+
+                        }
 
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -391,7 +413,6 @@ $(document).ready(function () {
                     }
 
                 });
-
 
 
             } else {
@@ -409,7 +430,6 @@ $(document).ready(function () {
                     '</div>' +
                     '</div>');
             }
-
 
 
         } else {
@@ -447,7 +467,7 @@ $(document).ready(function () {
                     dataType: "JSON",
                     success: function (data) {
                         BtnReset(instance)
-                        if(data.url){
+                        if (data.url) {
                             let timerInterval
                             Swal.fire({
                                 title: 'Procensando',
@@ -465,9 +485,9 @@ $(document).ready(function () {
                                     location.href = data.url;
                                 }
                             })
-                        }else{
+                        } else {
 
-                            if(data.reload){
+                            if (data.reload) {
                                 let timerInterval
                                 Swal.fire({
                                     title: 'Recargando',
@@ -485,7 +505,7 @@ $(document).ready(function () {
                                     }
                                 })
 
-                            }else{
+                            } else {
                                 manageShowAlertFormSuccess(true);
                                 manageShowAlertFormError(false);
                                 $('.new-alert-success').html('<div class="row col-md-12">' +
@@ -505,7 +525,6 @@ $(document).ready(function () {
                         }
 
 
-
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         BtnReset(instance)
@@ -522,13 +541,11 @@ $(document).ready(function () {
 
     });
 
-
     $('#alert-form').on('click', '.close-alert-div', function () {
         var target = $(this).data('target')
         var add = $(this).data('add')
         $('.' + target).addClass(add)
     });
-
     //openModal products
     $('.btn-product-table-line').on('click', function () {
 
@@ -552,7 +569,7 @@ $(document).ready(function () {
                         table.clear();
 
                         $.each(data, function (index, value) {
-                            if (!(jQuery.inArray(value.id, current_id) !== -1 )) {
+                            if (!(jQuery.inArray(value.id, current_id) !== -1)) {
                                 table.row.add([
                                     '<input class="checked-table" type="checkbox" value="' + value.id + '" >',
                                     value.id,
@@ -604,7 +621,10 @@ $(document).ready(function () {
                         if (data.length > 0) {
                             $.each(data, function (index, value) {
                                 var dkey = value.id;
-                                var newdata = {dkey: dkey, data: {unit: 0, costs: value.price, total: 0,product_id:dkey}};
+                                var newdata = {
+                                    dkey: dkey,
+                                    data: {unit: 0, costs: value.price, total: 0, product_id: dkey}
+                                };
                                 data_table.push(newdata);
 
 
@@ -622,7 +642,7 @@ $(document).ready(function () {
                                 html += '<td><input type="number" name="units[]" class="form-control units-line" value="0"' +
                                     'min="1" data-id="' + value.id + '" id="unit-' + value.id + '"></td>';
 
-                                html += '<td><input type="number" class="form-control price-line" min="1"'+
+                                html += '<td><input type="number" class="form-control price-line" min="1"' +
                                     'step="0.2" value="' + value.price + '" name="costs[]" data-id="' + value.id + '" id="costs-' + value.id + '"/></td>';
 
                                 html += '<td><label for="form-control-label " id="total-' + value.id + '">0.00</label></td>';
@@ -674,19 +694,19 @@ $(document).ready(function () {
         //current data line
         jQuery(data_table).each(function (index, value) {
 
-            if(value.dkey == id){
+            if (value.dkey == id) {
                 costs = Number(value.data.costs)
                 return false;
             }
 
         });
 
-        total+= Number(units * costs);
+        total += Number(units * costs);
 
         //update data
         jQuery(data_table).each(function (index, value) {
 
-            if(value.dkey == id){
+            if (value.dkey == id) {
                 value.data.unit = units
                 value.data.costs = costs
                 value.data.total = total
@@ -694,7 +714,7 @@ $(document).ready(function () {
             }
 
         });
-        $('#total-'+id).html(total.toFixed(2))
+        $('#total-' + id).html(total.toFixed(2))
 
 
         calculateTotal()
@@ -710,19 +730,19 @@ $(document).ready(function () {
         //current data line
         jQuery(data_table).each(function (index, value) {
 
-            if(value.dkey == id){
+            if (value.dkey == id) {
                 units = Number(value.data.unit)
                 return false;
             }
 
         });
 
-        total+= Number(units * costs);
+        total += Number(units * costs);
 
         //update data
         jQuery(data_table).each(function (index, value) {
 
-            if(value.dkey == id){
+            if (value.dkey == id) {
                 value.data.unit = units
                 value.data.costs = costs
                 value.data.total = total
@@ -730,7 +750,7 @@ $(document).ready(function () {
             }
 
         });
-        $('#total-'+id).html(total.toFixed(2))
+        $('#total-' + id).html(total.toFixed(2))
         calculateTotal()
 
     });
@@ -764,19 +784,18 @@ $(document).ready(function () {
     function tableValidate() {
         var check = true;
 
-        if(data_table.length >0){
+        if (data_table.length > 0) {
 
             jQuery(data_table).each(function (index, value) {
-                if(Number(value.data.unit)<=0 || Number(value.data.costs)<=0 || Number(value.data.total)<=0){
+                if (Number(value.data.unit) <= 0 || Number(value.data.costs) <= 0 || Number(value.data.total) <= 0) {
                     check = false;
                 }
 
             });
-        }else{
+        } else {
 
             check = false;
         }
-
 
 
         return check;
@@ -836,43 +855,46 @@ $(document).ready(function () {
 
         });
 
-        if($('#total-table')){
-            $('#total-table').html("$ "+Number(total).toFixed(2));
+        if ($('#total-table')) {
+            $('#total-table').html("$ " + Number(total).toFixed(2));
         }
 
 
     }
 
-    function getDataToTable(id){
+    function getDataToTable(action,id) {
 
-        if(id){
+        if (id) {
             $.ajax({
 
-                data: {a: 'GET-PURCHASE-REQUEST-DETAILS', id: id},
+                data: {a: action, id: id},
                 url: "./?action=admin",
                 type: "POST",
                 dataType: "JSON",
                 success: function (data) {
 
                     if (data.length > 0) {
-                        var disabled ="";
-                        var readonly ="";
-                        var disableClass ="";
-                        if($('.disable-button').length>0){
+                        var disabled = "";
+                        var readonly = "";
+                        var disableClass = "";
+                        if ($('.disable-button').length > 0) {
                             disabled = "disabled ='disabled'";
                             readonly = "readonly ='readonly'";
-                            disableClass ="disable-button";
+                            disableClass = "disable-button";
                         }
                         $.each(data, function (index, value) {
                             var dkey = value.id;
-                            var newdata = {dkey: dkey, data: {unit: value.unit, costs: value.costs, total: value.total,product_id:dkey}};
+                            var newdata = {
+                                dkey: dkey,
+                                data: {unit: value.unit, costs: value.costs, total: value.total, product_id: dkey}
+                            };
                             data_table.push(newdata);
 
 
                             var html = '<tr id="line-' + value.id + '">';
 
-                            html += '<td><button type="button" class="btn btn-danger pull-center remove-line btn-sm '+disableClass+' " ' +
-                                'data-id="' + value.id + '" '+disabled+'> <i class="material-icons">close</i></button></td>';
+                            html += '<td><button type="button" class="btn btn-danger pull-center remove-line btn-sm ' + disableClass + ' " ' +
+                                'data-id="' + value.id + '" ' + disabled + '> <i class="material-icons">close</i></button></td>';
 
                             html += '<td><label for="form-control-label">' + value.id + '</label><input type="hidden" ' +
                                 'name="product_id[]" class="form-control" value="' + value.id + '" ></td>';
@@ -880,13 +902,13 @@ $(document).ready(function () {
 
                             html += '<td><label for="form-control-label">' + value.unidad_para_compra + '</label></td>';
 
-                            html += '<td><input type="number" name="units[]" class="form-control units-line" value="'+value.unit+'"' +
-                                'min="1" data-id="' + value.id + '" id="unit-' + value.id + '" '+readonly+'></td>';
+                            html += '<td><input type="number" name="units[]" class="form-control units-line" value="' + value.unit + '"' +
+                                'min="1" data-id="' + value.id + '" id="unit-' + value.id + '" ' + readonly + '></td>';
 
-                            html += '<td><input type="number" class="form-control price-line" min="1"'+
-                                'step="0.2" value="' + value.costs + '" name="costs[]" data-id="' + value.id + '" id="costs-' + value.id + '" '+readonly+'/></td>';
+                            html += '<td><input type="number" class="form-control price-line" min="1"' +
+                                'step="0.2" value="' + value.costs + '" name="costs[]" data-id="' + value.id + '" id="costs-' + value.id + '" ' + readonly + '/></td>';
 
-                            html += '<td><label for="form-control-label " id="total-' + value.id + '">'+value.total+'</label></td>';
+                            html += '<td><label for="form-control-label " id="total-' + value.id + '">' + value.total + '</label></td>';
 
 
                             html += '</tr>';
