@@ -84,10 +84,9 @@ $ordenescompra = "active-sublink";
                                                     ?>
                                                     <select class="form-control validate select2 change-and-consult" name="purchase_request"
                                                             id="purchase_request"
-                                                            data-action="GET-PURCHASE-REQUEST"
-                                                            data-form="form"
-                                                            data-setting="date,provider,comment">
-                                                        <option value="">-Seleccione-</option>
+                                                            data-action="GET-PURCHASE-REQUEST-TO-ORDER"
+                                                            data-form="form">
+                                                           <option value="">-Seleccione-</option>
                                                         <?php
                                                         foreach ($result_CT as $item) { ?>
 
@@ -106,7 +105,8 @@ $ordenescompra = "active-sublink";
                                                 <div class="form-group bmd-form-group">
                                                     <input type="date" class="form-control validate" name="date"
                                                            value=""
-                                                           id="date" placeholder="Fecha">
+                                                           id="date"
+                                                           placeholder="Fecha">
                                                     <small class="form-text text-muted date-error"
                                                            style="color:red !important;"></small>
                                                 </div>

@@ -9,18 +9,59 @@ $(document).ready(function () {
         getDataToTable($('.table-data-edit').data('id'))
     }
     $('.change-and-consult').on('change',function(){
-        var request_id = $(this).val();
-        var settings =  $(this).data('setting')
-        var inputs = settings.split(',');
+        var instance = this;
+        var request_id = $(instance).val();
         data_table = [];
-        getDataToTable(request_id)
-        $("#"+$(this).data("form"))[0].reset();
-        $('.table-data-add').html('')
-        $('#total-table').html('0.00')
 
+        $.ajax({
 
+            data: {a:$(instance).data("action"),id:$(instance).val()},
+            url: "./?action=admin",
+            type: "POST",
+            dataType: "JSON",
+            success: function (data) {
+                if($("#"+$(instance).data("form")).length>0){
+                    $("#"+$(instance).data("form"))[0].reset();
+                }
+                if($('.table-data-add').length>0){
+                    $('.table-data-add').html('')
+                }
+                if($('#total-table').length>0){
+                    $('#total-table').html('0.00')
 
-        console.log(inputs)
+                }
+                if($('.table-data-add').length>0){
+                    getDataToTable(request_id)
+                }
+                if(data.data.length>0){
+
+                    jQuery(data.data).each(function (index, value) {
+
+                        if(value.type =='input'){
+                            if($('#'+value.id).length>0){
+                                $('#'+value.id).val(value.value)
+
+                            }
+                        }
+                        if(value.type =='select'){
+                            if($('#'+value.id).length>0){
+                               $('#'+value.id).val(value.value).change();
+                            }
+                        }
+
+                    });
+
+                }
+                $(instance).val(data.id)
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
+
+            }
+
+        });
+
 
     });
 

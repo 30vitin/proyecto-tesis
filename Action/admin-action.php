@@ -674,6 +674,24 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PURCHASE-ORDER') {
     $cls->autocommitF();
     $mensaje = $_POST;
 }
+if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-REQUEST-TO-ORDER') {
+
+    $mensaje = [];
+    if (isset($_POST['id'])) {
+        $id = $_POST['id'];
+        $sql = "SELECT DATE_FORMAT(date,'%Y-%m-%d') as date ,provider,comment FROM purchase_requests t1 WHERE t1.id = '$id' ";
+        $result_lis = $cls->consulQuery($sql);//query
+        $inputs = array("id"=>$id,
+            "data"=>array(array('type'=>'input','id'=>'date','value'=>$result_lis['date']),
+                        array('type'=>'select','id'=>'provider','value'=>$result_lis['provider']),
+                        array('type'=>'input','id'=>'comment','value'=>$result_lis['comment'])
+            ));
+
+        $mensaje = $inputs;
+    }
+
+}
+
 
 if (isset($_POST['a']) && $_POST['a'] == 'LOGIN') {
     $key = $cls->getAuthKey();
