@@ -11,4 +11,4 @@
 <!-- CSS Just for demo purpose, don't include it in your project -->
 <!--<link href="Views/assets/demo/demo.css" rel="stylesheet"/>-->
 
-<link href="Views/assets/css/styles.css?v=3" rel="stylesheet"/>
+<link href="Views/assets/css/styles.css?v=4" rel="stylesheet"/>

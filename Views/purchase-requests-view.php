@@ -74,13 +74,14 @@ if (isset($_POST['page'])) {
                                             <th>ID</th>
                                             <th>Fecha</th>
                                             <th>Proveedor</th>
+                                            <th>Status</th>
                                             <th>Acción</th>
                                         </tr>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <?php
-                                        $sql = "SELECT t1.id, t1.date, t2.name as provider FROM purchase_requests t1 join providers t2 on t1.provider = t1.id WHERE t1.status <>'DELETE' order by t1.created_at desc ";
+                                        $sql = "SELECT t1.id, t1.date, t2.name as provider,t1.status FROM purchase_requests t1 join providers t2 on t1.provider = t2.id WHERE t1.status <>'DELETE' order by t1.created_at desc ";
 
 
                                         $result_lis = $cls->consultListQuery($sql);//query
@@ -93,9 +94,13 @@ if (isset($_POST['page'])) {
                                                 <td><?php echo $item->date; ?></td>
 
                                                 <td><?php echo ucwords($item->provider); ?></td>
+                                                <td>
+                                                    <span class="badge <?php echo ($item->status =='CERRADO')? 'badge-danger':'badge-success'?>">
+                                                        <?php echo $item->status;?></span>
+                                                </td>
 
                                                 <td class="td-actions">
-                                                    <a href="./?view=purchase-request-edit&id=<?php echo $item->id; ?>"
+                                                    <a href="./?view=purchase-requests-edit&id=<?php echo $item->id; ?>"
                                                        rel="tooltip" title="" class="btn btn-primary btn-link btn-sm"
                                                        data-original-title="Mostrar Requisición">
                                                         <i class="material-icons">edit</i>

@@ -344,6 +344,10 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-PRODUCTS') {
 }
 
 
+/**
+ * COMPRAS
+ *
+ */
 if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PROVIDER') {
     $check = true;
     if (!isset($_POST['name'])) {
@@ -460,6 +464,199 @@ if (isset($_POST['a']) && $_POST['a'] == 'DELETE-PROVIDER') {
         if ($res) {
             $cls->commitSet();
             $mensaje = array('success' => true, 'url' => './?view=providers');
+
+        } else {
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res);
+
+        }
+    } else {
+
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
+    }
+
+}
+
+
+if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PURCHASE-REQUEST') {
+    $cls->autocommitF();
+    $check = true;
+    if (!isset($_POST['date'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo fecha es obligatorio');
+    }
+    if (!isset($_POST['provider'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo proveedor es obligatorio');
+    }
+    if(!isset($_POST['data_table'])){
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Debe completar todos los campos de la tabla de productos');
+    }
+
+    $id = $cls->getId_autoincrement("purchase_requests");
+    $date = $_POST['date'];
+    $provider = $_POST['provider'];
+    $comment = trim($_POST['comment']);
+
+    $sql1="INSERT INTO purchase_requests (id,date,provider,comment,created_at,created_by)values('$id','$date','$provider','$comment','$datetime','$VAR_SESSION->username')";
+    $res = $cls->exeQuery($sql1);
+    if ($res) {
+        $data_table = json_decode($_POST['data_table']);
+        $check = true; // check data table
+        foreach ($data_table as $data){
+
+            if($data->costs > 0 && $data->total > 0 && $data->unit){
+
+                $sql2="INSERT INTO purchase_requests_details (purchase_request,product_id,costs,units,total)values('$id','$data->product_id','$data->costs','$data->unit','$data->total')";
+                $res2 = $cls->exeQuery($sql2);
+                if (!$res2) {
+                    $check = false;
+                }
+
+            }else{
+
+                $check = false;
+
+            }
+        }
+
+        if($check){
+
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'mens' => 'Requisició de compra registrada con exito.', 'url' => './?view=purchase-requests-edit&id=' . $id, "post_name" => "Requisición de compra", "id" => $id);
+
+        }else{
+
+            $mensaje = array('success' => false, 'mens' => 'Hubo un error al insertar los detalles de la tabla de productos.');
+
+        }
+
+    } else {
+        $cls->exeQuery('ROLLBACK');
+        $mensaje = array('success' => false, 'mens' => $res);
+
+    }
+
+}
+if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PURCHASE-REQUEST') {
+    $cls->autocommitF();
+    $check = true;
+    $mensaje = json_decode($_POST['data_table']);
+    if (!isset($_POST['date'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo fecha es obligatorio');
+    }
+    if (!isset($_POST['provider'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo proveedor es obligatorio');
+    }
+    if(!isset($_POST['data_table'])){
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Debe completar todos los campos de la tabla de productos');
+    }
+    if (!isset($_POST['id'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
+    }
+
+
+    $date = $_POST['date'];
+    $id = $_POST['id'];
+    $provider = $_POST['provider'];
+    $comment = trim($_POST['comment']);
+
+    $sqlstatus ="SELECT status FROM purchase_requests WHERE id='$id'";
+    $response = $cls->consulQuery($sqlstatus);
+    if($response['status']!="CERRADO"){
+        $sql1="UPDATE purchase_requests set date ='$date',
+                             provider = '$provider',
+                             comment ='$comment',
+                             updated_at = '$datetime',
+                             updated_by = '$VAR_SESSION->username' WHERE id='$id'";
+
+        $res = $cls->exeQuery($sql1);
+        if ($res) {
+            $sql2="DELETE FROM purchase_requests_details WHERE purchase_request='$id'";
+            $res2 = $cls->exeQuery($sql2);
+            if ($res2) {
+
+                $data_table = json_decode($_POST['data_table']);
+                $check = true; // check data table
+                foreach ($data_table as $data){
+
+                    if($data->costs > 0 && $data->total > 0 && $data->unit){
+
+                        $sql3="INSERT INTO purchase_requests_details (purchase_request,product_id,costs,units,total)values('$id','$data->product_id','$data->costs','$data->unit','$data->total')";
+                        $res3 = $cls->exeQuery($sql3);
+                        if (!$res3) {
+                            $check = false;
+                        }
+
+                    }else{
+
+                        $check = false;
+
+                    }
+                }
+
+                if($check){
+
+                    $cls->commitSet();
+                    $mensaje = array('success' => true, 'mens' => 'Requisición de compra actualizada con exito.');
+
+                }else{
+
+                    $mensaje = array('success' => false, 'mens' => 'Hubo un error al insertar los detalles de la tabla de productos.');
+
+                }
+
+            }else{
+
+                $cls->exeQuery('ROLLBACK');
+                $mensaje = array('success' => false, 'mens' => $res);
+
+
+            }
+
+
+        } else {
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res);
+
+        }
+
+    }else{
+
+        $mensaje = array('success' => false, 'mens' => 'No se puede editar esta requisición porque ya se encuentra cerrada.');
+    }
+
+
+}
+if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-REQUEST-DETAILS') {
+    $mensaje = [];
+    if (isset($_POST['id'])) {
+        $id = $_POST['id'];
+        $sql = "SELECT t1.product_id as id,t1.costs,t1.units as unit,t1.total,t2.unidad_para_compra,t2.name FROM purchase_requests_details t1 join products t2 on t1.product_id = t2.id WHERE t1.purchase_request = '$id' ";
+        $result_lis = $cls->consultListQuery($sql);//query
+        $mensaje = $result_lis;
+
+    }
+}
+
+if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-REQUEST') {
+    $cls->autocommitF();
+
+
+    if (isset($_POST['id'])) {
+
+        $id = $_POST['id'];
+
+        $sql = "UPDATE purchase_requests set status='CERRADO',updated_by='$VAR_SESSION->username', updated_at ='$datetime' WHERE id ='$id' ";
+        $res = $cls->exeQuery($sql);
+        if ($res) {
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'mens' => 'Requisición de compra ha sido cerrada con exito.','reload'=>true);
 
         } else {
             $cls->exeQuery('ROLLBACK');

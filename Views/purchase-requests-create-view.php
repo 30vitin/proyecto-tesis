@@ -21,6 +21,7 @@ $requisicion = "active-sublink";
     </title>
     <?php include "styles.php"; ?>
     <link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 
 </head>
 
@@ -55,7 +56,7 @@ $requisicion = "active-sublink";
 
                                 <div class="row">
                                     <div class="col-md-12 ">
-                                        <button type="button" class="btn btn-primary pull-right btn-send-table-form"
+                                        <button type="button" class="btn btn-primary pull-right btn-send-form-table"
                                                 data-form="form" data-reset="true"> Guardar Requisición
                                         </button>
 
@@ -125,34 +126,41 @@ $requisicion = "active-sublink";
 
                                         <div class="col-md-12 table-responsive">
                                             <div class="row">
-                                                    <div class="col-md-6 pt-3">
-                                                        <button type="button"
-                                                                class="btn btn-primary pull-left btn-product-table-line"> Agregar producto
-                                                        </button>
-
-                                                    </div>
+                                                <div class="col-md-6 pt-3">
+                                                    <button type="button"
+                                                            class="btn btn-primary pull-left btn-product-table-line">
+                                                        Agregar producto
+                                                    </button>
 
                                                 </div>
-                                            <table class="table " >
-                                                    <thead class=" text-primary">
-                                                    <tr>
-                                                        <th class="small-th"></th>
-                                                        <th>ID</th>
-                                                        <th>Nombre</th>
-                                                        <th>UoM Unid</th>
-                                                        <th>Unidades</th>
-                                                        <th>Costo</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody class="table-data-add">
 
-                                                    </tbody>
-                                                </table>
+                                            </div>
+                                            <table class="table ">
+                                                <thead class=" text-primary">
+                                                <tr>
+                                                    <th class="small-th"></th>
+                                                    <th>ID</th>
+                                                    <th>Nombre</th>
+                                                    <th>UoM Unid</th>
+                                                    <th>Unidades</th>
+                                                    <th>Costo</th>
+                                                    <th>Total</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody class="table-data-add">
+
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="5"></td>
+                                                        <th>Total</th>
+                                                        <td id="total-table">0.00</td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
 
                                         </div>
                                     </div>
-
 
 
                                     <div class="clearfix"></div>
@@ -166,7 +174,7 @@ $requisicion = "active-sublink";
 
             </div>
         </div>
-        <?php include "scripts/modal-products.php";?>
+        <?php include "scripts/modal-products.php"; ?>
         <?php include "footer.php"; ?>
     </div>
 </div>
@@ -174,6 +182,8 @@ $requisicion = "active-sublink";
 
 <?php include "scripts/scripts.php"; ?>
 <?php include "scripts/data-table.php"; ?>
+<?php include "scripts/select2.php"; ?>
+
 </body>
 
 </html>

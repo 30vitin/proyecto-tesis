@@ -1,3 +1,6 @@
+button.disable-button {
+    cursor: not-allowed;
+}
 th.small-th {
     width: 8%;
 }

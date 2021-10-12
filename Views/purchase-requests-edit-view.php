@@ -4,8 +4,27 @@ $cls = new Functions;  //llamando al objeto
 include 'utils.php';
 
 
+if (!isset($_GET['id'])) {
+    header("Location:" . $_SERVER['HTTP_REFERER']);
+}
+$id = $_GET['id'];
+$sql = "SELECT date,provider,comment,status FROM purchase_requests WHERE id='$id' and status<>'CLOSED'";
+
+$response = $cls->consulQuery($sql);
+if (!$response) {
+    header("Location:javascript:window.history.go(-2);");
+}
+$disabled="";
+$classDisable="";
+if($response['status']=='CERRADO'){
+
+    $disabled="disabled='disabled'";
+    $classDisable="disable-button";
+
+}
+
 $purchase = "active";
-$ordenescompra = "active-sublink";
+$requisicion = "active-sublink";
 
 
 ?>
@@ -15,11 +34,11 @@ $ordenescompra = "active-sublink";
 
 <head>
     <meta charset="utf-8"/>
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Crear Orden de Compra | Cafeteria
+        Editar Requisición | Cafeteria
     </title>
-
     <?php include "styles.php"; ?>
     <link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
@@ -27,7 +46,6 @@ $ordenescompra = "active-sublink";
 </head>
 
 <body class="">
-
 <?php include 'loader.php'; ?>
 
 
@@ -36,10 +54,13 @@ $ordenescompra = "active-sublink";
     <div class="main-panel">
         <!-- Navbar -->
 
+
         <?php include "navbar.php"; ?>
+
         <!-- End Navbar -->
         <div class="content">
             <div class="container-fluid">
+
                 <div class="row">
 
                     <div class="col-8 col-lg-1"></div>
@@ -48,15 +69,23 @@ $ordenescompra = "active-sublink";
                         <div class="card ">
                             <div class="card-header card-header-rose card-header-text">
                                 <div class="card-text">
-                                    <h4 class="card-title">Crear Nueva Orden de Compra </h4>
+                                    <h4 class="card-title">Eitar Requisición # <?php echo $id;?> </h4>
                                 </div>
                             </div>
                             <div class="card-body ">
 
                                 <div class="row">
                                     <div class="col-md-12 ">
-                                        <button type="button" class="btn btn-primary pull-right btn-send-form-table"
-                                                data-form="form" data-reset="true"> Guardar Orden de Compra
+                                        <button type="button" class="btn btn-danger pull-right btn-delete-form <?php echo $classDisable;?>"
+                                                data-form="form" data-id="<?php echo $id; ?>"
+                                                data-action="CLOSE-REQUEST"
+                                                data-text="¿Estas seguro de cerrar esta requisición?" <?php echo $disabled;?>>Cerrar
+                                        </button>
+                                        <button type="button" class="btn btn-primary pull-right btn-send-form-table <?php echo $classDisable;?>"
+                                                data-form="form" data-reset="false" <?php echo $disabled;?>>Guardar
+                                        </button>
+                                        <button type="button" class="btn btn-success pull-right <?php echo $classDisable;?>"
+                                                data-form="form" data-reset="false" <?php echo $disabled;?>>Convertir a compra
                                         </button>
 
                                     </div>
@@ -66,7 +95,8 @@ $ordenescompra = "active-sublink";
                                       action="">
 
 
-                                    <input type="hidden" name="a" value="CREATE-PURCHASE-ORDER">
+                                    <input type="hidden" name="a" value="UPDATE-PURCHASE-REQUEST">
+                                    <input type="hidden" name="id" value="<?php echo $id;?>">
 
                                     <?php include 'alert-form.php'; ?>
 
@@ -75,26 +105,11 @@ $ordenescompra = "active-sublink";
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="col-md-12">
-                                                <label class="col-form-label">Requisición</label>
+                                                <label class="col-form-label">Status</label>
+
                                                 <div class="form-group bmd-form-group">
 
-                                                    <?php
-                                                    $sql_CT = "SELECT id from purchase_requests WHERE status='ACTIVO'";
-                                                    $result_CT = $cls->consultListQuery($sql_CT);//query
-                                                    ?>
-                                                    <select class="form-control validate select2" name="purchase_request"
-                                                            id="purchase_request">
-                                                        <option value="">-Seleccione-</option>
-                                                        <?php
-                                                        foreach ($result_CT as $item) { ?>
-
-                                                            <option value="<?php echo $item->id; ?>">#<?php echo $item->id; ?></option>
-
-                                                        <?php } ?>
-
-                                                    </select>
-                                                    <small class="form-text text-muted purchase_request-error"
-                                                           style="color:red !important;"></small>
+                                                    <span class="badge <?php echo ($response['status'] =='CERRADO')? 'badge-danger':'badge-success'?>"><?php echo $response['status'];?></span>
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
@@ -102,7 +117,7 @@ $ordenescompra = "active-sublink";
 
                                                 <div class="form-group bmd-form-group">
                                                     <input type="date" class="form-control validate" name="date"
-                                                           value=""
+                                                           value="<?php echo date_format(date_create($response['date']), 'Y-m-d');?>"
                                                            id="date" placeholder="Fecha">
                                                     <small class="form-text text-muted date-error"
                                                            style="color:red !important;"></small>
@@ -122,7 +137,7 @@ $ordenescompra = "active-sublink";
                                                         <?php
                                                         foreach ($result_CT as $item) { ?>
 
-                                                            <option value="<?php echo $item->id; ?>"><?php echo $item->name; ?></option>
+                                                            <option value="<?php echo $item->id; ?>" <?php echo ($response['provider'] == $item->id) ? 'selected' : ''; ?>><?php echo $item->name; ?></option>
 
                                                         <?php } ?>
 
@@ -137,11 +152,8 @@ $ordenescompra = "active-sublink";
                                                 <label class="col-form-label">Comentario</label>
 
                                                 <div class="form-group bmd-form-group">
-
                                                     <textarea class="form-control" placeholder="Comentario"
-                                                              name="comment">
-
-                                                    </textarea>
+                                                              name="comment"><?php echo trim($response['comment']);?></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -150,7 +162,7 @@ $ordenescompra = "active-sublink";
                                             <div class="row">
                                                 <div class="col-md-6 pt-3">
                                                     <button type="button"
-                                                            class="btn btn-primary pull-left btn-product-table-line">
+                                                            class="btn btn-primary pull-left btn-product-table-line <?php echo $classDisable;?>" <?php echo $disabled;?>>
                                                         Agregar producto
                                                     </button>
 
@@ -169,7 +181,7 @@ $ordenescompra = "active-sublink";
                                                     <th>Total</th>
                                                 </tr>
                                                 </thead>
-                                                <tbody class="table-data-add">
+                                                <tbody class="table-data-add table-data-edit" data-id="<?php echo $id;?>">
 
                                                 </tbody>
                                                 <tfoot>
@@ -184,6 +196,7 @@ $ordenescompra = "active-sublink";
                                         </div>
                                     </div>
 
+
                                     <div class="clearfix"></div>
 
                                 </form>
@@ -193,14 +206,13 @@ $ordenescompra = "active-sublink";
 
                 </div>
 
-
             </div>
         </div>
-
         <?php include "scripts/modal-products.php"; ?>
         <?php include "footer.php"; ?>
     </div>
 </div>
+
 
 <?php include "scripts/scripts.php"; ?>
 <?php include "scripts/data-table.php"; ?>
