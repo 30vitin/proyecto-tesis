@@ -76,7 +76,8 @@ $(document).ready(function () {
             //TODO 
             console.log('ok')
             //jQuery(".select-form  option[value='-1']").attr("selected", "selected");
-            $("#provider option:contains('-1')").attr('selected', true);
+            //$(" option[value=3]").attr('selected', 'selected');
+            //$("#provider option:contains('-1')").attr('selected', true);
 
 
         }
