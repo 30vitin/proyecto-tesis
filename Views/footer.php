@@ -6,7 +6,7 @@
             <script>
                 document.write(new Date().getFullYear())
             </script>
-            CRUV - Departamento de cafeteria.
+            CRUV - Departamento de Cafetería.
         </div>
     </div>
 </footer>

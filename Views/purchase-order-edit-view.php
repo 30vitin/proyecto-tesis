@@ -127,7 +127,7 @@ $ordenescompra = "active-sublink";
                                                 <div class="form-group bmd-form-group">
 
                                                     <?php
-                                                    $sql_CT = "SELECT id from purchase_requests WHERE status='ACTIVO'";
+                                                    $sql_CT = "SELECT id from purchase_requests WHERE status='APROBADA'";
                                                     $result_CT = $cls->consultListQuery($sql_CT);//query
                                                     ?>
                                                     <select class="form-control validate select2 <?php echo ($response['status'] =='CERRADO')? '':'change-and-consult-edit'?> " name="purchase_request"
