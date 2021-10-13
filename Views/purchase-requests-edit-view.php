@@ -16,10 +16,12 @@ if (!$response) {
 }
 $disabled="";
 $classDisable="";
-if($response['status']=='CERRADO'){
+$readOnly="";
+if($response['status']=='CERRADO' || $response['status']=='APROBADA'){
 
     $disabled="disabled='disabled'";
     $classDisable="disable-button";
+    $readOnly="readonly='readonly'";
 
 }
 
@@ -84,9 +86,18 @@ $requisicion = "active-sublink";
                                         <button type="button" class="btn btn-primary pull-right btn-send-form-table <?php echo $classDisable;?>"
                                                 data-form="form" data-reset="false" <?php echo $disabled;?>>Guardar
                                         </button>
-                                        <button type="button" class="btn btn-success pull-right <?php echo $classDisable;?>"
-                                                data-form="form" data-reset="false" <?php echo $disabled;?>>Convertir a compra
-                                        </button>
+
+                                        <?php if($response['status']=='ACTIVO'){?>
+                                            <button type="button" class="btn btn-success pull-right btn-confirm-action <?php echo $classDisable;?>"
+                                                    data-id="<?php echo $id;?>" data-action="APPROVE-PURCHASE-REQUEST"  data-text="¿Estas seguro de aprobar esta requisición de compra?" <?php echo $disabled;?>>Aprobar para facturar
+                                            </button>
+                                        <?php }?>
+                                        <?php if($response['status']=='APROBADA' || $response['status']=='CERRADO' ){?>
+                                            <button type="button" class="btn btn-success pull-right btn-confirm-action"
+                                                    data-id="<?php echo $id;?>" data-action="CONVERT-TO-PURCHASE-ORDER" data-text="¿Estas seguro convertir a orden de compra?">Convertir a O/C
+                                            </button>
+
+                                        <?php }?>
 
                                     </div>
 
@@ -109,7 +120,7 @@ $requisicion = "active-sublink";
 
                                                 <div class="form-group bmd-form-group">
 
-                                                    <span class="badge <?php echo ($response['status'] =='CERRADO')? 'badge-danger':'badge-success'?>"><?php echo $response['status'];?></span>
+                                                    <span class="badge <?php echo $cls->getStatusClass($response['status'])?>"><?php echo $response['status'];?></span>
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
@@ -118,7 +129,7 @@ $requisicion = "active-sublink";
                                                 <div class="form-group bmd-form-group">
                                                     <input type="date" class="form-control validate" name="date"
                                                            value="<?php echo date_format(date_create($response['date']), 'Y-m-d');?>"
-                                                           id="date" placeholder="Fecha">
+                                                           id="date" placeholder="Fecha" <?php echo $readOnly;?>>
                                                     <small class="form-text text-muted date-error"
                                                            style="color:red !important;"></small>
                                                 </div>
@@ -132,7 +143,7 @@ $requisicion = "active-sublink";
                                                     $result_CT = $cls->consultListQuery($sql_CT);//query
                                                     ?>
                                                     <select class="form-control validate select2" name="provider"
-                                                            id="provider">
+                                                            id="provider" <?php echo $disabled;?>>
                                                         <option value="">-Seleccione-</option>
                                                         <?php
                                                         foreach ($result_CT as $item) { ?>
@@ -153,7 +164,7 @@ $requisicion = "active-sublink";
 
                                                 <div class="form-group bmd-form-group">
                                                     <textarea class="form-control" placeholder="Comentario"
-                                                              name="comment"><?php echo trim($response['comment']);?></textarea>
+                                                              name="comment" <?php echo $readOnly;?> ><?php echo trim($response['comment']);?></textarea>
                                                 </div>
                                             </div>
                                         </div>

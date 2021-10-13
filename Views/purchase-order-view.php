@@ -99,7 +99,7 @@ if (isset($_POST['page'])) {
 
                                                 <td><?php echo ucwords($item->provider); ?></td>
                                                 <td>
-                                                    <span class="badge <?php echo ($item->status =='CERRADO')? 'badge-danger':'badge-success'?>">
+                                                    <span class="badge <?php echo $cls->getStatusClass($item->status);?>">
                                                         <?php echo $item->status;?></span>
                                                 </td>
 

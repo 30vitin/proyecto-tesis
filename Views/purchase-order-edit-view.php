@@ -18,7 +18,7 @@ if (!$response) {
 $disabled="";
 $classDisable="";
 $readOnly="";
-if($response['status']=='CERRADO'){
+if($response['status']=='CERRADO' || $response['status']=='APROBADA'){
     $disabled="disabled='disabled'";
     $classDisable="disable-button";
     $readOnly="readonly='readonly'";
@@ -119,7 +119,7 @@ $ordenescompra = "active-sublink";
 
                                                 <div class="form-group bmd-form-group">
 
-                                                    <span class="badge <?php echo ($response['status'] =='CERRADO')? 'badge-danger':'badge-success'?>"><?php echo $response['status'];?></span>
+                                                    <span class="badge <?php echo $cls->getStatusClass($response['status'])?>"><?php echo $response['status'];?></span>
                                                 </div>
                                             </div>
                                             <div class="col-md-12">

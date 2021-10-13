@@ -42,14 +42,15 @@ class Functions extends dba
     {
 
         $datos = array(
-            "limitPage"=>15,
-            "product-image"=>"Others/Files_products",
-            "default-image"=>"Views/assets/img/image_placeholder.jpg"
+            "limitPage" => 15,
+            "product-image" => "Others/Files_products",
+            "default-image" => "Views/assets/img/image_placeholder.jpg"
         );
         return $datos[$key];
     }
 
-    public function uploadFile(array $file,$path){
+    public function uploadFile(array $file, $path)
+    {
         $check = true;
         $file_name_final = "";
         if (!empty($file) && !$file['error']) {
@@ -69,15 +70,36 @@ class Functions extends dba
                     mkdir($path, 0777);
                 }
                 $file_name_final = $file_name . '.' . pathinfo($original_name, PATHINFO_EXTENSION);
-                move_uploaded_file($file_tmp, $path . '/' . $file_name_final );
+                move_uploaded_file($file_tmp, $path . '/' . $file_name_final);
             }
 
         }
 
-        $mensaje = array("success" => $check,"filename"=>$file_name_final);
-        return json_decode(json_encode($mensaje),true);
+        $mensaje = array("success" => $check, "filename" => $file_name_final);
+        return json_decode(json_encode($mensaje), true);
     }
 
+    public function getStatusClass($status)
+    {
+
+        $class = "";
+        switch ($status) {
+
+            case "ACTIVO":
+                $class = "badge-success";
+                break;
+            case "CERRADO":
+                $class = "badge-danger";
+                break;
+            case "APROBADA":
+                $class = "badge-info";
+                break;
+
+        }
+        return $class;
+
+
+    }
 
     public function exeQuery($sql)
     {

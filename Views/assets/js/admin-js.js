@@ -187,8 +187,8 @@ $(document).ready(function () {
                         if (data.url) {
                             let timerInterval
                             Swal.fire({
-                                title: 'Procensando',
-                                html: '...',
+                                title: (data.title)?data.title:'Procensando',
+                                html: (data.subtitle)?data.subtitle:'...',
                                 timer: 2000,
                                 timerProgressBar: true,
                                 didOpen: () => {
