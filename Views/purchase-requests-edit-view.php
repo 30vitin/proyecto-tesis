@@ -78,23 +78,30 @@ $requisicion = "active-sublink";
 
                                 <div class="row">
                                     <div class="col-md-12 ">
-                                        <button type="button" class="btn btn-danger pull-right btn-delete-form <?php echo $classDisable;?>"
-                                                data-form="form" data-id="<?php echo $id; ?>"
-                                                data-action="CLOSE-REQUEST"
-                                                data-text="¿Estas seguro de cerrar esta requisición?" <?php echo $disabled;?>>Cerrar
-                                        </button>
-                                        <button type="button" class="btn btn-primary pull-right btn-send-form-table <?php echo $classDisable;?>"
-                                                data-form="form" data-reset="false" <?php echo $disabled;?>>Guardar
-                                        </button>
+
 
                                         <?php if($response['status']=='ACTIVO'){?>
+                                            <button type="button" class="btn btn-danger pull-right btn-confirm-action"
+                                                    data-id="<?php echo $id;?>" data-action="CANCEL-PURCHASE-REQUEST" data-text="¿Estas seguro de cancelar esta requisición de compra?">Cancelar
+                                            </button>
+                                            <button type="button" class="btn btn-primary pull-right btn-send-form-table <?php echo $classDisable;?>"
+                                                    data-form="form" data-reset="false" <?php echo $disabled;?>>Guardar
+                                            </button>
+
                                             <button type="button" class="btn btn-success pull-right btn-confirm-action <?php echo $classDisable;?>"
                                                     data-id="<?php echo $id;?>" data-action="APPROVE-PURCHASE-REQUEST"  data-text="¿Estas seguro de aprobar esta requisición de compra?" <?php echo $disabled;?>>Aprobar para facturar
                                             </button>
+
                                         <?php }?>
-                                        <?php if($response['status']=='APROBADA' || $response['status']=='CERRADO' ){?>
+                                        <?php if($response['status']=='APROBADA'){?>
                                             <button type="button" class="btn btn-success pull-right btn-confirm-action"
                                                     data-id="<?php echo $id;?>" data-action="CONVERT-TO-PURCHASE-ORDER" data-text="¿Estas seguro convertir a orden de compra?">Convertir a O/C
+                                            </button>
+
+                                            <button type="button" class="btn btn-danger pull-right btn-delete-form <?php echo $classDisable;?>"
+                                                    data-form="form" data-id="<?php echo $id; ?>"
+                                                    data-action="CLOSE-REQUEST"
+                                                    data-text="¿Estas seguro de cerrar esta requisición?" <?php echo $disabled;?>>Cerrar
                                             </button>
 
                                         <?php }?>
