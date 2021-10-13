@@ -6,11 +6,14 @@ $(document).ready(function () {
 
     var data_table = [];
     if ($('.table-data-edit').length > 0) {
-        getDataToTable($('.table-data-edit').data('action'),$('.table-data-edit').data('id'))
+        getDataToTable($('.table-data-edit').data('action'),$('.table-data-edit').data('id'),'.table-data-edit')
     }
     $('.change-and-consult').on('change', function () {
+
         var instance = this;
         var request_id = $(instance).val();
+
+
         if(request_id){
             data_table = [];
             $.ajax({
@@ -33,6 +36,7 @@ $(document).ready(function () {
                     if ($('.table-data-add').length > 0) {
                         getDataToTable($('.table-data-add').data('action'),request_id)
                     }
+
                     if (data.data.length > 0) {
 
                         jQuery(data.data).each(function (index, value) {
@@ -73,17 +77,189 @@ $(document).ready(function () {
                 $('#total-table').html('0.00')
 
             }
-            //TODO 
-            console.log('ok')
-            //jQuery(".select-form  option[value='-1']").attr("selected", "selected");
-            //$(" option[value=3]").attr('selected', 'selected');
-            //$("#provider option:contains('-1')").attr('selected', true);
+            if($('[data-reset-select-field="true"]').length>0){
+                $('[data-reset-select-field="true"]').val('').change()
 
+            }
+
+        }
+
+    });
+    $('.change-and-consult-edit').on('change', function () {
+
+        var instance = this;
+        var request_id = $(instance).val();
+
+        if(request_id){
+            data_table = [];
+            $.ajax({
+
+                data: {a: $(instance).data("action"), id: $(instance).val()},
+                url: "./?action=admin",
+                type: "POST",
+                dataType: "JSON",
+                success: function (data) {
+                    if ($("#" + $(instance).data("form")).length > 0) {
+                        $("#" + $(instance).data("form"))[0].reset();
+                    }
+                    if ($('.table-data-edit').length > 0) {
+                        $('.table-data-edit').html('')
+                    }
+                    if ($('#total-table').length > 0) {
+                        $('#total-table').html('0.00')
+
+                    }
+                    if ($('.table-data-edit').length > 0) {
+                        getDataToTable($('.table-data-edit').data('action-change'),request_id,'.table-data-edit')
+                    }
+
+                    if (data.data.length > 0) {
+
+                        jQuery(data.data).each(function (index, value) {
+
+                            if (value.type == 'input') {
+                                if ($('#' + value.id).length > 0) {
+                                    $('#' + value.id).val(value.value)
+
+                                }
+                            }
+                            if (value.type == 'select') {
+                                if ($('#' + value.id).length > 0) {
+                                    $('#' + value.id).val(value.value).change();
+                                }
+                            }
+
+                        });
+
+                    }
+                    $(instance).val(data.id)
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
+
+                }
+
+            });
+        }else{
+
+            if ($("#" + $(instance).data("form")).length > 0) {
+                $("#" + $(instance).data("form"))[0].reset();
+            }
+            if ($('.table-data-add').length > 0) {
+                $('.table-data-add').html('')
+            }
+            if ($('#total-table').length > 0) {
+                $('#total-table').html('0.00')
+
+            }
+            if($('[data-reset-select-field="true"]').length>0){
+                $('[data-reset-select-field="true"]').val('').change()
+
+            }
 
         }
 
     });
 
+    //set status con confirmacion
+    $('.btn-confirm-action').on('click', function () {
+        var instance = this;
+        var id = $(this).data('id');
+        var action = $(this).data('action');
+        var text = $(this).data('text');
+        Swal.fire({
+            title: (text) ? text : '¿Estas seguro de realizar esta acción?',
+            showCancelButton: true,
+            confirmButtonText: 'Si',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.value) {
+
+                $.ajax({
+
+                    data: {a: action, id: id},
+                    url: "./?action=admin",
+                    type: "POST",
+                    dataType: "JSON",
+                    success: function (data) {
+                        BtnReset(instance)
+                        if (data.url) {
+                            let timerInterval
+                            Swal.fire({
+                                title: 'Procensando',
+                                html: '...',
+                                timer: 2000,
+                                timerProgressBar: true,
+                                didOpen: () => {
+                                    Swal.showLoading()
+                                },
+                                willClose: () => {
+                                    clearInterval(timerInterval)
+                                }
+                            }).then((result) => {
+                                if (result.dismiss === Swal.DismissReason.timer) {
+                                    location.href = data.url;
+                                }
+                            })
+                        } else {
+
+                            if (data.reload) {
+                                let timerInterval
+                                Swal.fire({
+                                    title: 'Recargando',
+                                    timer: 1000,
+                                    timerProgressBar: true,
+                                    didOpen: () => {
+                                        Swal.showLoading()
+                                    },
+                                    willClose: () => {
+                                        clearInterval(timerInterval)
+                                    }
+                                }).then((result) => {
+                                    if (result.dismiss === Swal.DismissReason.timer) {
+                                        location.reload()
+                                    }
+                                })
+
+                            } else {
+                                manageShowAlertFormSuccess(true);
+                                manageShowAlertFormError(false);
+                                $('.new-alert-success').html('<div class="row col-md-12">' +
+                                    '<div class="col-md-12">' +
+                                    '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
+                                    '</div>' +
+                                    ' <div class="col-md-12">' +
+                                    '<h4> <i class="material-icons">check</i> ' + data.mens + '</h4>' +
+                                    '</div>' +
+                                    ' <div class="col-md-12">' +
+
+                                    '</div>' +
+                                    '</div>');
+                            }
+
+
+                        }
+
+
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        BtnReset(instance)
+                        console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
+
+                    }
+
+                });
+
+                /**/
+
+            }
+        })
+
+    });
+
+
+    //envio de formularios / envio de formularios con tabla
     $('.btn-send-form').on('click', function (e) {
         e.preventDefault()
         var instance = this;
@@ -597,7 +773,6 @@ $(document).ready(function () {
 
         });
     });
-
     $('.btn-add-product-table').on('click', function () {
 
         //checked-table
@@ -670,6 +845,7 @@ $(document).ready(function () {
 
     })
 
+    //en el crear
     $('.table-data-add').on('click', '.remove-line', function () {
         var instance = this;
         $('#line-' + $(instance).data('id')).remove()
@@ -683,8 +859,6 @@ $(document).ready(function () {
         });
         calculateTotal();
     });
-
-
     $('.table-data-add').on('keyup mouseup', '.units-line', function () {
 
         var id = $(this).data('id')
@@ -722,6 +896,91 @@ $(document).ready(function () {
 
     });
     $('.table-data-add').on('keyup mouseup', '.price-line', function () {
+
+        var id = $(this).data('id')
+        var costs = Number($(this).val());
+        var units = Number(0);
+        var total = Number(0);
+
+        //current data line
+        jQuery(data_table).each(function (index, value) {
+
+            if (value.dkey == id) {
+                units = Number(value.data.unit)
+                return false;
+            }
+
+        });
+
+        total += Number(units * costs);
+
+        //update data
+        jQuery(data_table).each(function (index, value) {
+
+            if (value.dkey == id) {
+                value.data.unit = units
+                value.data.costs = costs
+                value.data.total = total
+                return false;
+            }
+
+        });
+        $('#total-' + id).html(total.toFixed(2))
+        calculateTotal()
+
+    });
+
+    //en el editar
+    $('.table-data-edit').on('click', '.remove-line', function () {
+        var instance = this;
+        $('#line-' + $(instance).data('id')).remove()
+        jQuery(data_table).each(function (index, value) {
+
+            if (value.dkey == $(instance).data('id')) {
+                data_table.splice(index, 1); // This will remove the object that first name equals to Test1
+
+                return false; // This will stop the execution of jQuery each loop.
+            }
+        });
+        calculateTotal();
+    });
+    $('.table-data-edit').on('keyup mouseup', '.units-line', function () {
+
+        var id = $(this).data('id')
+        var units = Number($(this).val());
+        var costs = Number(0);
+        var total = Number(0);
+
+        //current data line
+        jQuery(data_table).each(function (index, value) {
+
+            if (value.dkey == id) {
+                costs = Number(value.data.costs)
+                return false;
+            }
+
+        });
+
+        total += Number(units * costs);
+
+        //update data
+        jQuery(data_table).each(function (index, value) {
+
+            if (value.dkey == id) {
+                value.data.unit = units
+                value.data.costs = costs
+                value.data.total = total
+                return false;
+            }
+
+        });
+        $('#total-' + id).html(total.toFixed(2))
+
+
+        calculateTotal()
+
+    });
+    $('.table-data-edit').on('keyup mouseup', '.price-line', function () {
 
         var id = $(this).data('id')
         var costs = Number($(this).val());
@@ -863,9 +1122,9 @@ $(document).ready(function () {
 
     }
 
-    function getDataToTable(action,id) {
+    function getDataToTable(action,id,targetAdd=".table-data-add") {
 
-        if (id) {
+        if (action && id && targetAdd) {
             $.ajax({
 
                 data: {a: action, id: id},
@@ -913,7 +1172,7 @@ $(document).ready(function () {
 
 
                             html += '</tr>';
-                            $('.table-data-add').append(html);
+                            $(targetAdd).append(html);
 
                         });
                         calculateTotal();

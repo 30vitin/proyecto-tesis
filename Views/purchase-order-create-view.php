@@ -120,7 +120,7 @@ $ordenescompra = "active-sublink";
                                                     $result_CT = $cls->consultListQuery($sql_CT);//query
                                                     ?>
                                                     <select class="form-control validate select2 select-form" name="provider"
-                                                            id="provider">
+                                                            id="provider" data-reset-select-field="true">
                                                         <option value="">-Seleccione-</option>
                                                         <?php
                                                         foreach ($result_CT as $item) { ?>
@@ -172,7 +172,7 @@ $ordenescompra = "active-sublink";
                                                     <th>Total</th>
                                                 </tr>
                                                 </thead>
-                                                <tbody class="table-data-add"  data-action="GET-PURCHASE-REQUEST-DETAILS">
+                                                <tbody class="table-data-add "  data-action="GET-PURCHASE-REQUEST-DETAILS">
 
                                                 </tbody>
                                                 <tfoot>
