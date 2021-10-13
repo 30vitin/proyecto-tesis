@@ -23,6 +23,7 @@ $(document).ready(function () {
                 type: "POST",
                 dataType: "JSON",
                 success: function (data) {
+
                     if ($("#" + $(instance).data("form")).length > 0) {
                         $("#" + $(instance).data("form"))[0].reset();
                     }
@@ -37,7 +38,7 @@ $(document).ready(function () {
                         getDataToTable($('.table-data-add').data('action'),request_id)
                     }
 
-                    if (data.data.length > 0) {
+                    if (data.data) {
 
                         jQuery(data.data).each(function (index, value) {
 
@@ -56,6 +57,7 @@ $(document).ready(function () {
                         });
 
                     }
+
                     $(instance).val(data.id)
 
                 },
@@ -168,6 +170,35 @@ $(document).ready(function () {
         var id = $(this).data('id');
         var action = $(this).data('action');
         var text = $(this).data('text');
+        var winput = $(this).data('winput');
+        var winputtext = $(this).data('winputtext');
+
+        var validForm = $(this).data('validform');
+        var validTableForm = $(this).data('validtableform');
+
+        if(validForm){
+            if(!documentValidate()){
+                return false;
+            }
+        }
+        if(validTableForm){
+            if(!tableValidate()){
+                manageShowAlertFormSuccess(false);
+                manageShowAlertFormError(true);
+
+                BtnReset(instance)
+                Swal.fire('¡Alerta!', 'Favor validar los campos de la tabla', 'error')
+                $('.new-alert-error').html('<div class="row">' +
+                    '<div class="col-md-12">' +
+                    '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-error" data-add="alert-error-none">x</button>' +
+                    '</div>' +
+                    ' <div class="col-md-12">' +
+                    '<h4><i class="material-icons">warning</i> Las unidades y el costo de los productos deben ser mayor a cero</h4>' +
+                    '</div>' +
+                    '</div>');
+                return false;
+            }
+        }
         Swal.fire({
             title: (text) ? text : '¿Estas seguro de realizar esta acción?',
             showCancelButton: true,
@@ -175,40 +206,121 @@ $(document).ready(function () {
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.value) {
+                if(winput){
 
-                $.ajax({
+                    Swal.fire({
+                        title: (winputtext) ? winputtext:'Agregar nota',
+                        input: 'text',
+                        inputAttributes: {
+                            autocapitalize: 'off'
+                        },
+                        showCancelButton: true,
+                        confirmButtonText: 'Enviar',
+                        showLoaderOnConfirm: true,
+                        backdrop: false,
+                        preConfirm: (comment) => {
+                            if(!comment){
+                                return  Swal.showValidationMessage('Este campo es obligatorio')
+                            }
 
-                    data: {a: action, id: id},
-                    url: "./?action=admin",
-                    type: "POST",
-                    dataType: "JSON",
-                    success: function (data) {
-                        BtnReset(instance)
-                        if (data.url) {
-                            let timerInterval
-                            Swal.fire({
-                                title: (data.title)?data.title:'Procensando',
-                                html: (data.subtitle)?data.subtitle:'...',
-                                timer: 2000,
-                                timerProgressBar: true,
-                                didOpen: () => {
-                                    Swal.showLoading()
+                        },
+                        allowOutsideClick: () => !Swal.isLoading()
+                    }).then((result) => {
+                        if(result.isConfirmed){
+                            $.ajax({
+                                data: {a: action, id: id,comment_canceled:result.value},
+                                url: "./?action=admin",
+                                type: "POST",
+                                dataType: "JSON",
+                                success: function (data) {
+                                    BtnReset(instance)
+                                    if (data.url) {
+                                        let timerInterval
+                                        Swal.fire({
+                                            title: (data.title)?data.title:'Procensando',
+                                            html: (data.subtitle)?data.subtitle:'...',
+                                            timer: 2000,
+                                            timerProgressBar: true,
+                                            didOpen: () => {
+                                                Swal.showLoading()
+                                            },
+                                            willClose: () => {
+                                                clearInterval(timerInterval)
+                                            }
+                                        }).then((result) => {
+                                            if (result.dismiss === Swal.DismissReason.timer) {
+                                                location.href = data.url;
+                                            }
+                                        })
+                                    } else {
+
+                                        if (data.reload) {
+                                            let timerInterval
+                                            Swal.fire({
+                                                title: 'Recargando',
+                                                timer: 1000,
+                                                timerProgressBar: true,
+                                                didOpen: () => {
+                                                    Swal.showLoading()
+                                                },
+                                                willClose: () => {
+                                                    clearInterval(timerInterval)
+                                                }
+                                            }).then((result) => {
+                                                if (result.dismiss === Swal.DismissReason.timer) {
+                                                    location.reload()
+                                                }
+                                            })
+
+                                        } else {
+                                            manageShowAlertFormSuccess(true);
+                                            manageShowAlertFormError(false);
+                                            $('.new-alert-success').html('<div class="row col-md-12">' +
+                                                '<div class="col-md-12">' +
+                                                '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
+                                                '</div>' +
+                                                ' <div class="col-md-12">' +
+                                                '<h4> <i class="material-icons">check</i> ' + data.mens + '</h4>' +
+                                                '</div>' +
+                                                ' <div class="col-md-12">' +
+
+                                                '</div>' +
+                                                '</div>');
+                                        }
+
+
+                                    }
+
+
                                 },
-                                willClose: () => {
-                                    clearInterval(timerInterval)
-                                }
-                            }).then((result) => {
-                                if (result.dismiss === Swal.DismissReason.timer) {
-                                    location.href = data.url;
-                                }
-                            })
-                        } else {
+                                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                    BtnReset(instance)
+                                    console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
 
-                            if (data.reload) {
+                                }
+
+                            });
+                        }
+
+
+                    })
+
+                }else{
+                    $.ajax({
+
+                        data: {a: action, id: id},
+                        url: "./?action=admin",
+                        type: "POST",
+                        dataType: "JSON",
+                        success: function (data) {
+                            console.log(action,  id)
+                            BtnReset(instance)
+                            if (data.url) {
                                 let timerInterval
                                 Swal.fire({
-                                    title: 'Recargando',
-                                    timer: 1000,
+                                    title: (data.title)?data.title:'Procensando...',
+                                    html: (data.mens)?data.mens:'',
+                                    timer: 3000,
                                     timerProgressBar: true,
                                     didOpen: () => {
                                         Swal.showLoading()
@@ -218,40 +330,62 @@ $(document).ready(function () {
                                     }
                                 }).then((result) => {
                                     if (result.dismiss === Swal.DismissReason.timer) {
-                                        location.reload()
+                                        location.href = data.url;
                                     }
                                 })
-
                             } else {
-                                manageShowAlertFormSuccess(true);
-                                manageShowAlertFormError(false);
-                                $('.new-alert-success').html('<div class="row col-md-12">' +
-                                    '<div class="col-md-12">' +
-                                    '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
-                                    '</div>' +
-                                    ' <div class="col-md-12">' +
-                                    '<h4> <i class="material-icons">check</i> ' + data.mens + '</h4>' +
-                                    '</div>' +
-                                    ' <div class="col-md-12">' +
 
-                                    '</div>' +
-                                    '</div>');
+                                if (data.reload) {
+                                    let timerInterval
+                                    Swal.fire({
+                                        title: 'Recargando',
+                                        timer: 1000,
+                                        timerProgressBar: true,
+                                        didOpen: () => {
+                                            Swal.showLoading()
+                                        },
+                                        willClose: () => {
+                                            clearInterval(timerInterval)
+                                        }
+                                    }).then((result) => {
+                                        if (result.dismiss === Swal.DismissReason.timer) {
+                                            location.reload()
+                                        }
+                                    })
+
+                                } else {
+
+
+                                    manageShowAlertFormError(true);
+
+                                    $("#ht-preloader").css("display", "none");
+
+                                    Swal.fire('¡Alerta!', data.mens, 'error')
+                                    $('.new-alert-error').html('<div class="row">' +
+                                        '<div class="col-md-12">' +
+                                        '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-error" data-add="alert-error-none">x</button>' +
+                                        '</div>' +
+                                        ' <div class="col-md-12">' +
+                                        '<h4><i class="material-icons">warning</i> ' + data.mens + '</h4>' +
+                                        '</div>' +
+                                        '</div>');
+
+                                }
+
+
                             }
 
 
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            BtnReset(instance)
+                            console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
+
                         }
 
+                    });
 
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        BtnReset(instance)
-                        console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
-
-                    }
-
-                });
-
-                /**/
+                }
 
             }
         })
@@ -627,6 +761,7 @@ $(document).ready(function () {
         var id = $(this).data('id');
         var action = $(this).data('action');
         var text = $(this).data('text');
+
         Swal.fire({
             title: (text) ? text : '¿Estas seguro de eliminar este elemento?',
 
@@ -723,13 +858,13 @@ $(document).ready(function () {
         var add = $(this).data('add')
         $('.' + target).addClass(add)
     });
+
     //openModal products
     $('.btn-product-table-line').on('click', function () {
-
+        console.log('ok')
         var current_id = $('input[name="product_id[]"]').map(function () {
             return this.value; // $(this).val()
         }).get();
-
         $('#modalProduct').modal('show')
         $.ajax({
 
@@ -825,7 +960,14 @@ $(document).ready(function () {
 
 
                                 html += '</tr>';
-                                $('.table-data-add').append(html);
+
+                                if($('.table-data-add').length>0){
+                                    $('.table-data-add').append(html);
+                                }
+                                if($('.table-data-edit').length>0){
+                                    $('.table-data-edit').append(html);
+                                }
+
 
                             });
 
@@ -1019,7 +1161,6 @@ $(document).ready(function () {
 
         var check = true;
         $.each($('.validate'), function (index, value) {
-
 
             if ($(value).val() == '') {
                 $("." + this.id + '-error').html("This field is required!");

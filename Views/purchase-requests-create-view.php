@@ -122,6 +122,18 @@ $requisicion = "active-sublink";
                                                     </textarea>
                                                 </div>
                                             </div>
+
+                                            <div class="col-md-12">
+                                                <label class="col-form-label">Referencia #</label>
+
+                                                <div class="form-group bmd-form-group">
+                                                    <input type="text" class="form-control" name="reference"
+                                                           value=""
+                                                           id="reference" placeholder="Referencia #">
+                                                </div>
+                                            </div>
+
+
                                         </div>
 
                                         <div class="col-md-12 table-responsive">

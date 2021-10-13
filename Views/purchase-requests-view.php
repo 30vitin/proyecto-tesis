@@ -39,7 +39,7 @@ if (isset($_POST['page'])) {
         <!-- Navbar -->
 
         <?php
-        $navbar="Listar Requisición";
+        $navbar="Lista de  Requisiciones";
         include 'navbar.php'; ?>
         <!-- End Navbar -->
         <div class="content">

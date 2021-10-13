@@ -8,7 +8,7 @@ if (!isset($_GET['id'])) {
     header("Location:javascript:window.history.go(-2);");
 }
 $id = $_GET['id'];
-$sql = "SELECT date,provider,comment,status FROM purchase_requests WHERE id='$id' and status<>'DELETE'";
+$sql = "SELECT date,provider,comment,status,comment_canceled,reference FROM purchase_requests WHERE id='$id' and status<>'DELETE'";
 
 $response = $cls->consulQuery($sql);
 if (!$response) {
@@ -17,7 +17,7 @@ if (!$response) {
 $disabled="";
 $classDisable="";
 $readOnly="";
-if($response['status']=='CERRADO' || $response['status']=='APROBADA'){
+if($response['status']=='CERRADO' || $response['status']=='APROBADA' || $response['status']=='CANCELADA'){
 
     $disabled="disabled='disabled'";
     $classDisable="disable-button";
@@ -81,28 +81,46 @@ $requisicion = "active-sublink";
 
 
                                         <?php if($response['status']=='ACTIVO'){?>
-                                            <button type="button" class="btn btn-danger pull-right btn-confirm-action"
-                                                    data-id="<?php echo $id;?>" data-action="CANCEL-PURCHASE-REQUEST" data-text="¿Estas seguro de cancelar esta requisición de compra?">Cancelar
-                                            </button>
+                                                <?php if($cls->enableCancel()){?>
+                                                        <button type="button" class="btn btn-danger pull-right btn-confirm-action"
+                                                                data-id="<?php echo $id;?>"
+                                                                data-action="CANCEL-PURCHASE-REQUEST"
+                                                                data-text="¿Estas seguro de cancelar esta requisición de compra?"
+                                                                data-winput="true"
+                                                                data-winputtext="Agregar nota para cancelar"
+                                                                >Cancelar
+                                                        </button>
+                                                <?php }?>
+
                                             <button type="button" class="btn btn-primary pull-right btn-send-form-table <?php echo $classDisable;?>"
                                                     data-form="form" data-reset="false" <?php echo $disabled;?>>Guardar
                                             </button>
 
                                             <button type="button" class="btn btn-success pull-right btn-confirm-action <?php echo $classDisable;?>"
-                                                    data-id="<?php echo $id;?>" data-action="APPROVE-PURCHASE-REQUEST"  data-text="¿Estas seguro de aprobar esta requisición de compra?" <?php echo $disabled;?>>Aprobar para facturar
+                                                    data-id="<?php echo $id;?>"
+                                                    data-action="APROVE-PURCHASE-REQUEST"
+                                                    data-text="¿Estas seguro de aprobar esta requisición de compra?" <?php echo $disabled;?>
+                                                    data-validform="true"
+                                                    data-validtableform="true">Aprobar para O/C
                                             </button>
 
                                         <?php }?>
                                         <?php if($response['status']=='APROBADA'){?>
+
+                                            <?php if($cls->enableClose()) {?>
+                                                    <button type="button" class="btn btn-danger pull-right btn-delete-form"
+                                                            data-form="form" data-id="<?php echo $id; ?>"
+                                                            data-action="CLOSE-REQUEST"
+                                                            data-text="¿Estas seguro de cerrar esta requisición?">Cerrar
+                                                    </button>
+                                                <?php }  ?>
+
                                             <button type="button" class="btn btn-success pull-right btn-confirm-action"
-                                                    data-id="<?php echo $id;?>" data-action="CONVERT-TO-PURCHASE-ORDER" data-text="¿Estas seguro convertir a orden de compra?">Convertir a O/C
+                                                    data-id="<?php echo $id;?>"
+                                                    data-action="CONVERT-TO-PURCHASE-ORDER"
+                                                    data-text="¿Estas seguro convertir a orden de compra?">Convertir a O/C
                                             </button>
 
-                                            <button type="button" class="btn btn-danger pull-right btn-delete-form <?php echo $classDisable;?>"
-                                                    data-form="form" data-id="<?php echo $id; ?>"
-                                                    data-action="CLOSE-REQUEST"
-                                                    data-text="¿Estas seguro de cerrar esta requisición?" <?php echo $disabled;?>>Cerrar
-                                            </button>
 
                                         <?php }?>
 
@@ -130,6 +148,16 @@ $requisicion = "active-sublink";
                                                     <span class="badge <?php echo $cls->getStatusClass($response['status'])?>"><?php echo $response['status'];?></span>
                                                 </div>
                                             </div>
+                                            <?php if ($response['status'] == 'CANCELADA') { ?>
+                                                <div class="col-md-12">
+                                                    <label class="col-form-label">Comentario de cancelación</label>
+
+                                                    <div class="form-group bmd-form-group">
+                                                        <?php echo $response['comment_canceled'];?>
+                                                    </div>
+                                                </div>
+
+                                            <?php } ?>
                                             <div class="col-md-12">
                                                 <label class="col-form-label">Fecha</label>
 
@@ -172,6 +200,16 @@ $requisicion = "active-sublink";
                                                 <div class="form-group bmd-form-group">
                                                     <textarea class="form-control" placeholder="Comentario"
                                                               name="comment" <?php echo $readOnly;?> ><?php echo trim($response['comment']);?></textarea>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <label class="col-form-label">Referencia #</label>
+
+                                                <div class="form-group bmd-form-group">
+                                                    <input type="text" class="form-control" name="reference"
+                                                           value="<?php echo $response['reference'];?>"
+                                                           id="reference" placeholder="Referencia #" <?php echo $readOnly;?>>
                                                 </div>
                                             </div>
                                         </div>

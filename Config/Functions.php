@@ -10,10 +10,22 @@ require('Others/fpdf/fpdf.php');
 class Functions extends dba
 {
     private $maximumFileTam = 2097152;
+    private $enableClose = true;
+    private $enableCancel = true;
+
 
     public function __construct()
     {
 
+    }
+
+    public function enableClose(){
+
+        return $this->enableClose;
+    }
+    public function enableCancel(){
+
+        return $this->enableCancel;
     }
 
 
@@ -93,6 +105,9 @@ class Functions extends dba
                 break;
             case "APROBADA":
                 $class = "badge-info";
+                break;
+            case "CANCELADA":
+                $class = "badge-secondary";
                 break;
 
         }

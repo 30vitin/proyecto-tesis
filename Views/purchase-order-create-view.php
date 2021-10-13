@@ -44,7 +44,7 @@ $ordenescompra = "active-sublink";
 
                     <div class="col-8 col-lg-1"></div>
 
-                    <div class="col-md-10">
+                    <div class="col-md-12">
                         <div class="card ">
                             <div class="card-header card-header-rose card-header-text">
                                 <div class="card-text">
@@ -145,6 +145,15 @@ $ordenescompra = "active-sublink";
                                                               name="comment" id="comment">
 
                                                     </textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="col-form-label">Referencia #</label>
+
+                                                <div class="form-group bmd-form-group">
+                                                    <input type="text" class="form-control" name="reference"
+                                                           value=""
+                                                           id="reference" placeholder="Referencia #">
                                                 </div>
                                             </div>
                                         </div>

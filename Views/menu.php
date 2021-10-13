@@ -63,10 +63,19 @@ if (isset($categoria))
 else
     $categoria = "";
 
+if (isset($clientes))
+    $clientes = ($clientes == '' ? '' : $clientes);
+else
+    $clientes = "";
+
 if (isset($logout))
     $logout = ($logout == '' ? '' : $logout);
 else
     $logout = "";
+
+
+
+
 //seguir
 ?>
 
@@ -99,6 +108,13 @@ else
             </a>
             <div class="collapse" id="sales" style="">
                 <ul class="nav">
+                    <li class="nav-item <?php echo $clientes; ?>">
+                        <a class="nav-link" href="./?view=customers">
+                            <span class="sidebar-mini"> CL </span>
+                            <span class="sidebar-normal"> Clientes </span>
+                        </a>
+                    </li>
+
                     <li class="nav-item <?php echo $cotizacion; ?>">
                         <a class="nav-link" href="./?view=quotes">
                             <span class="sidebar-mini"> CO </span>
@@ -190,6 +206,8 @@ else
                 </ul>
             </div>
         </li>
+
+
 
         <li class="nav-item <?php echo $logout; ?> ">
             <a class="nav-link" href="./?view=logout">

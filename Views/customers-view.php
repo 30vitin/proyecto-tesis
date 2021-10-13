@@ -3,17 +3,10 @@ require_once 'Config/Functions.php';
 $cls = new Functions;  //llamando al objeto
 include 'utils.php';
 
+$sales = "active";
+$clientes ="active-sublink";
 
-$purchase = "active";
-$ordenescompra = "active-sublink";
 
-if (isset($_POST['page'])) {
-
-    $page = $_POST['page'];
-
-} else {
-    $page = 1;
-}
 ?>
 
 <!DOCTYPE html>
@@ -21,9 +14,10 @@ if (isset($_POST['page'])) {
 
 <head>
     <meta charset="utf-8"/>
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Orden de Compra | Cafeteria
+        Clientes | Cafeteria
     </title>
     <?php include "styles.php"; ?>
     <link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet"/>
@@ -34,58 +28,58 @@ if (isset($_POST['page'])) {
 
 <?php include 'loader.php'; ?>
 
-
 <div class="wrapper ">
     <?php include "sidebar.php"; ?>
+
     <div class="main-panel">
         <!-- Navbar -->
 
         <?php
-        $navbar="Lista de Ordenes de Compra";
+        $navbar="Lista de  Clientes";
         include 'navbar.php'; ?>
 
         <!-- End Navbar -->
         <div class="content">
             <div class="container-fluid">
-
                 <div class="row">
 
                     <div class="col-8 col-lg-1"></div>
 
                     <div class="col-md-9">
                         <div class="card">
-                            <div class="card-header">
-                                <h4 class="card-title ">Ordenes de compra</h4>
+                            <div class="card-header ">
+                                <h4 class="card-title ">Clientes</h4>
                             </div>
                             <div class="card-body">
-
                                 <div class="row">
                                     <div class="col-md-5 pb-3">
-                                        <a href="./?view=purchase-order-create" class="btn btn-primary">
-                                            Registrar orden de compra
+                                        <a href="./?view=customers-create" class="btn btn-primary">
+                                            Registrar cliente
                                         </a>
 
                                     </div>
 
                                 </div>
 
+
+
+
                                 <div class="table-responsive">
                                     <table id="table" class="table table-striped table-bordered" style="width:100%">
                                         <thead class="text-primary">
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Requisición</th>
-                                            <th>Fecha</th>
-                                            <th>Proveedor</th>
-                                            <td>Status</td>
+                                            <th>Id</th>
+                                            <th>Nombre</th>
+                                            <th>Email</th>
+                                            <th>Teléfono</th>
+                                            <th>Tipo de Crédito</th>
                                             <th>Acción</th>
                                         </tr>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <?php
-                                        $sql = "SELECT t1.id, t1.purchase_request,t2.name as provider, t1.date,t1.status FROM purchase_orders t1 join providers t2 on t1.provider = t2.id WHERE t1.status <>'DELETE'  order by t1.created_at desc ";
-
+                                        $sql = "SELECT t1.id, t1.name, t1.email,t1.telephone1 FROM customers t1 WHERE t1.status <>'DELETE' order by t1.created_at desc ";
 
                                         $result_lis = $cls->consultListQuery($sql);//query
 
@@ -94,19 +88,14 @@ if (isset($_POST['page'])) {
                                             <tr>
 
                                                 <td><?php echo $item->id; ?></td>
-                                                <td><?php echo $item->purchase_request; ?></td>
-                                                <td><?php echo $item->date; ?></td>
-
-                                                <td><?php echo ucwords($item->provider); ?></td>
-                                                <td>
-                                                    <span class="badge <?php echo $cls->getStatusClass($item->status);?>">
-                                                        <?php echo $item->status;?></span>
-                                                </td>
+                                                <td><?php echo $item->name; ?></td>
+                                                <td><?php echo $item->email; ?></td>
+                                                <td><?php echo $item->telephone1; ?></td>
 
                                                 <td class="td-actions">
-                                                    <a href="./?view=purchase-order-edit&id=<?php echo $item->id; ?>"
+                                                    <a href="./?view=customers-edit&id=<?php echo $item->id; ?>"
                                                        rel="tooltip" title="" class="btn btn-primary btn-link btn-sm"
-                                                       data-original-title="Mostrar Orden de Compra">
+                                                       data-original-title="Mostrar Cliente">
                                                         <i class="material-icons">edit</i>
                                                         <div class="ripple-container"></div>
                                                     </a>
@@ -129,8 +118,11 @@ if (isset($_POST['page'])) {
         </div>
 
         <?php include 'footer.php'; ?>
+
     </div>
+
 </div>
+
 <?php include "scripts/scripts.php"; ?>
 <?php include "scripts/data-table.php"; ?>
 </body>
