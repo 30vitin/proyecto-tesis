@@ -36,7 +36,7 @@ if (isset($_POST['page'])) {
 <div class="wrapper ">
     <?php include "sidebar.php"; ?>
 
-    <div class="main-panel">
+    <div class="main-panel" >
         <!-- Navbar -->
 
         <?php
@@ -50,7 +50,7 @@ if (isset($_POST['page'])) {
 
                     <div class="col-8 col-lg-1"></div>
 
-                    <div class="col-md-9">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="card-header ">
                                 <h4 class="card-title ">Cotizaciones</h4>
@@ -77,13 +77,14 @@ if (isset($_POST['page'])) {
                                             <th>Fecha</th>
                                             <th>Cliente</th>
                                             <th>Orden de Compra</th>
+                                            <th>Status</th>
                                             <th>Acción</th>
                                         </tr>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <?php
-                                        $sql = "SELECT t1.id, t1.purchase_order, t1.date,t2.name FROM quotes t1 join customers t2 on t1.customer = t2.id WHERE t1.status <>'DELETE' order by t1.created_at desc ";
+                                        $sql = "SELECT t1.id, t1.purchase_order, t1.date,t2.name,t1.status FROM quotes t1 join customers t2 on t1.customer = t2.id WHERE t1.status <>'DELETE' order by t1.created_at desc ";
 
                                         $result_lis = $cls->consultListQuery($sql);//query
 
@@ -94,7 +95,11 @@ if (isset($_POST['page'])) {
                                                 <td><?php echo $item->id; ?></td>
                                                 <td><?php echo $item->date; ?></td>
                                                 <td><?php echo $item->name; ?></td>
-                                                <td><?php echo $item->purchase_request; ?></td>
+                                                <td><?php echo $item->purchase_order; ?></td>
+                                                <td>
+                                                    <span class="badge <?php echo $cls->getStatusClass($item->status);?>">
+                                                        <?php echo $item->status;?></span>
+                                                </td>
 
                                                 <td class="td-actions">
                                                     <a href="./?view=quotes-edit&id=<?php echo $item->id; ?>"

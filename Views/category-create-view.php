@@ -41,7 +41,7 @@ $categoria="active-sublink";
 
             <div class="col-8 col-lg-1"></div>
 
-            <div class="col-md-8">
+            <div class="col-md-12">
               <div class="card ">
                 <div class="card-header card-header-rose card-header-text">
                   <div class="card-text">

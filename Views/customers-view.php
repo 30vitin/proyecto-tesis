@@ -45,7 +45,7 @@ $clientes ="active-sublink";
 
                     <div class="col-8 col-lg-1"></div>
 
-                    <div class="col-md-9">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="card-header ">
                                 <h4 class="card-title ">Clientes</h4>
@@ -79,7 +79,7 @@ $clientes ="active-sublink";
                                         </thead>
                                         <tbody>
                                         <?php
-                                        $sql = "SELECT t1.id, t1.name, t1.email,t1.telephone1 FROM customers t1 WHERE t1.status <>'DELETE' order by t1.created_at desc ";
+                                        $sql = "SELECT t1.id, t1.name, t1.email,t1.telephone1,type_credit FROM customers t1 WHERE t1.status <>'DELETE' order by t1.created_at desc ";
 
                                         $result_lis = $cls->consultListQuery($sql);//query
 
@@ -91,6 +91,7 @@ $clientes ="active-sublink";
                                                 <td><?php echo $item->name; ?></td>
                                                 <td><?php echo $item->email; ?></td>
                                                 <td><?php echo $item->telephone1; ?></td>
+                                                <td><?php echo $item->type_credit; ?></td>
 
                                                 <td class="td-actions">
                                                     <a href="./?view=customers-edit&id=<?php echo $item->id; ?>"

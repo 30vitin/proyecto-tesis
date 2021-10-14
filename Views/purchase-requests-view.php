@@ -48,7 +48,7 @@ if (isset($_POST['page'])) {
 
                     <div class="col-8 col-lg-1"></div>
 
-                    <div class="col-md-9">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="card-header ">
                                 <h4 class="card-title ">Requisición</h4>

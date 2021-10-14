@@ -6,7 +6,7 @@ $(document).ready(function () {
 
     var data_table = [];
     if ($('.table-data-edit').length > 0) {
-        getDataToTable($('.table-data-edit').data('action'),$('.table-data-edit').data('id'),'.table-data-edit')
+        getDataToTable($('.table-data-edit').data('action'), $('.table-data-edit').data('id'), '.table-data-edit')
     }
     $('.change-and-consult').on('change', function () {
 
@@ -14,7 +14,7 @@ $(document).ready(function () {
         var request_id = $(instance).val();
 
 
-        if(request_id){
+        if (request_id) {
             data_table = [];
             $.ajax({
 
@@ -27,16 +27,25 @@ $(document).ready(function () {
                     if ($("#" + $(instance).data("form")).length > 0) {
                         $("#" + $(instance).data("form"))[0].reset();
                     }
-                    if ($('.table-data-add').length > 0) {
-                        $('.table-data-add').html('')
-                    }
+
                     if ($('#total-table').length > 0) {
                         $('#total-table').html('0.00')
 
                     }
                     if ($('.table-data-add').length > 0) {
-                        getDataToTable($('.table-data-add').data('action'),request_id)
+                        $('.table-data-add').html('')
+                        getDataToTable($('.table-data-add').data('action'), request_id)
                     }
+                    if ($('.table-data-add-sect2').length > 0) {
+
+                        $('.table-data-add-sect2').html('');
+                        $('#unit-buy').html('0.00')
+                        $('#unit-request').html('0.00')
+                        $('#unit-diff').html('0.00')
+                        getDataToTableSect2($('.table-data-add-sect2').data('action'), request_id)
+
+                    }
+
 
                     if (data.data) {
 
@@ -60,6 +69,7 @@ $(document).ready(function () {
 
                     $(instance).val(data.id)
 
+
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
@@ -67,7 +77,7 @@ $(document).ready(function () {
                 }
 
             });
-        }else{
+        } else {
 
             if ($("#" + $(instance).data("form")).length > 0) {
                 $("#" + $(instance).data("form"))[0].reset();
@@ -79,8 +89,16 @@ $(document).ready(function () {
                 $('#total-table').html('0.00')
 
             }
-            if($('[data-reset-select-field="true"]').length>0){
+            if ($('[data-reset-select-field="true"]').length > 0) {
                 $('[data-reset-select-field="true"]').val('').change()
+
+            }
+            if ($('.table-data-add-sect2').length > 0) {
+
+                $('.table-data-add-sect2').html('');
+                $('#unit-buy').html('0.00')
+                $('#unit-request').html('0.00')
+                $('#unit-diff').html('0.00')
 
             }
 
@@ -92,7 +110,7 @@ $(document).ready(function () {
         var instance = this;
         var request_id = $(instance).val();
 
-        if(request_id){
+        if (request_id) {
             data_table = [];
             $.ajax({
 
@@ -112,7 +130,7 @@ $(document).ready(function () {
 
                     }
                     if ($('.table-data-edit').length > 0) {
-                        getDataToTable($('.table-data-edit').data('action-change'),request_id,'.table-data-edit')
+                        getDataToTable($('.table-data-edit').data('action-change'), request_id, '.table-data-edit')
                     }
 
                     if (data.data.length > 0) {
@@ -143,7 +161,7 @@ $(document).ready(function () {
                 }
 
             });
-        }else{
+        } else {
 
             if ($("#" + $(instance).data("form")).length > 0) {
                 $("#" + $(instance).data("form"))[0].reset();
@@ -155,7 +173,7 @@ $(document).ready(function () {
                 $('#total-table').html('0.00')
 
             }
-            if($('[data-reset-select-field="true"]').length>0){
+            if ($('[data-reset-select-field="true"]').length > 0) {
                 $('[data-reset-select-field="true"]').val('').change()
 
             }
@@ -163,6 +181,7 @@ $(document).ready(function () {
         }
 
     });
+
 
     //set status con confirmacion
     $('.btn-confirm-action').on('click', function () {
@@ -176,13 +195,13 @@ $(document).ready(function () {
         var validForm = $(this).data('validform');
         var validTableForm = $(this).data('validtableform');
 
-        if(validForm){
-            if(!documentValidate()){
+        if (validForm) {
+            if (!documentValidate()) {
                 return false;
             }
         }
-        if(validTableForm){
-            if(!tableValidate()){
+        if (validTableForm) {
+            if (!tableValidate()) {
                 manageShowAlertFormSuccess(false);
                 manageShowAlertFormError(true);
 
@@ -206,10 +225,10 @@ $(document).ready(function () {
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.value) {
-                if(winput){
+                if (winput) {
 
                     Swal.fire({
-                        title: (winputtext) ? winputtext:'Agregar nota',
+                        title: (winputtext) ? winputtext : 'Agregar nota',
                         input: 'text',
                         inputAttributes: {
                             autocapitalize: 'off'
@@ -219,16 +238,16 @@ $(document).ready(function () {
                         showLoaderOnConfirm: true,
                         backdrop: false,
                         preConfirm: (comment) => {
-                            if(!comment){
-                                return  Swal.showValidationMessage('Este campo es obligatorio')
+                            if (!comment) {
+                                return Swal.showValidationMessage('Este campo es obligatorio')
                             }
 
                         },
                         allowOutsideClick: () => !Swal.isLoading()
                     }).then((result) => {
-                        if(result.isConfirmed){
+                        if (result.isConfirmed) {
                             $.ajax({
-                                data: {a: action, id: id,comment_canceled:result.value},
+                                data: {a: action, id: id, comment_canceled: result.value},
                                 url: "./?action=admin",
                                 type: "POST",
                                 dataType: "JSON",
@@ -237,8 +256,8 @@ $(document).ready(function () {
                                     if (data.url) {
                                         let timerInterval
                                         Swal.fire({
-                                            title: (data.title)?data.title:'Procensando',
-                                            html: (data.subtitle)?data.subtitle:'...',
+                                            title: (data.title) ? data.title : 'Procensando',
+                                            html: (data.subtitle) ? data.subtitle : '...',
                                             timer: 2000,
                                             timerProgressBar: true,
                                             didOpen: () => {
@@ -305,7 +324,7 @@ $(document).ready(function () {
 
                     })
 
-                }else{
+                } else {
                     $.ajax({
 
                         data: {a: action, id: id},
@@ -313,13 +332,13 @@ $(document).ready(function () {
                         type: "POST",
                         dataType: "JSON",
                         success: function (data) {
-                            console.log(action,  id)
+                            console.log(action, id)
                             BtnReset(instance)
                             if (data.url) {
                                 let timerInterval
                                 Swal.fire({
-                                    title: (data.title)?data.title:'Procensando...',
-                                    html: (data.mens)?data.mens:'',
+                                    title: (data.title) ? data.title : 'Procensando...',
+                                    html: (data.mens) ? data.mens : '',
                                     timer: 3000,
                                     timerProgressBar: true,
                                     didOpen: () => {
@@ -727,6 +746,13 @@ $(document).ready(function () {
 
 
             } else {
+                var mensaje="<i class=\"material-icons\">warning</i> Las unidades y el costo de los productos deben ser mayor a cero";
+                if($('.table-data-add-sect2').length>0){
+
+                    mensaje="<i class=\"material-icons\">warning</i> Las unidades solicitadas no deben ser mayor a las compradas." +
+                        "<br><i class=\"material-icons\">warning</i> Las solicitadas deben ser mayor a cero";
+
+                }
                 manageShowAlertFormSuccess(false);
                 manageShowAlertFormError(true);
 
@@ -737,7 +763,7 @@ $(document).ready(function () {
                     '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-error" data-add="alert-error-none">x</button>' +
                     '</div>' +
                     ' <div class="col-md-12">' +
-                    '<h4><i class="material-icons">warning</i> Las unidades y el costo de los productos deben ser mayor a cero</h4>' +
+                    '<h4>'+mensaje+' </h4>' +
                     '</div>' +
                     '</div>');
             }
@@ -861,7 +887,7 @@ $(document).ready(function () {
 
     //openModal products
     $('.btn-product-table-line').on('click', function () {
-        console.log('ok')
+
         var current_id = $('input[name="product_id[]"]').map(function () {
             return this.value; // $(this).val()
         }).get();
@@ -941,8 +967,9 @@ $(document).ready(function () {
 
                                 var html = '<tr id="line-' + value.id + '">';
 
-                                html += '<td><button type="button" class="btn btn-danger pull-center remove-line btn-sm" ' +
-                                    'data-id="' + value.id + '"> <i class="material-icons">close</i></button></td>';
+                                html += '<td><button type="button" class="btn btn-danger remove-line  pull-center btn-sm" ' +
+                                    'data-id="' + value.id + '" > <i class="material-icons">close</i></button></td>';
+
 
                                 html += '<td><label for="form-control-label">' + value.id + '</label><input type="hidden" ' +
                                     'name="product_id[]" class="form-control" value="' + value.id + '"></td>';
@@ -961,10 +988,10 @@ $(document).ready(function () {
 
                                 html += '</tr>';
 
-                                if($('.table-data-add').length>0){
+                                if ($('.table-data-add').length > 0) {
                                     $('.table-data-add').append(html);
                                 }
-                                if($('.table-data-edit').length>0){
+                                if ($('.table-data-edit').length > 0) {
                                     $('.table-data-edit').append(html);
                                 }
 
@@ -1072,6 +1099,54 @@ $(document).ready(function () {
 
     });
 
+    //valida pedidos
+    $('.table-data-add-sect2').on('keyup mouseup', '.units-line-request', function () {
+        var instance = this;
+        var id = $(instance).data('id')
+        var units_request = Number($(instance).val());
+        var units_diff = Number(0);
+        var unit_purchase =Number(0);
+
+
+
+        //current data line
+       jQuery(data_table).each(function (index, value) {
+
+            if (value.dkey == id) {
+                unit_purchase = value.data.unit;
+                units_diff = (Number(value.data.unit) - units_request);
+                return false;
+            }
+
+        });
+
+        if(units_request>unit_purchase){
+            $("#error-"+$(instance).data('id')).css("display","block");
+            $(instance).val(0)
+            return false;
+        }else{
+            $("#error-"+$(instance).data('id')).css("display","none");
+        }
+
+        //update data
+        jQuery(data_table).each(function (index, value) {
+
+                   if (value.dkey == id) {
+                       value.data.units_request = units_request
+                       value.data.units_diff = units_diff
+                       return false;
+                   }
+
+        });
+
+        $('#total-diff' + id).html((units_request>0)?units_diff :0)
+
+        calculateTotalSect2();
+
+    });
+
+
+
     //en el editar
     $('.table-data-edit').on('click', '.remove-line', function () {
         var instance = this;
@@ -1157,6 +1232,9 @@ $(document).ready(function () {
 
     });
 
+
+
+
     function documentValidate() {
 
         var check = true;
@@ -1187,12 +1265,31 @@ $(document).ready(function () {
 
         if (data_table.length > 0) {
 
-            jQuery(data_table).each(function (index, value) {
-                if (Number(value.data.unit) <= 0 || Number(value.data.costs) <= 0 || Number(value.data.total) <= 0) {
-                    check = false;
-                }
+            if($('.table-data-add-sect2').length>0){
+                jQuery(data_table).each(function (index, value) {
 
-            });
+                    if (Number(value.data.units_request) > Number(value.data.unit)) {
+                        check = false;
+                    }
+                    if (Number(value.data.units_request) <= 0) {
+                        check = false;
+                    }
+                    if (Number(value.data.units_diff) < 0) {
+                        check = false;
+                    }
+
+                });
+
+            }else{
+
+                jQuery(data_table).each(function (index, value) {
+                    if (Number(value.data.unit) <= 0 || Number(value.data.costs) <= 0 || Number(value.data.total) <= 0) {
+                        check = false;
+                    }
+
+                });
+            }
+
         } else {
 
             check = false;
@@ -1263,7 +1360,33 @@ $(document).ready(function () {
 
     }
 
-    function getDataToTable(action,id,targetAdd=".table-data-add") {
+    function calculateTotalSect2() {
+        var units = 0;
+        var units_request = 0;
+        var units_diff = 0;
+        jQuery(data_table).each(function (index, value) {
+
+            units += Number(value.data.unit)
+            units_request += Number(value.data.units_request)
+            units_diff += Number(value.data.units_diff)
+
+        });
+
+        if ($('#unit-buy').length>0) {
+            $('#unit-buy').html(units);
+        }
+        if ($('#unit-request').length>0) {
+            $('#unit-request').html(units_request);
+        }
+        if ($('#unit-diff').length>0) {
+            $('#unit-diff').html(units_diff);
+        }
+
+
+
+    }
+
+    function getDataToTable(action, id, targetAdd = ".table-data-add") {
 
         if (action && id && targetAdd) {
             $.ajax({
@@ -1297,6 +1420,7 @@ $(document).ready(function () {
                             html += '<td><button type="button" class="btn btn-danger pull-center remove-line btn-sm ' + disableClass + ' " ' +
                                 'data-id="' + value.id + '" ' + disabled + '> <i class="material-icons">close</i></button></td>';
 
+
                             html += '<td><label for="form-control-label">' + value.id + '</label><input type="hidden" ' +
                                 'name="product_id[]" class="form-control" value="' + value.id + '" ></td>';
                             html += '<td><label for="form-control-label">' + value.name + '</label></td>';
@@ -1329,4 +1453,73 @@ $(document).ready(function () {
         }
 
     }
+
+    function getDataToTableSect2(action, id, targetAdd = ".table-data-add-sect2") {
+
+        if (action && id && targetAdd) {
+            $.ajax({
+
+                data: {a: action, id: id},
+                url: "./?action=admin",
+                type: "POST",
+                dataType: "JSON",
+                success: function (data) {
+                    if (data.length > 0) {
+                        var disabled = "";
+                        var readonly = "";
+                        var disableClass = "";
+
+                        if ($('.disable-button').length > 0) {
+                            disabled = "disabled ='disabled'";
+                            disableClass = "disable-button";
+                            readonly = "readonly ='readonly'";
+                        }
+                        $.each(data, function (index, value) {
+                            var dkey = value.id;
+                            var newdata = {
+                                dkey: dkey,
+                                data: {unit: value.unit, units_request: 0, units_diff: 0, product_id: dkey}
+                            };
+
+                            data_table.push(newdata);
+
+
+                            var html = '<tr id="line-' + value.id + '">';
+
+                            html += '<td><label for="form-control-label">' + value.id + '</label><input type="hidden" ' +
+                                'name="product_id[]" class="form-control" value="' + value.id + '" ></td>';
+
+                            html += '<td><label for="form-control-label">' + value.name + '</label></td>';
+
+                            html += '<td><label for="form-control-label">' + value.unidad_para_compra + '</label></td>';
+
+                            html += '<td><input type="number" name="units[]" class="form-control units-line" value="' + value.unit + '"' +
+                                'min="1" data-id="' + value.id + '" id="unit-' + value.id + '" readonly ="readonly"></td>';
+
+                            html += '<td><input type="number" name="units_request[]" class="form-control units-line-request" value="0"' +
+                                'min="0" max="' + value.unit + '" data-id="' + value.id + '" id="unit-request-' + value.id + '" ' + readonly + '>' +
+                                '<small class="form-text text-muted error" style="color:red !important;display: none" id="error-' + value.id + '">Limite unit. O/C ('+value.unit+')</small>' +
+                                '</td>';
+
+                            html += '<td><label for="form-control-label " id="total-diff' + value.id + '">0</label></td>';
+
+
+                            html += '</tr>';
+                            $(targetAdd).append(html);
+
+                        });
+                        calculateTotalSect2();
+                    }
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
+
+                }
+
+            });
+
+        }
+    }
+
 });

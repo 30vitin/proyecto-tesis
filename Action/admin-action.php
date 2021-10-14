@@ -1,5 +1,19 @@
 <?php
 
+//TODO
+
+//TODO CUANDO CARGO UNA ORDEN DE COMPRA EN EL PEDIDO VALIDAR QUE ESTE DESCUENTE LAS UNIDADES QUE YA SE AN SOLICITADO
+
+//TODO CREAR COTIZACION,FACTURA, PEDIDO
+//TODO CREAR ICONO PARA BACK TO LIST (breadcrumb)
+//TODO AGREGAR FONDO AL LOGIN CON LOGO DE LA U
+//TODO CAMBIAR EL PRIMARY COLOR
+//TODO COLOCAR EL LOGO DE LA U EN EL MENU
+//TODO CREAR LOS PDF NECESARIOS CON PAGINACION
+#Error #001: id no enviados
+#Error #002: error al subir archivo
+#Error #003: error al actualizar la imagen del producto
+
 require_once 'Config/Functions.php';
 $VAR_SESSION = Session::getInstance();
 
@@ -12,13 +26,387 @@ $datetime = date('Y-m-d H:i:s');
 
 $mensaje = array();
 
+
+/**
+ * VENTAS
+ *
+ */
+if (isset($_POST['a']) && $_POST['a'] == 'CREATE-CUSTOMER') {
+    $cls->autocommitF();
+    $check = true;
+
+    if(!isset($_POST['name'])){
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo nombre es obligatorio');
+
+    }
+    if(!isset($_POST['email'])){
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo email es obligatorio');
+    }
+    if(!isset($_POST['telephone1'])){
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo Telèfono 1 es obligatorio');
+    }
+    if(!isset($_POST['type_credit'])){
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo Tipo de Crédito es obligatorio');
+    }
+
+
+    if ($check) {
+        $id = $cls->getId_autoincrement("customers");
+
+        $name = $_POST['name'];
+        $email = $_POST['email'];
+        $telephone1 =  $_POST['telephone1'];
+        $telephone2 =  $_POST['telephone2'];
+        $type_credit = $_POST['type_credit'];
+
+        $sql = "INSERT INTO customers (id,
+                       name,
+                       email,
+                       telephone1,
+                       telephone2,
+                       type_credit,
+                       created_by,
+                       created_at)
+                values('$id',
+                       '$name',
+                       '$email',
+                       '$telephone1',
+                       '$telephone2',
+                       '$type_credit',
+                       '$VAR_SESSION->username', '$datetime')";
+        $res = $cls->exeQuery($sql);
+        if ($res) {
+
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'mens' => 'Cliente registrado con exito.', 'url' => './?view=customers-edit&id=' . $id, "post_name" => "Clientes", "id" => $id);
+
+        } else {
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res);
+
+        }
+
+    }
+}
+if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-CUSTOMER') {
+    $cls->autocommitF();
+    $check = true;
+
+    if(!isset($_POST['name'])){
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo nombre es obligatorio');
+
+    }
+    if(!isset($_POST['email'])){
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo email es obligatorio');
+    }
+    if(!isset($_POST['telephone1'])){
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo Telèfono 1 es obligatorio');
+    }
+    if(!isset($_POST['type_credit'])){
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo Tipo de Crédito es obligatorio');
+    }
+    if(!isset($_POST['id'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
+    }
+    if ($check) {
+        $id = $_POST['id'];
+        $name = $_POST['name'];
+        $email = $_POST['email'];
+        $telephone1 =  $_POST['telephone1'];
+        $telephone2 =  $_POST['telephone2'];
+        $type_credit = $_POST['type_credit'];
+        $sql = "UPDATE customers 
+                       SET name ='$name',
+                       email='$email',
+                       telephone1 = '$telephone1',
+                       telephone2 = '$telephone2',
+                       type_credit = '$type_credit',
+                       updated_by ='$VAR_SESSION->username',
+                       updated_at ='$datetime' where id='$id'";
+        $res = $cls->exeQuery($sql);
+        if ($res) {
+
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'mens' => 'Cliente actualizado con exito.');
+
+        } else {
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res);
+
+        }
+    }
+
+}
+if (isset($_POST['a']) && $_POST['a'] == 'DELETE-CUSTOMER') {
+    $cls->autocommitF();
+    $check = true;
+    if(!isset($_POST['id'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
+    }
+    if ($check) {
+        $id = $_POST['id'];
+
+        $sql = "UPDATE customers set status='DELETE',updated_by='$VAR_SESSION->username',updated_at ='$datetime'WHERE id ='$id' ";
+        $res = $cls->exeQuery($sql);
+        if ($res) {
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'url' => './?view=customers');
+
+        } else {
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res);
+
+        }
+    }
+
+}
+
+
+if (isset($_POST['a']) && $_POST['a'] == 'CREATE-QUOTE') {
+    $cls->autocommitF();
+    $check = true;
+    if (!isset($_POST['date'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo fecha es obligatorio');
+    }
+    if (!isset($_POST['purchase_order'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo orden de compra es obligatorio');
+    }
+    if (!isset($_POST['customer'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo proveedor es obligatorio');
+    }
+    if (!isset($_POST['data_table'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Debe completar todos los campos de la tabla de productos');
+    }
+
+    $id = $cls->getId_autoincrement("quotes");
+    $date = $_POST['date'];
+    $customer= $_POST['customer'];
+    $comment = trim($_POST['comment']);
+    $purchase_order = $_POST['purchase_order'];
+    $reference = $_POST['reference'];
+
+    $sql1="INSERT INTO quotes (id,
+                             date,
+                             customer,
+                             comment,
+                             purchase_order,
+                             reference,
+                             created_at,
+                             created_by)
+                             values(
+                                    '$id',
+                                    '$date',
+                                    '$customer',
+                                    '$comment',
+                                    '$purchase_order',
+                                    '$reference',
+                                    '$datetime',
+                                    '$VAR_SESSION->username')";
+    $res = $cls->exeQuery($sql1);
+    if($res){
+        $data_table = json_decode($_POST['data_table']);
+        $check = true; // check data table
+        foreach ($data_table as $data){
+
+            if($data->costs > 0 && $data->total > 0 && $data->unit){
+
+                $sql3="UPDATE products set price='$data->costs' WHERE id ='$data->product_id'";
+                $res3 = $cls->exeQuery($sql3);
+                if($res3){
+
+                    $sql2="INSERT INTO quotes_details (quote,product_id,costs,units,total)values('$id','$data->product_id','$data->costs','$data->unit','$data->total')";
+                    $res2 = $cls->exeQuery($sql2);
+                    if (!$res2) {
+                        $check = false;
+                    }
+
+                }else{
+
+                    $check = false;
+
+                }
+
+
+
+            }else{
+
+                $check = false;
+
+            }
+        }
+
+        if($check){
+
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'mens' => 'Cotización registrada con exito.', 'url' => './?view=quotes-edit&id=' . $id, "post_name" => "Cotización", "id" => $id);
+
+        }else{
+
+            $mensaje = array('success' => false, 'mens' => 'Hubo un error al insertar los detalles de la tabla de productos.');
+
+        }
+    }else {
+        $cls->exeQuery('ROLLBACK');
+        $mensaje = array('success' => false, 'mens' => $res);
+
+    }
+
+}
+if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-QUOTE') {
+    $cls->autocommitF();
+    $check = true;
+    if (!isset($_POST['date'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo fecha es obligatorio');
+    }
+    if (!isset($_POST['purchase_order'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo orden de compra es obligatorio');
+    }
+    if (!isset($_POST['customer'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'El campo proveedor es obligatorio');
+    }
+    if (!isset($_POST['data_table'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Debe completar todos los campos de la tabla de productos');
+    }
+    if(!isset($_POST['id'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
+    }
+
+    $id = $cls->getId_autoincrement("quotes");
+    $date = $_POST['date'];
+    $customer= $_POST['customer'];
+    $comment = trim($_POST['comment']);
+    //$purchase_order = $_POST['purchase_order'];
+    $reference = $_POST['reference'];
+
+    $sql1="UPDATE quotes SET date ='$date',
+                             customer ='$customer',
+                             comment ='$comment',
+                             reference ='$reference',
+                             created_at ='$datetime',
+                             created_by ='$VAR_SESSION->username'";
+    $mensaje =$_POST;
+    $res = $cls->exeQuery($sql1);
+    if($res){
+        $data_table = json_decode($_POST['data_table']);
+        $check = true; // check data table
+        foreach ($data_table as $data){
+
+            if($data->costs > 0 && $data->total > 0 && $data->unit){
+
+                $sql3="UPDATE products set price='$data->costs' WHERE id ='$data->product_id'";
+                $res3 = $cls->exeQuery($sql3);
+                if($res3){
+
+                    $sql2="INSERT INTO quotes_details (quote,product_id,costs,units,total)values('$id','$data->product_id','$data->costs','$data->unit','$data->total')";
+                    $res2 = $cls->exeQuery($sql2);
+                    if (!$res2) {
+                        $check = false;
+                    }
+
+                }else{
+
+                    $check = false;
+
+                }
+
+
+
+            }else{
+
+                $check = false;
+
+            }
+        }
+
+        if($check){
+
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'mens' => 'Cotización actualizada con exito.');
+
+        }else{
+
+            $mensaje = array('success' => false, 'mens' => 'Hubo un error al insertar los detalles de la tabla de productos.');
+
+        }
+    }else {
+        $cls->exeQuery('ROLLBACK');
+        $mensaje = array('success' => false, 'mens' => $res);
+
+    }
+
+}
+if (isset($_POST['a']) && $_POST['a'] == 'APROVE-QUOTE') {
+    $cls->autocommitF();
+
+    if (isset($_POST['id'])) {
+
+        $id = $_POST['id'];
+
+        $sql = "UPDATE quotes set status='APROBADA',approved_by='$VAR_SESSION->username',updated_by='$VAR_SESSION->username', approved_at ='$datetime',updated_at ='$datetime' WHERE id ='$id' ";
+        $res = $cls->exeQuery($sql);
+        if ($res) {
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'mens' => 'Cotización ha sido aprobada con exito.','reload'=>true);
+
+        } else {
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res);
+
+        }
+    } else {
+
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
+    }
+
+}
+
+
+if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-ORDER-TO-ORDER') {
+
+    $mensaje = [];
+    if (isset($_POST['id'])) {
+        $id = $_POST['id'];
+        $sql = "SELECT DATE_FORMAT(date,'%Y-%m-%d') as date,comment,reference FROM purchase_orders t1 WHERE t1.id = '$id' ";
+        $result_lis = $cls->consulQuery($sql);//query
+        $inputs = array("id"=>$id,
+            "data"=>array(
+                array('type'=>'input','id'=>'date','value'=>$result_lis['date']),
+                array('type'=>'input','id'=>'comment','value'=>$result_lis['comment']),
+                array('type'=>'input','id'=>'reference','value'=>$result_lis['reference'])
+            ));
+
+        $mensaje = $inputs;
+    }
+
+}
+if (isset($_POST['a']) && $_POST['a'] == 'CREATE-ORDER') {
+
+    $mensaje = $_POST;
+}
+
 /**
  * INVENTARIO
  *
  */
-#Error #001: id no enviados
-#Error #002: error al subir archivo
-#Error #003: error al actualizar la imagen del producto
 
 
 if (isset($_POST['a']) && $_POST['a'] == 'CREATE-CATEGORY') {
@@ -682,7 +1070,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'APROVE-PURCHASE-REQUEST') {
         $res = $cls->exeQuery($sql);
         if ($res) {
             $cls->commitSet();
-            $mensaje = array('success' => true, 'mens' => 'Orden de compra ha sido aprovada con exito.','reload'=>true);
+            $mensaje = array('success' => true, 'mens' => 'Orden de compra ha sido aprobada con exito.','reload'=>true);
 
         } else {
             $cls->exeQuery('ROLLBACK');
@@ -709,7 +1097,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'CANCEL-PURCHASE-REQUEST') {
         $res = $cls->exeQuery($sql);
         if ($res) {
             $cls->commitSet();
-            $mensaje = array('success' => true, 'mens' => 'Orden de compra ha sido aprovada con exito.','reload'=>true);
+            $mensaje = array('success' => true, 'mens' => 'Orden de compra ha sido aprobada con exito.','reload'=>true);
 
         } else {
             $cls->exeQuery('ROLLBACK');
@@ -722,26 +1110,13 @@ if (isset($_POST['a']) && $_POST['a'] == 'CANCEL-PURCHASE-REQUEST') {
     }
 
 }
-
-
-//TODO
-
-
-
-//TODO CREAR SECION DE CLIENTE, LISTAR, AGREGAR, ELIMINAR(VALIDAR QUE NO ESTE EN NINGUN DOCUMENTO ABIERTO)
-//TODO CREAR ICONO PARA BACK TO LIST
-//TODO AGREGAR FONDO AL LOGIN CON LOGO DE LA U
-//TODO CAMBIAR EL PRIMARY COLOR
-//TODO COLOCAR EL LOGO DE LA U EN EL MENU
-//TODO CREAR LOS PDF NECESARIOS CON PAGINACION
-
 if (isset($_POST['a']) && $_POST['a'] == 'CONVERT-TO-PURCHASE-ORDER') {
     $cls->autocommitF();
     $check = true;
 
     if(!isset($_POST['id'])){
         $check = false;
-        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001 '.$_POST['id']);
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001 ');
 
     }
     $request_id = $_POST['id'];
@@ -1109,7 +1484,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'APROVE-PURCHASE-ORDER') {
         $res = $cls->exeQuery($sql);
         if ($res) {
             $cls->commitSet();
-            $mensaje = array('success' => true, 'mens' => 'Orden de compra ha sido aprovada con exito.','reload'=>true);
+            $mensaje = array('success' => true, 'mens' => 'Orden de compra ha sido aprobada con exito.','reload'=>true);
 
         } else {
             $cls->exeQuery('ROLLBACK');
@@ -1169,7 +1544,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-ORDER-TO-QUOTE') {
     }
 
 }
-
 
 
 

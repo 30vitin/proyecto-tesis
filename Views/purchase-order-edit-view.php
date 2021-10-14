@@ -65,7 +65,7 @@ $ordenescompra = "active-sublink";
 
                     <div class="col-8 col-lg-1"></div>
 
-                    <div class="col-md-10">
+                    <div class="col-md-12">
                         <div class="card ">
                             <div class="card-header card-header-rose card-header-text">
                                 <div class="card-text">
@@ -112,10 +112,7 @@ $ordenescompra = "active-sublink";
 
                                             <?php } ?>
                                             <button type="button" class="btn btn-success pull-right "
-                                                    data-form="form" data-reset="false">Convertir a factura
-                                            </button>
-                                            <button type="button" class="btn btn-success pull-right "
-                                                    data-form="form" data-reset="false">Convertir a cotización
+                                                    data-form="form" data-reset="false">Convertir a pedido
                                             </button>
                                         <?php } ?>
 
@@ -225,7 +222,7 @@ $ordenescompra = "active-sublink";
 
                                                 <div class="form-group bmd-form-group">
                                                     <textarea class="form-control" placeholder="Comentario"
-                                                              name="comment" <?php echo $readOnly; ?>><?php echo trim($response['comment']); ?></textarea>
+                                                              name="comment" <?php echo $readOnly; ?>>  </textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-12">

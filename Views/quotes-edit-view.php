@@ -7,6 +7,26 @@ $sales = "active";
 $cotizacion = "active-sublink";
 
 
+if (!isset($_GET['id'])) {
+    header("Location:javascript:window.history.go(-2);");
+}
+
+$id = $_GET['id'];
+$sql = "SELECT purchase_order,date,customer,comment,status,reference  FROM quotes WHERE id='$id' and status<>'DELETE'";
+
+$response = $cls->consulQuery($sql);
+if (!$response) {
+    header("Location:javascript:window.history.go(-2);");
+}
+
+$disabled = "";
+$classDisable = "";
+$readOnly = "";
+if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
+    $disabled = "disabled='disabled'";
+    $classDisable = "disable-button";
+    $readOnly = "readonly='readonly'";
+}
 ?>
 
 
@@ -18,7 +38,7 @@ $cotizacion = "active-sublink";
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Crear Cotización | Cafeteria
+        Editar Cotización | Cafeteria
     </title>
     <?php include "styles.php"; ?>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
@@ -47,16 +67,37 @@ $cotizacion = "active-sublink";
                         <div class="card ">
                             <div class="card-header card-header-rose card-header-text">
                                 <div class="card-text">
-                                    <h4 class="card-title">Crear Nueva Cotización </h4>
+                                    <h4 class="card-title">Editar Cotización # <?php echo $id;?> </h4>
                                 </div>
                             </div>
                             <div class="card-body ">
 
                                 <div class="row">
                                     <div class="col-md-12 ">
-                                        <button type="button" class="btn btn-primary pull-right btn-send-form-table"
-                                                data-form="form" data-reset="true"> Guardar Cotización
-                                        </button>
+                                        <?php if ($response['status'] == 'ACTIVO') { ?>
+
+                                                <button type="button" class="btn btn-primary pull-right btn-send-form-table" <?php echo $classDisable; ?>
+                                                        data-form="form" <?php echo $disabled; ?>> Guardar Cotización
+                                                </button>
+                                                <button type="button"
+                                                        class="btn btn-success pull-right btn-confirm-action <?php echo $classDisable; ?>"
+                                                        data-id="<?php echo $id; ?>" data-action="APROVE-QUOTE"
+                                                        data-text="¿Estas seguro de aprobar esta cotización?" <?php echo $disabled; ?>
+                                                        data-validform="true"
+                                                        data-validtableform="true">
+                                                    Aprobar para imprimir
+                                                </button>
+                                        <?php }?>
+
+                                        <?php if ($response['status'] == 'APROBADA') { ?>
+                                            <button type="button" class="btn btn-secondary pull-right print"
+                                                    data-form="form" data-reset="true"> Imprimir
+                                            </button>
+
+                                        <?php }?>
+
+
+
 
                                     </div>
 
@@ -65,7 +106,8 @@ $cotizacion = "active-sublink";
                                       action="">
 
 
-                                    <input type="hidden" name="a" value="CREATE-QUOTE">
+                                    <input type="hidden" name="a" value="UPDATE-QUOTE">
+                                    <input type="hidden" name="id" value="<?php echo $id; ?>">
 
                                     <?php include 'alert-form.php'; ?>
 
@@ -74,18 +116,6 @@ $cotizacion = "active-sublink";
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="col-md-12">
-                                                <label class="col-form-label">Fecha</label>
-
-                                                <div class="form-group bmd-form-group">
-                                                    <input type="date" class="form-control validate" name="date"
-                                                           value=""
-                                                           id="date"
-                                                           placeholder="Fecha">
-                                                    <small class="form-text text-muted date-error"
-                                                           style="color:red !important;"></small>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
                                                 <label class="col-form-label">Cliente</label>
                                                 <div class="form-group bmd-form-group">
 
@@ -93,18 +123,32 @@ $cotizacion = "active-sublink";
                                                     $sql_CT = "SELECT id,name from customers WHERE status='ACTIVO'";
                                                     $result_CT = $cls->consultListQuery($sql_CT);//query
                                                     ?>
-                                                    <select class="form-control validate select2 select-form" name="customer"
-                                                            id="customer" data-reset-select-field="true">
+                                                    <select class="form-control validate select2 select-form <?php echo $classDisable; ?>" name="customer"
+                                                            id="customer" data-reset-select-field="true" <?php echo $disabled; ?>>
+
                                                         <option value="">-Seleccione-</option>
                                                         <?php
                                                         foreach ($result_CT as $item) { ?>
 
-                                                            <option value="<?php echo $item->id; ?>"><?php echo $item->name; ?></option>
+                                                            <option value="<?php echo $item->id; ?>" <?php echo ($response['customer'] == $item->id) ? 'selected' : ''; ?>><?php echo $item->name; ?></option>
 
                                                         <?php } ?>
 
                                                     </select>
                                                     <small class="form-text text-muted customer-error"
+                                                           style="color:red !important;"></small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="col-form-label">Fecha</label>
+
+                                                <div class="form-group bmd-form-group">
+                                                    <input type="date" class="form-control validate" name="date"
+                                                           value="<?php echo date_format(date_create($response['date']), 'Y-m-d'); ?>"
+                                                           id="date"
+                                                           placeholder="Fecha"
+                                                            <?php echo $readOnly?>>
+                                                    <small class="form-text text-muted date-error"
                                                            style="color:red !important;"></small>
                                                 </div>
                                             </div>
@@ -116,16 +160,16 @@ $cotizacion = "active-sublink";
                                                     $sql_CT = "SELECT id from purchase_orders WHERE status='APROBADA'";
                                                     $result_CT = $cls->consultListQuery($sql_CT);//query
                                                     ?>
-                                                    <select class="form-control validate select2 change-and-consult"
+                                                    <select class="form-control validate select2 change-and-consult-edit"
                                                             name="purchase_order"
                                                             id="purchase_order"
                                                             data-action="GET-PURCHASE-ORDER-TO-QUOTE"
-                                                            data-form="form">
+                                                            data-form="form" disabled="disabled">
                                                         <option value="">-Seleccione-</option>
                                                         <?php
                                                         foreach ($result_CT as $item) { ?>
 
-                                                            <option value="<?php echo $item->id; ?>">#<?php echo $item->id; ?></option>
+                                                            <option value="<?php echo $item->id; ?>" <?php echo ($response['purchase_order'] == $item->id) ? 'selected' : ''; ?>>#<?php echo $item->id; ?></option>
 
                                                         <?php } ?>
 
@@ -142,9 +186,7 @@ $cotizacion = "active-sublink";
                                                 <div class="form-group bmd-form-group">
 
                                                     <textarea class="form-control" placeholder="Comentario"
-                                                              name="comment" id="comment">
-
-                                                    </textarea>
+                                                              name="comment" id="comment"  <?php echo $readOnly?>><?php echo trim($response['comment']); ?></textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
@@ -152,8 +194,8 @@ $cotizacion = "active-sublink";
 
                                                 <div class="form-group bmd-form-group">
                                                     <input type="text" class="form-control" name="reference"
-                                                           value=""
-                                                           id="reference" placeholder="Referencia #">
+                                                           value="<?php echo $response['reference'];?>"
+                                                           id="reference" placeholder="Referencia #"  <?php echo $readOnly?>>
                                                 </div>
                                             </div>
                                         </div>
@@ -172,7 +214,9 @@ $cotizacion = "active-sublink";
                                                     <th>Total</th>
                                                 </tr>
                                                 </thead>
-                                                <tbody class="table-data-add disable-button"  data-action="GET-PURCHASE-ORDER-DETAILS">
+                                                <tbody class="table-data-edit disable-button"
+                                                       data-action="GET-PURCHASE-ORDER-DETAILS"
+                                                       data-id="<?php echo $id; ?>">
 
                                                 </tbody>
                                                 <tfoot>

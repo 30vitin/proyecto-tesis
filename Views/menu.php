@@ -115,6 +115,13 @@ else
                         </a>
                     </li>
 
+                    <li class="nav-item <?php echo $pedidos; ?> ">
+                        <a class="nav-link" href="./?view=orders">
+                            <span class="sidebar-mini"> PE </span>
+                            <span class="sidebar-normal"> Pedidos</span>
+                        </a>
+                    </li>
+
                     <li class="nav-item <?php echo $cotizacion; ?>">
                         <a class="nav-link" href="./?view=quotes">
                             <span class="sidebar-mini"> CO </span>
@@ -130,12 +137,6 @@ else
                     </li>
 
 
-                    <li class="nav-item <?php echo $pedidos; ?> ">
-                        <a class="nav-link" href="./?view=orders">
-                            <span class="sidebar-mini"> PE </span>
-                            <span class="sidebar-normal"> Pedidos</span>
-                        </a>
-                    </li>
 
 
                 </ul>
