@@ -6,6 +6,26 @@ include 'utils.php';
 $sales = "active";
 $pedidos = "active-sublink";
 
+if (!isset($_GET['id'])) {
+    header("Location:javascript:window.history.go(-2);");
+}
+
+$id = $_GET['id'];
+$sql = "SELECT date,purchase_order,comment,status,reference  FROM orders WHERE id='$id' and status<>'DELETE'";
+
+
+$response = $cls->consulQuery($sql);
+if (!$response) {
+    header("Location:javascript:window.history.go(-2);");
+}
+$disabled = "";
+$classDisable = "";
+$readOnly = "";
+if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $response['status'] == 'CANCELADA') {
+    $disabled = "disabled='disabled'";
+    $classDisable = "disable-button";
+    $readOnly = "readonly='readonly'";
+}
 
 ?>
 
@@ -18,7 +38,7 @@ $pedidos = "active-sublink";
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Crear Pedido | Cafeteria
+        Editar Pedido | Cafeteria
     </title>
     <?php include "styles.php"; ?>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
@@ -47,16 +67,41 @@ $pedidos = "active-sublink";
                         <div class="card ">
                             <div class="card-header card-header-rose card-header-text">
                                 <div class="card-text">
-                                    <h4 class="card-title">Crear Nuevo Pedido </h4>
+                                    <h4 class="card-title">Editar Pedido #<?php echo $id;?> </h4>
                                 </div>
                             </div>
                             <div class="card-body ">
 
                                 <div class="row">
                                     <div class="col-md-12 ">
-                                        <button type="button" class="btn btn-primary pull-right btn-send-form-table"
-                                                data-form="form" data-reset="true"> Guardar Pedido
-                                        </button>
+
+                                        <?php if ($response['status'] == 'ACTIVO') { ?>
+                                            <button type="button"
+                                                    class="btn btn-primary pull-right btn-send-form-table <?php echo $classDisable; ?>"
+                                                    data-form="form" data-reset="false" <?php echo $disabled; ?>>Guardar
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-success pull-right btn-confirm-action <?php echo $classDisable; ?>"
+                                                    data-id="<?php echo $id; ?>" data-action="APROVE-ORDER"
+                                                    data-text="¿Estas seguro de aprobar este pedido?" <?php echo $disabled; ?>
+                                                    data-validform="true"
+                                                    data-validtableform="true">
+                                                Aprobar para facturar
+                                            </button>
+
+                                        <?php } ?>
+                                        <?php if ($response['status'] == 'APROBADA') { ?>
+                                            <button type="button" class="btn btn-secondary pull-right print"
+                                                    data-form="form" data-reset="true"> Imprimir
+                                            </button>
+                                            <button type="button" class="btn btn-success pull-right "
+                                                    data-form="form" data-reset="false">Convertir a cotización
+                                            </button>
+                                            <button type="button" class="btn btn-success pull-right "
+                                                    data-form="form" data-reset="false">Convertir a factura
+                                            </button>
+
+                                        <?php } ?>
 
                                     </div>
 
@@ -65,7 +110,7 @@ $pedidos = "active-sublink";
                                       action="">
 
 
-                                    <input type="hidden" name="a" value="CREATE-ORDER">
+                                    <input type="hidden" name="a" value="UPDATE-ORDER">
 
                                     <?php include 'alert-form.php'; ?>
 
@@ -81,16 +126,16 @@ $pedidos = "active-sublink";
                                                     $sql_CT = "SELECT id from purchase_orders WHERE status='APROBADA'";
                                                     $result_CT = $cls->consultListQuery($sql_CT);//query
                                                     ?>
-                                                    <select class="form-control validate select2 change-and-consult"
+                                                    <select class="form-control validate select2 <?php echo ($response['status'] == 'CERRADO') ? '' : 'change-and-consult-edit' ?>"
                                                             name="purchase_order"
                                                             id="purchase_order"
                                                             data-action="GET-PURCHASE-ORDER-TO-ORDER"
-                                                            data-form="form">
+                                                            data-form="form" <?php echo $disabled; ?>>
                                                         <option value="">-Seleccione-</option>
                                                         <?php
                                                         foreach ($result_CT as $item) { ?>
 
-                                                            <option value="<?php echo $item->id; ?>">#<?php echo $item->id; ?></option>
+                                                            <option value="<?php echo $item->id; ?>" <?php echo ($response['purchase_order'] == $item->id) ? 'selected' : ''; ?>>#<?php echo $item->id; ?></option>
 
                                                         <?php } ?>
 
@@ -104,9 +149,9 @@ $pedidos = "active-sublink";
 
                                                 <div class="form-group bmd-form-group">
                                                     <input type="date" class="form-control validate" name="date"
-                                                           value=""
+                                                           value="<?php echo date_format(date_create($response['date']), 'Y-m-d'); ?>"
                                                            id="date"
-                                                           placeholder="Fecha">
+                                                           placeholder="Fecha" <?php echo $readOnly;?>>
                                                     <small class="form-text text-muted date-error"
                                                            style="color:red !important;"></small>
                                                 </div>
@@ -121,9 +166,7 @@ $pedidos = "active-sublink";
                                                 <div class="form-group bmd-form-group">
 
                                                     <textarea class="form-control" placeholder="Comentario"
-                                                              name="comment" id="comment">
-
-                                                    </textarea>
+                                                              name="comment" id="comment" <?php echo $readOnly;?>><?php echo trim($response['comment']);?></textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
@@ -131,8 +174,8 @@ $pedidos = "active-sublink";
 
                                                 <div class="form-group bmd-form-group">
                                                     <input type="text" class="form-control" name="reference"
-                                                           value=""
-                                                           id="reference" placeholder="Referencia #">
+                                                           value="<?php echo $response['reference'];?>"
+                                                           id="reference" placeholder="Referencia #" <?php echo $readOnly;?>>
                                                 </div>
                                             </div>
                                         </div>
@@ -150,7 +193,10 @@ $pedidos = "active-sublink";
                                                     <th>Diferencia</th>
                                                 </tr>
                                                 </thead>
-                                                <tbody class="table-data-add-sect2" data-action="GET-PURCHASE-ORDER-DETAILS-TO-ORDER">
+                                                <tbody class="table-data-edit table-data-add-sect2 <?php if ($response['status'] == 'APROBADA') { ?>disable-button<?php } ?>"
+                                                       data-id="<?php echo $id;?>"
+                                                       data-action-change="GET-PURCHASE-ORDER-DETAILS-TO-ORDER"
+                                                       data-action="GET-ORDERS-DETAILS">
 
                                                 </tbody>
                                                 <tfoot>

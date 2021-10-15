@@ -18,12 +18,19 @@ if (!$response) {
 $disabled = "";
 $classDisable = "";
 $readOnly = "";
-if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $response['status'] == 'CANCELADA') {
+if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $response['status'] == 'CANCELADA' ) {
     $disabled = "disabled='disabled'";
     $classDisable = "disable-button";
     $readOnly = "readonly='readonly'";
 }
-
+$disableConvertPedido="";
+$classDisableConvertPedido= "";
+$completeOrder = false;
+if(!$cls->checkIfTotalPurchase($id)){
+    $disableConvertPedido = "disabled='disabled'";
+    $classDisableConvertPedido= "disable-button";
+    $completeOrder = true;
+}
 
 $purchase = "active";
 $ordenescompra = "active-sublink";
@@ -111,8 +118,8 @@ $ordenescompra = "active-sublink";
                                                 </button>
 
                                             <?php } ?>
-                                            <button type="button" class="btn btn-success pull-right "
-                                                    data-form="form" data-reset="false">Convertir a pedido
+                                            <button type="button" class="btn btn-success pull-right <?php echo $classDisableConvertPedido;?>"
+                                                    data-form="form" data-reset="false" <?php echo $disableConvertPedido;?>>Convertir a pedido
                                             </button>
                                         <?php } ?>
 
@@ -130,9 +137,20 @@ $ordenescompra = "active-sublink";
                                     <?php include 'alert-form.php'; ?>
 
                                     <h4>Datos Generales</h4>
+                                    <?php if($completeOrder){?>
+                                        <div class="col-md-12">
+                                            <div class="form-group bmd-form-group">
+
+                                                <span class="badge badge-warning ">Orden de compra completada!</span>
+                                            </div>
+                                        </div>
+
+                                    <?php }?>
                                     <hr/>
                                     <div class="row">
                                         <div class="col-md-6">
+
+
                                             <div class="col-md-12">
                                                 <label class="col-form-label">Status</label>
 
@@ -222,7 +240,7 @@ $ordenescompra = "active-sublink";
 
                                                 <div class="form-group bmd-form-group">
                                                     <textarea class="form-control" placeholder="Comentario"
-                                                              name="comment" <?php echo $readOnly; ?>>  </textarea>
+                                                              name="comment" <?php echo $readOnly; ?>><?php echo $response['comment'];?>  </textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-12">

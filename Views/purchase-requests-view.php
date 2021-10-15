@@ -31,7 +31,7 @@ if (isset($_POST['page'])) {
 
 <body class="">
 
-    <?php include 'loader.php'; ?>
+<?php include 'loader.php'; ?>
 
 <div class="wrapper ">
     <?php include "sidebar.php"; ?>
@@ -39,7 +39,7 @@ if (isset($_POST['page'])) {
         <!-- Navbar -->
 
         <?php
-        $navbar="Lista de  Requisiciones";
+        $navbar = "Lista de  Requisiciones";
         include 'navbar.php'; ?>
         <!-- End Navbar -->
         <div class="content">
@@ -74,6 +74,9 @@ if (isset($_POST['page'])) {
                                             <th>ID</th>
                                             <th>Fecha</th>
                                             <th>Proveedor</th>
+                                            <th>Unidades</th>
+                                            <th>Costo</th>
+                                            <th>Total</th>
                                             <th>Status</th>
                                             <th>Acción</th>
                                         </tr>
@@ -81,7 +84,14 @@ if (isset($_POST['page'])) {
                                         </thead>
                                         <tbody>
                                         <?php
-                                        $sql = "SELECT t1.id, t1.date, t2.name as provider,t1.status FROM purchase_requests t1 join providers t2 on t1.provider = t2.id WHERE t1.status <>'DELETE' order by t1.created_at desc ";
+                                        $sql = "SELECT  id as id,sum(units) as units,sum(costs) as costs,sum(total) as total,date,provider,status FROM (
+                                                    (SELECT   t1.id,t3.units,t3.costs,t3.total,t1.date,t2.name as provider,t1.status
+                                                    FROM purchase_requests t1 
+                                                    join providers t2 on t1.provider = t2.id 
+                                                    join purchase_requests_details t3 on t1.id = t3.purchase_request 
+                                                    WHERE t1.status <>'DELETE' ) as datas
+                                                    
+                                            ) group by id ORDER BY date desc ";
 
 
                                         $result_lis = $cls->consultListQuery($sql);//query
@@ -94,9 +104,14 @@ if (isset($_POST['page'])) {
                                                 <td><?php echo $item->date; ?></td>
 
                                                 <td><?php echo ucwords($item->provider); ?></td>
+                                                <td><?php echo $item->units; ?></td>
+                                                <td><?php echo $item->costs; ?></td>
+                                                <td><?php echo $item->total; ?></td>
+
+
                                                 <td>
-                                                    <span class="badge <?php echo $cls->getStatusClass($item->status);?>">
-                                                        <?php echo $item->status;?></span>
+                                                    <span class="badge <?php echo $cls->getStatusClass($item->status); ?>">
+                                                        <?php echo $item->status; ?></span>
                                                 </td>
 
                                                 <td class="td-actions">
@@ -127,8 +142,8 @@ if (isset($_POST['page'])) {
         <?php include 'footer.php'; ?>
     </div>
 </div>
-    <?php include "scripts/scripts.php"; ?>
-    <?php include "scripts/data-table.php"; ?>
+<?php include "scripts/scripts.php"; ?>
+<?php include "scripts/data-table.php"; ?>
 </body>
 
 </html>

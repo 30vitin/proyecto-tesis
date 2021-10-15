@@ -135,6 +135,18 @@ class Functions extends dba
         return $result;
     }
 
+    public function checkIfTotalPurchase($id){
+        $currentUnits = 0;
+        $sql = "SELECT t1.product_id as id,0 as units_diff,t1.units as unit,0 as units_request,t2.unidad_para_compra,t2.name FROM purchase_orders_details t1 join products t2 on t1.product_id = t2.id WHERE t1.purchase_order = '$id' ";
+        $result_lis = $this->consultListQuery($sql);//query
+        foreach ($result_lis as $result) {
+            $sql2 = "select sum(t2.units_request) as units from orders t1 join orders_details t2 on t1.id = t2.order_id WHERE t1.purchase_order = '$id' and t2.product_id='$result->id' LIMIT 1";
+            $response = $this->consulQuery($sql2);
+            $currentUnits+= ($result->unit - $response['units']);
+        }
+        return ($currentUnits>0);
+    }
+
 
     public function getKeyPass()
     {

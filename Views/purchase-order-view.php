@@ -77,6 +77,9 @@ if (isset($_POST['page'])) {
                                             <th>Requisición</th>
                                             <th>Fecha</th>
                                             <th>Proveedor</th>
+                                            <th>Unidades</th>
+                                            <th>Costo</th>
+                                            <th>Total</th>
                                             <td>Status</td>
                                             <th>Acción</th>
                                         </tr>
@@ -84,9 +87,15 @@ if (isset($_POST['page'])) {
                                         </thead>
                                         <tbody>
                                         <?php
-                                        $sql = "SELECT t1.id, t1.purchase_request,t2.name as provider, t1.date,t1.status FROM purchase_orders t1 join providers t2 on t1.provider = t2.id WHERE t1.status <>'DELETE'  order by t1.created_at desc ";
 
-
+                                        $sql = "SELECT  id as id,sum(units) as units,sum(costs) as costs,sum(total) as total,date,provider,status,purchase_request FROM (
+                                                    (SELECT   t1.id,t3.units,t3.costs,t3.total,t1.date,t2.name as provider,t1.status,t1.purchase_request
+                                                    FROM purchase_orders t1 
+                                                    join providers t2 on t1.provider = t2.id 
+                                                    join purchase_orders_details t3 on t1.id = t3.purchase_order 
+                                                    WHERE t1.status <>'DELETE' ) as datas
+                                                    
+                                            ) group by id ORDER BY date desc ";
                                         $result_lis = $cls->consultListQuery($sql);//query
 
                                         foreach ($result_lis as $item) {
@@ -98,6 +107,9 @@ if (isset($_POST['page'])) {
                                                 <td><?php echo $item->date; ?></td>
 
                                                 <td><?php echo ucwords($item->provider); ?></td>
+                                                <td><?php echo $item->units; ?></td>
+                                                <td><?php echo $item->costs; ?></td>
+                                                <td><?php echo $item->total; ?></td>
                                                 <td>
                                                     <span class="badge <?php echo $cls->getStatusClass($item->status);?>">
                                                         <?php echo $item->status;?></span>

@@ -6,7 +6,15 @@ $(document).ready(function () {
 
     var data_table = [];
     if ($('.table-data-edit').length > 0) {
-        getDataToTable($('.table-data-edit').data('action'), $('.table-data-edit').data('id'), '.table-data-edit')
+        if($('.table-data-add-sect2').length){
+            getDataToTableSect2($('.table-data-edit').data('action'), $('.table-data-edit').data('id'), '.table-data-add-sect2')
+
+        }else{
+            getDataToTable($('.table-data-edit').data('action'), $('.table-data-edit').data('id'), '.table-data-edit')
+
+
+        }
+
     }
     $('.change-and-consult').on('change', function () {
 
@@ -129,8 +137,18 @@ $(document).ready(function () {
                         $('#total-table').html('0.00')
 
                     }
-                    if ($('.table-data-edit').length > 0) {
+                    if ($('.table-data-edit').length > 0 && $('.table-data-add-sect2').length==0) {
                         getDataToTable($('.table-data-edit').data('action-change'), request_id, '.table-data-edit')
+                    }
+                    if ($('.table-data-add-sect2').length > 0) {
+
+                        $('.table-data-add-sect2').html('');
+                        $('#unit-buy').html('0.00')
+                        $('#unit-request').html('0.00')
+                        $('#unit-diff').html('0.00')
+
+                        getDataToTableSect2($('.table-data-add-sect2').data('action-change'), request_id)
+
                     }
 
                     if (data.data.length > 0) {
@@ -1272,7 +1290,10 @@ $(document).ready(function () {
                         check = false;
                     }
                     if (Number(value.data.units_request) <= 0) {
-                        check = false;
+                        if(Number(value.data.unit)>0){
+                            check = false;
+                        }
+
                     }
                     if (Number(value.data.units_diff) < 0) {
                         check = false;
@@ -1455,7 +1476,7 @@ $(document).ready(function () {
     }
 
     function getDataToTableSect2(action, id, targetAdd = ".table-data-add-sect2") {
-
+        console.log(action)
         if (action && id && targetAdd) {
             $.ajax({
 
@@ -1464,6 +1485,7 @@ $(document).ready(function () {
                 type: "POST",
                 dataType: "JSON",
                 success: function (data) {
+                    console.log(data)
                     if (data.length > 0) {
                         var disabled = "";
                         var readonly = "";
@@ -1478,7 +1500,7 @@ $(document).ready(function () {
                             var dkey = value.id;
                             var newdata = {
                                 dkey: dkey,
-                                data: {unit: value.unit, units_request: 0, units_diff: 0, product_id: dkey}
+                                data: {unit: value.unit, units_request: value.units_request, units_diff: value.units_diff, product_id: dkey}
                             };
 
                             data_table.push(newdata);
@@ -1496,12 +1518,12 @@ $(document).ready(function () {
                             html += '<td><input type="number" name="units[]" class="form-control units-line" value="' + value.unit + '"' +
                                 'min="1" data-id="' + value.id + '" id="unit-' + value.id + '" readonly ="readonly"></td>';
 
-                            html += '<td><input type="number" name="units_request[]" class="form-control units-line-request" value="0"' +
+                            html += '<td><input type="number" name="units_request[]" class="form-control units-line-request" value="'+value.units_request+'"' +
                                 'min="0" max="' + value.unit + '" data-id="' + value.id + '" id="unit-request-' + value.id + '" ' + readonly + '>' +
                                 '<small class="form-text text-muted error" style="color:red !important;display: none" id="error-' + value.id + '">Limite unit. O/C ('+value.unit+')</small>' +
                                 '</td>';
 
-                            html += '<td><label for="form-control-label " id="total-diff' + value.id + '">0</label></td>';
+                            html += '<td><label for="form-control-label " id="total-diff' + value.id + '">'+value.units_diff+'</label></td>';
 
 
                             html += '</tr>';
