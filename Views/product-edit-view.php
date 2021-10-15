@@ -9,7 +9,7 @@ if (!isset($_GET['id'])) {
 $id = $_GET['id'];
 
 $sql = "SELECT name,description,category,price,img_portada,code_extern,
-        unidad_para_compra,unidad_almacen,unidad_para_almacen,provider FROM products WHERE id='$id' and status='ACTIVO'";
+        unidad_para_compra,unidad_para_almacen,provider FROM products WHERE id='$id' and status='ACTIVO'";
 $response = $cls->consulQuery($sql);
 if (empty($response)) {
     header("Location:javascript:window.history.go(-2);");
@@ -218,17 +218,7 @@ $productos = "active-sublink";
                                                        style="color:red !important;"></small>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
-                                            <label class="col-form-label">Cantidad de unidad por compra</label>
-                                            <div class="form-group bmd-form-group">
-                                                <input type="number" class="form-control validate" name="unidad_almacen"
-                                                       value="<?php echo $response['unidad_almacen']; ?>" min="1"
-                                                       id="unidad_almacen" placeholder="Cantidad de unidad">
-                                                <small class="form-text text-muted unidad_almacen-error"
-                                                       style="color:red !important;"></small>
-                                            </div>
 
-                                        </div>
                                     </div>
 
                                     <div class="row">

@@ -566,7 +566,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'APROVE-ORDER') {
     }
 
 }
-//
 if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-ORDER') {
 
     $mensaje = $_POST;
@@ -649,7 +648,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-ORDER') {
 
     }
 }
-
 if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-ORDER') {
     $cls->autocommitF();
 
@@ -691,7 +689,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-ORDER') {
  *
  */
 
-
+//listo
 if (isset($_POST['a']) && $_POST['a'] == 'CREATE-CATEGORY') {
     $cls->autocommitF();
     if (isset($_POST['name'])) {
@@ -725,6 +723,13 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-CATEGORY') {
 
             $name = $_POST['name'];
             $id = $_POST['id'];
+            $sqlstatus = "SELECT COUNT(*) AS count FROM products_category WHERE id='$id' AND status ='ACTIVO'";
+            $response = $cls->consulQuery($sqlstatus);
+            if ($response['count'] == 0) {
+                $check = false;
+                $mensaje = array('success' => false, 'mens' => 'Para editar categorias, esta deben estar activos');
+            }
+
 
             $sql = "UPDATE products_category set name='$name',updated_by='$VAR_SESSION->username' WHERE id ='$id' ";
             $res = $cls->exeQuery($sql);
@@ -754,17 +759,29 @@ if (isset($_POST['a']) && $_POST['a'] == 'DELETE-CATEGORY') {
 
         $id = $_POST['id'];
 
-        $sql = "UPDATE products_category set status='DELETE',updated_by='$VAR_SESSION->username',updated_at ='$datetime'WHERE id ='$id' ";
-        $res = $cls->exeQuery($sql);
-        if ($res) {
-            $cls->commitSet();
-            $mensaje = array('success' => true, 'url' => './?view=category-products');
-
-        } else {
-            $cls->exeQuery('ROLLBACK');
-            $mensaje = array('success' => false, 'mens' => $res);
-
+        $check = true;
+        $sqlstatus = "SELECT COUNT(*) AS count FROM products WHERE category='$id' AND status ='ACTIVO'";
+        $response = $cls->consulQuery($sqlstatus);
+        if ($response['count'] > 0) {
+            $check = false;
+            $mensaje = array('success' => false, 'mens' => 'No se puede eliminar categorias, que esten relacionados a productos activos');
         }
+
+        if ($check) {
+            $sql = "UPDATE products_category set status='DELETE',updated_by='$VAR_SESSION->username',updated_at ='$datetime'WHERE id ='$id' ";
+            $res = $cls->exeQuery($sql);
+            if ($res) {
+                $cls->commitSet();
+                $mensaje = array('success' => true, 'url' => './?view=category-products');
+
+            } else {
+                $cls->exeQuery('ROLLBACK');
+                $mensaje = array('success' => false, 'mens' => $res);
+
+            }
+        }
+
+
     } else {
 
         $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
@@ -773,6 +790,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'DELETE-CATEGORY') {
 }
 
 
+//listo
 if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PRODUCT') {
     $check = true;
     if (!isset($_POST['name'])) {
@@ -787,14 +805,18 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PRODUCT') {
         $check = false;
         $mensaje = array('success' => false, 'mens' => 'El campo Unidad de compra es obligatorio');
     }
-    if (!isset($_POST['unidad_para_almacen'])) {
+
+
+    $provider = $_POST['provider'];
+
+    $sqlcheck = "SELECT COUNT(*) as count FROM providers WHERE id ='$provider' AND status ='ACTIVO'";
+    $resulcheck = $cls->consulQuery($sqlcheck);
+    if ($resulcheck['count'] == 0) {
         $check = false;
-        $mensaje = array('success' => false, 'mens' => 'El campo Unidad para almacen es obligatorio');
+        $mensaje = array('success' => false, 'mens' => 'para crear este producto el proovedor #' . $provider . ' debe estar ACTIVO');
+
     }
-    if (!isset($_POST['unidad_almacen'])) {
-        $check = false;
-        $mensaje = array('success' => false, 'mens' => 'El campo Cantidad de unidad para almacen es obligatorio');
-    }
+
 
     if ($check) {
         $id = $cls->getId_autoincrement("products");
@@ -804,10 +826,10 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PRODUCT') {
         $file = $_FILES['file'];
         $name = $_POST['name'];
         $price = $_POST['price'];
-        $provider = $_POST['provider'];
+
         $unidad_para_compra = $_POST['unidad_para_compra'];
         $unidad_para_almacen = $_POST['unidad_para_almacen'];
-        $unidad_almacen = $_POST['unidad_almacen'];
+
         $code_extern = $_POST['code_extern'];
 
         $image_name = "";
@@ -825,8 +847,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PRODUCT') {
                       description,
                       category,
                       price,
-                      img_portada,
-                      unidad_almacen,   
+                      img_portada,   
                       code_extern,
                       unidad_para_compra,
                       unidad_para_almacen,
@@ -839,7 +860,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PRODUCT') {
                             '$category',
                              $price,
                             '$image_name',
-                             $unidad_almacen,
                             '$code_extern',
                             '$unidad_para_compra',
                             '$unidad_para_almacen',
@@ -888,13 +908,19 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PRODUCT') {
         $check = false;
         $mensaje = array('success' => false, 'mens' => 'El campo Unidad para almacen es obligatorio');
     }
-    if (!isset($_POST['unidad_almacen'])) {
-        $check = false;
-        $mensaje = array('success' => false, 'mens' => 'El campo Cantidad de unidad para almacen es obligatorio');
-    }
+
     if (!isset($_POST['id'])) {
         $check = false;
         $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
+    }
+    $provider = $_POST['provider'];
+
+    $sqlcheck = "SELECT COUNT(*) as count FROM providers WHERE id ='$provider' AND status ='ACTIVO'";
+    $resulcheck = $cls->consulQuery($sqlcheck);
+    if ($resulcheck['count'] == 0) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'para crear este producto el proovedor #' . $provider . ' debe estar ACTIVO');
+
     }
 
     if ($check) {
@@ -905,10 +931,8 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PRODUCT') {
         $file = $_FILES['file'];
         $name = $_POST['name'];
         $price = $_POST['price'];
-        $provider = $_POST['provider'];
         $unidad_para_compra = $_POST['unidad_para_compra'];
         $unidad_para_almacen = $_POST['unidad_para_almacen'];
-        $unidad_almacen = $_POST['unidad_almacen'];
         $code_extern = $_POST['code_extern'];
 
         $image_name = "";
@@ -944,8 +968,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PRODUCT') {
                       set name = '$name',
                       description = '$description',
                       category = '$category',
-                      price = $price,
-                      unidad_almacen = $unidad_almacen,   
+                      price = $price, 
                       code_extern ='$code_extern',
                       unidad_para_compra = '$unidad_para_compra',
                       unidad_para_almacen = '$unidad_para_almacen',
@@ -982,20 +1005,44 @@ if (isset($_POST['a']) && $_POST['a'] == 'DELETE-PRODUCT') {
 
 
     if (isset($_POST['id'])) {
-
+        $check = true;
         $id = $_POST['id'];
 
-        $sql = "UPDATE products set status='DELETE',updated_by='$VAR_SESSION->username', updated_at ='$datetime' WHERE id ='$id' ";
-        $res = $cls->exeQuery($sql);
-        if ($res) {
-            $cls->commitSet();
-            $mensaje = array('success' => true, 'url' => './?view=products');
-
-        } else {
-            $cls->exeQuery('ROLLBACK');
-            $mensaje = array('success' => false, 'mens' => $res);
+        //checar si esta en una requisición
+        $sqlch1="SELECT count(*) as count FROM purchase_requests_details t1 JOIN purchase_requests t2 ON t1.purchase_request = t2.id 
+                    WHERE t1.product_id = '$id' AND t2.status ='ACTIVO'";
+        $resulcheck1 = $cls->consulQuery($sqlch1);
+        if ($resulcheck1['count'] > 0) {
+            $check = false;
+            $mensaje = array('success' => false, 'mens' => 'Este producto no se puede eliminar porque tiene requisiciones de compras activas');
 
         }
+
+        //checar si esta en una orden
+        $sqlch2="SELECT count(*) as count FROM purchase_orders_details t1 JOIN purchase_orders t2 ON t1.purchase_order = t2.id 
+                    WHERE t1.product_id = '$id' AND t2.status ='ACTIVO'";
+        $resulcheck2 = $cls->consulQuery($sqlch2);
+        if ($resulcheck2['count'] > 0) {
+            $check = false;
+            $mensaje = array('success' => false, 'mens' => 'Este producto no se puede eliminar porque tiene ordenes de compras activas');
+
+        }
+
+        if($check){
+
+            $sql = "UPDATE products set status='DELETE',updated_by='$VAR_SESSION->username', updated_at ='$datetime' WHERE id ='$id' ";
+            $res = $cls->exeQuery($sql);
+            if ($res) {
+                $cls->commitSet();
+                $mensaje = array('success' => true, 'url' => './?view=products');
+
+            } else {
+                $cls->exeQuery('ROLLBACK');
+                $mensaje = array('success' => false, 'mens' => $res);
+
+            }
+        }
+
     } else {
 
         $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
@@ -1089,7 +1136,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PROVIDER') {
         $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
     }
 
-    $sqlstatus = "SELECT COUNT(*) AS count FROM providers WHERE id='$id' AND status =='ACTIVO'";
+    $sqlstatus = "SELECT COUNT(*) AS count FROM providers WHERE id='$id' AND status ='ACTIVO'";
     $response = $cls->consulQuery($sqlstatus);
     if ($response['count'] == 0) {
         $check = false;
@@ -1155,7 +1202,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'DELETE-PROVIDER') {
             $mensaje = array('success' => false, 'mens' => 'No se puede eliminar este proovedor porque esta en una order de compra activa.');
         }
 
-        $sqlstatus = "SELECT COUNT(*) AS count FROM providers WHERE id='$id' AND status =='ACTIVO'";
+        $sqlstatus = "SELECT COUNT(*) AS count FROM providers WHERE id='$id' AND status ='ACTIVO'";
         $response = $cls->consulQuery($sqlstatus);
         if ($response['count'] == 0) {
             $check = false;
@@ -1209,12 +1256,12 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PURCHASE-REQUEST') {
 
     $comment = trim($_POST['comment']);
     $reference = $_POST['reference'];
-    $check = true;
+
     $sqlcheck = "SELECT COUNT(*) as count FROM providers WHERE id ='$provider' AND status='ACTIVO'";
     $resulcheck = $cls->consulQuery($sqlcheck);
-    if ($resulcheck['count'] > 0) {
+    if ($resulcheck['count'] == 0) {
         $check = false;
-        $mensaje = array('success' => false, 'mens' => 'para crear una requisicion el proovedor #' + $provider + ' debe estar ACTIVO');
+        $mensaje = array('success' => false, 'mens' => 'para crear una requisicion el proovedor #' . $provider . ' debe estar ACTIVO');
 
     }
     if ($check) {
@@ -1290,12 +1337,19 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PURCHASE-REQUEST') {
     $reference = $_POST['reference'];
 
 
-    $check = true;
-    $sqlcheck = "SELECT COUNT(*) as count FROM purchase_requests WHERE id ='$provider' AND status='ACTIVO'";
+    $sqlcheck = "SELECT COUNT(*) as count FROM purchase_requests WHERE id ='$id' AND status='ACTIVO'";
     $response = $cls->consulQuery($sqlcheck);
     if ($response['count'] == 0) {
         $check = false;
         $mensaje = array('success' => false, 'mens' => 'No se puede editar esta requisición porque debe estar activa.');
+
+    }
+
+    $sqlcheck = "SELECT COUNT(*) as count FROM providers WHERE id ='$provider' AND status ='ACTIVO'";
+    $resulcheck = $cls->consulQuery($sqlcheck);
+    if ($resulcheck['count'] == 0) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'para editar una requisicion el proovedor #' . $provider . ' debe estar ACTIVO');
 
     }
     if ($check) {
@@ -1373,6 +1427,8 @@ if (isset($_POST['a']) && $_POST['a'] == 'APROVE-PURCHASE-REQUEST') {
             $mensaje = array('success' => false, 'mens' => 'No se puede APROBAR esta requisición porque debe estar activa.');
 
         }
+
+
 
         if ($check) {
             $sql = "UPDATE purchase_requests set status='APROBADA',approved_by='$VAR_SESSION->username',updated_by='$VAR_SESSION->username', approved_at ='$datetime',updated_at ='$datetime' WHERE id ='$id' ";
@@ -1640,11 +1696,19 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PURCHASE-ORDER') {
 
     $sqlch = "SELECT COUNT(*) AS count FROM purchase_requests where id ='$purchase_request' and status ='APROBADA'";
     $resch = $cls->consulQuery($sqlch);
-    $check = true;
+
     if ($resch['count'] > 0) {
 
         $check = false;
         $mensaje = array('success' => false, 'mens' => "No se puede crear esta orden de compra porque la requisicion debe estar APROBADA");
+
+    }
+
+    $sqlcheck = "SELECT COUNT(*) as count FROM providers WHERE id ='$provider' AND status='ACTIVO'";
+    $resulcheck = $cls->consulQuery($sqlcheck);
+    if ($resulcheck['count'] == 0) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'para crear una orden de compra el proovedor #' . $provider . ' debe estar ACTIVO');
 
     }
 
@@ -1754,14 +1818,19 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PURCHASE-ORDER') {
     $purchase_request = trim($_POST['purchase_request']);
     $reference = $_POST['reference'];
 
-    $sqlstatus = "SELECT COUNT(*) AS count FROM purchase_orders WHERE id='$id' AND status =='ACTIVO'";
+    $sqlstatus = "SELECT COUNT(*) AS count FROM purchase_orders WHERE id='$id' AND status ='ACTIVO'";
     $response = $cls->consulQuery($sqlstatus);
-
-    $check = true;
-
     if ($response['count'] == 0) {
         $check = false;
         $mensaje = array('success' => false, 'mens' => 'Para editar la requisicióm, esta debe estar activa');
+    }
+
+    $sqlcheck = "SELECT COUNT(*) as count FROM providers WHERE id ='$provider' AND status='ACTIVO'";
+    $resulcheck = $cls->consulQuery($sqlcheck);
+    if ($resulcheck['count'] == 0) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'para editar una orden de compra el proovedor #' . $provider . ' debe estar ACTIVO');
+
     }
     if ($check) {
 

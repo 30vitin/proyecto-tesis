@@ -128,7 +128,7 @@ $productos = "active-sublink";
                                                     <?php
                                                     foreach ($result_CT as $item) {?>
 
-                                                        <option value="<?php echo $item->id;?>"><?php echo $item->name;?></option>
+                                                        <option value="<?php echo $item->id;?>">[<?php echo $item->id;?>] <?php echo $item->name;?></option>
 
                                                     <?php }?>
 
@@ -174,16 +174,7 @@ $productos = "active-sublink";
                                                            style="color:red !important;"></small>
                                                 </div>
                                         </div>
-                                        <div class="col-md-4">
-                                            <label class="col-form-label">Cantidad de unidad por compra</label>
-                                            <div class="form-group bmd-form-group">
-                                                <input type="number" class="form-control validate" name="unidad_almacen"
-                                                           value="" min="1" id="unidad_almacen" placeholder="Cantidad de unidad">
-                                                <small class="form-text text-muted unidad_almacen-error"
-                                                           style="color:red !important;"></small>
-                                            </div>
 
-                                        </div>
                                     </div>
 
                                     <div class="row">
