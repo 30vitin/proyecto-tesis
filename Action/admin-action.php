@@ -1019,6 +1019,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-PRODUCTS') {
  * COMPRAS
  *
  */
+//listo
 if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PROVIDER') {
     $check = true;
     if (!isset($_POST['name'])) {
@@ -1088,6 +1089,13 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PROVIDER') {
         $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
     }
 
+    $sqlstatus = "SELECT COUNT(*) AS count FROM providers WHERE id='$id' AND status =='ACTIVO'";
+    $response = $cls->consulQuery($sqlstatus);
+    if ($response['count'] == 0) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Para editar proovedores, estos deben estar activos');
+    }
+
     if ($check) {
         $id = $_POST['id'];
 
@@ -1132,23 +1140,29 @@ if (isset($_POST['a']) && $_POST['a'] == 'DELETE-PROVIDER') {
         //check purchaser request
         //check purchase order
 
-        $sqlcheck1="SELECT COUNT(*) AS count FROM purchase_requests WHERE provider ='$id' and status ='ACTIVO'";
+        $sqlcheck1 = "SELECT COUNT(*) AS count FROM purchase_requests WHERE provider ='$id' and status ='ACTIVO'";
         $resulcheck1 = $cls->consulQuery($sqlcheck1);
         $check = true;
-        if($resulcheck1['count'] >0){
-            $check=false;
+        if ($resulcheck1['count'] > 0) {
+            $check = false;
             $mensaje = array('success' => false, 'mens' => 'No se puede eliminar este proovedor porque esta en una requisicion activa.');
         }
 
-        $sqlcheck1="SELECT COUNT(*) AS count FROM purchase_orders WHERE provider ='$id' and status ='ACTIVO'";
+        $sqlcheck1 = "SELECT COUNT(*) AS count FROM purchase_orders WHERE provider ='$id' and status ='ACTIVO'";
         $resulcheck1 = $cls->consulQuery($sqlcheck1);
-        if($resulcheck1['count'] >0){
-            $check=false;
+        if ($resulcheck1['count'] > 0) {
+            $check = false;
             $mensaje = array('success' => false, 'mens' => 'No se puede eliminar este proovedor porque esta en una order de compra activa.');
         }
 
+        $sqlstatus = "SELECT COUNT(*) AS count FROM providers WHERE id='$id' AND status =='ACTIVO'";
+        $response = $cls->consulQuery($sqlstatus);
+        if ($response['count'] == 0) {
+            $check = false;
+            $mensaje = array('success' => false, 'mens' => 'Para editar proovedores, estos deben estar activos');
+        }
 
-        if($check){
+        if ($check) {
 
             $sql = "UPDATE providers set status='DELETE',updated_by='$VAR_SESSION->username', updated_at ='$datetime' WHERE id ='$id' ";
             $res = $cls->exeQuery($sql);
@@ -1171,6 +1185,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'DELETE-PROVIDER') {
 }
 
 
+//listo
 if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PURCHASE-REQUEST') {
     $cls->autocommitF();
     $check = true;
@@ -1194,11 +1209,15 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PURCHASE-REQUEST') {
 
     $comment = trim($_POST['comment']);
     $reference = $_POST['reference'];
-
-    $sqlcheck ="SELECT COUNT(*) as count FROM providers WHERE id ='$provider' AND status='ACTIVO'";
+    $check = true;
+    $sqlcheck = "SELECT COUNT(*) as count FROM providers WHERE id ='$provider' AND status='ACTIVO'";
     $resulcheck = $cls->consulQuery($sqlcheck);
+    if ($resulcheck['count'] > 0) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'para crear una requisicion el proovedor #' + $provider + ' debe estar ACTIVO');
 
-    if($resulcheck['count']>0){
+    }
+    if ($check) {
 
         $sql1 = "INSERT INTO purchase_requests (id,date,provider,reference,comment,created_at,created_by)values('$id','$date','$provider','$reference', '$comment','$datetime','$VAR_SESSION->username')";
         $res = $cls->exeQuery($sql1);
@@ -1239,14 +1258,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PURCHASE-REQUEST') {
 
         }
 
-    }else{
-
-        $mensaje = array('success' => false, 'mens' => 'para crear una requisicion el proovedor #'+$provider+' necesita estar ACTIVO');
-
-
     }
-
-
 
 
 }
@@ -1271,23 +1283,28 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PURCHASE-REQUEST') {
         $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
     }
 
-
     $date = $_POST['date'];
     $id = $_POST['id'];
     $provider = $_POST['provider'];
     $comment = trim($_POST['comment']);
     $reference = $_POST['reference'];
 
-    $sqlstatus = "SELECT status FROM purchase_requests WHERE id='$id'";
-    $response = $cls->consulQuery($sqlstatus);
-    if ($response['status'] == "ACTIVO") {
+
+    $check = true;
+    $sqlcheck = "SELECT COUNT(*) as count FROM purchase_requests WHERE id ='$provider' AND status='ACTIVO'";
+    $response = $cls->consulQuery($sqlcheck);
+    if ($response['count'] == 0) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'No se puede editar esta requisición porque debe estar activa.');
+
+    }
+    if ($check) {
         $sql1 = "UPDATE purchase_requests set date ='$date',
                              provider = '$provider',
                              reference ='$reference',
                              comment ='$comment',
                              updated_at = '$datetime',
                              updated_by = '$VAR_SESSION->username' WHERE id='$id'";
-
         $res = $cls->exeQuery($sql1);
         if ($res) {
             $sql2 = "DELETE FROM purchase_requests_details WHERE purchase_request='$id'";
@@ -1338,23 +1355,85 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PURCHASE-REQUEST') {
             $mensaje = array('success' => false, 'mens' => $res);
 
         }
-
-    } else {
-
-        $mensaje = array('success' => false, 'mens' => 'No se puede editar esta requisición porque ya se encuentra cerrada.');
     }
 
 
 }
-if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-REQUEST-DETAILS') {
-    $mensaje = [];
-    if (isset($_POST['id'])) {
-        $id = $_POST['id'];
-        $sql = "SELECT t1.product_id as id,t1.costs,t1.units as unit,t1.total,t2.unidad_para_compra,t2.name FROM purchase_requests_details t1 join products t2 on t1.product_id = t2.id WHERE t1.purchase_request = '$id' ";
-        $result_lis = $cls->consultListQuery($sql);//query
-        $mensaje = $result_lis;
+if (isset($_POST['a']) && $_POST['a'] == 'APROVE-PURCHASE-REQUEST') {
+    $cls->autocommitF();
 
+    if (isset($_POST['id'])) {
+
+        $id = $_POST['id'];
+        $check = true;
+        $sqlcheck = "SELECT COUNT(*) as count FROM purchase_requests WHERE id ='$id' AND status='ACTIVO'";
+        $response = $cls->consulQuery($sqlcheck);
+        if ($response['count'] == 0) {
+            $check = false;
+            $mensaje = array('success' => false, 'mens' => 'No se puede APROBAR esta requisición porque debe estar activa.');
+
+        }
+
+        if ($check) {
+            $sql = "UPDATE purchase_requests set status='APROBADA',approved_by='$VAR_SESSION->username',updated_by='$VAR_SESSION->username', approved_at ='$datetime',updated_at ='$datetime' WHERE id ='$id' ";
+            $res = $cls->exeQuery($sql);
+            if ($res) {
+                $cls->commitSet();
+                $mensaje = array('success' => true, 'mens' => 'Orden de compra ha sido aprobada con exito.', 'reload' => true);
+
+            } else {
+                $cls->exeQuery('ROLLBACK');
+                $mensaje = array('success' => false, 'mens' => $res);
+
+            }
+        }
+
+
+    } else {
+
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
     }
+
+}
+if (isset($_POST['a']) && $_POST['a'] == 'CANCEL-PURCHASE-REQUEST') {
+    $cls->autocommitF();
+
+    if (isset($_POST['id'])) {
+
+        $id = $_POST['id'];
+        //CHECK CANCEL
+        $check = true;
+
+        $sqlcheck = "SELECT COUNT(*) AS count FROM purchase_requests WHERE id='$id' and status ='ACTIVO' ";
+        $resulcheck = $cls->consulQuery($sqlcheck);
+        if ($resulcheck['count'] == 0) {
+            $check = false;
+            $mensaje = array('success' => false, 'mens' => 'Para cancelar la requisición, esta debe estar activa');
+        }
+
+        if ($check) {
+            $comment_canceled = "";
+            if (isset($_POST['comment_canceled'])) {
+                $comment_canceled = $_POST['comment_canceled'];
+            }
+            $sql = "UPDATE purchase_requests set status='CANCELADA',comment_canceled='$comment_canceled',canceled_by='$VAR_SESSION->username',updated_by='$VAR_SESSION->username', canceled_at ='$datetime',updated_at ='$datetime' WHERE id ='$id' ";
+            $res = $cls->exeQuery($sql);
+            if ($res) {
+                $cls->commitSet();
+                $mensaje = array('success' => true, 'mens' => 'Orden de compra ha sido aprobada con exito.', 'reload' => true);
+
+            } else {
+                $cls->exeQuery('ROLLBACK');
+                $mensaje = array('success' => false, 'mens' => $res);
+
+            }
+        }
+
+    } else {
+
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
+    }
+
 }
 if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-REQUEST') {
     $cls->autocommitF();
@@ -1374,6 +1453,18 @@ if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-REQUEST') {
                 $check = false;
             }
         }
+
+        $check = true;
+        $sqlcheck = "SELECT COUNT(*) as count FROM purchase_requests WHERE id ='$provider' AND status='ACTIVO'";
+        $response = $cls->consulQuery($sqlcheck);
+        if ($response['count'] == 0) {
+            if ($cls->enableClose()) {
+                $check = false;
+                $mensaje = array('success' => false, 'mens' => 'No se puede CERRAR esta requisición porque debe estar activa.');
+            }
+
+        }
+
         if ($check) {
 
             $sql = "UPDATE purchase_requests set status='CERRADO',updated_by='$VAR_SESSION->username', updated_at ='$datetime' WHERE id ='$id' ";
@@ -1401,69 +1492,15 @@ if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-REQUEST') {
     }
 
 }
-if (isset($_POST['a']) && $_POST['a'] == 'APROVE-PURCHASE-REQUEST') {
-    $cls->autocommitF();
-
+if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-REQUEST-DETAILS') {
+    $mensaje = [];
     if (isset($_POST['id'])) {
-
         $id = $_POST['id'];
+        $sql = "SELECT t1.product_id as id,t1.costs,t1.units as unit,t1.total,t2.unidad_para_compra,t2.name FROM purchase_requests_details t1 join products t2 on t1.product_id = t2.id WHERE t1.purchase_request = '$id' ";
+        $result_lis = $cls->consultListQuery($sql);//query
+        $mensaje = $result_lis;
 
-        $sql = "UPDATE purchase_requests set status='APROBADA',approved_by='$VAR_SESSION->username',updated_by='$VAR_SESSION->username', approved_at ='$datetime',updated_at ='$datetime' WHERE id ='$id' ";
-        $res = $cls->exeQuery($sql);
-        if ($res) {
-            $cls->commitSet();
-            $mensaje = array('success' => true, 'mens' => 'Orden de compra ha sido aprobada con exito.', 'reload' => true);
-
-        } else {
-            $cls->exeQuery('ROLLBACK');
-            $mensaje = array('success' => false, 'mens' => $res);
-
-        }
-    } else {
-
-        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
     }
-
-}
-if (isset($_POST['a']) && $_POST['a'] == 'CANCEL-PURCHASE-REQUEST') {
-    $cls->autocommitF();
-
-    if (isset($_POST['id'])) {
-
-        $id = $_POST['id'];
-        //CHECK CANCEL
-        $check = true;
-
-        $sqlcheck="SELECT COUNT(*) AS count FROM purchase_requests WHERE id='$id' and status ='ACTIVO' ";
-        $resulcheck = $cls->consulQuery($sqlcheck);
-        if($resulcheck['count'] == 0){
-            $check = false;
-            $mensaje = array('success' => false, 'mens' => 'Para cancelar la requisición, esta debe estar activa');
-        }
-
-        if($check){
-            $comment_canceled = "";
-            if (isset($_POST['comment_canceled'])) {
-                $comment_canceled = $_POST['comment_canceled'];
-            }
-            $sql = "UPDATE purchase_requests set status='CANCELADA',comment_canceled='$comment_canceled',canceled_by='$VAR_SESSION->username',updated_by='$VAR_SESSION->username', canceled_at ='$datetime',updated_at ='$datetime' WHERE id ='$id' ";
-            $res = $cls->exeQuery($sql);
-            if ($res) {
-                $cls->commitSet();
-                $mensaje = array('success' => true, 'mens' => 'Orden de compra ha sido aprobada con exito.', 'reload' => true);
-
-            } else {
-                $cls->exeQuery('ROLLBACK');
-                $mensaje = array('success' => false, 'mens' => $res);
-
-            }
-        }
-
-    } else {
-
-        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001');
-    }
-
 }
 if (isset($_POST['a']) && $_POST['a'] == 'CONVERT-TO-PURCHASE-ORDER') {
     $cls->autocommitF();
@@ -1474,18 +1511,27 @@ if (isset($_POST['a']) && $_POST['a'] == 'CONVERT-TO-PURCHASE-ORDER') {
         $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001 ');
 
     }
-    $request_id = $_POST['id'];
-    $sql1 = "SELECT date,provider,comment,reference,status FROM purchase_requests WHERE id ='$request_id'";
-    $response1 = $cls->consulQuery($sql1);
-    if ($response1) {
-        if ($response1['status'] == 'APROBADA') {
 
-            $id = $cls->getId_autoincrement("purchase_orders");
-            $date = $response1['date'];
-            $provider = $response1['provider'];
-            $comment = trim($response1['comment']);
-            $reference = trim($response1['reference']);
-            $sql2 = "INSERT INTO purchase_orders (id,
+    $request_id = $_POST['id'];
+
+    $sqlcheck = "SELECT COUNT(*) as count FROM purchase_requests WHERE id ='$request_id' AND status='APROBADA'";
+    $response = $cls->consulQuery($sqlcheck);
+    if ($response['count'] == 0) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'No se puede convertir a O/C, la requisición tiene que estar aprobada');
+
+    }
+
+    if ($check) {
+        $sql1 = "SELECT date,provider,comment,reference,status FROM purchase_requests WHERE id ='$request_id'";
+        $response1 = $cls->consulQuery($sql1);
+
+        $id = $cls->getId_autoincrement("purchase_orders");
+        $date = $response1['date'];
+        $provider = $response1['provider'];
+        $comment = trim($response1['comment']);
+        $reference = trim($response1['reference']);
+        $sql2 = "INSERT INTO purchase_orders (id,
                              date,
                              provider,
                              purchase_request,
@@ -1503,72 +1549,60 @@ if (isset($_POST['a']) && $_POST['a'] == 'CONVERT-TO-PURCHASE-ORDER') {
                                     '$datetime',
                                     '$VAR_SESSION->username')";
 
-            $res2 = $cls->exeQuery($sql2);
-            if ($res2) {
+        $res2 = $cls->exeQuery($sql2);
+        if ($res2) {
 
-                $sql3 = "SELECT product_id,costs,units as unit,total FROM purchase_requests_details WHERE purchase_request ='$request_id'";
-                $response3 = $cls->consultListQuery($sql3);
+            $sql3 = "SELECT product_id,costs,units as unit,total FROM purchase_requests_details WHERE purchase_request ='$request_id'";
+            $response3 = $cls->consultListQuery($sql3);
 
-                $data_table = $response3;
-                $check = true; // check data table
-                foreach ($data_table as $data) {
+            $data_table = $response3;
+            $check = true; // check data table
+            foreach ($data_table as $data) {
 
-                    if ($data->costs > 0 && $data->total > 0 && $data->unit) {
+                if ($data->costs > 0 && $data->total > 0 && $data->unit) {
 
-                        $sql4 = "UPDATE products set price='$data->costs' WHERE id ='$data->product_id'";
-                        $res4 = $cls->exeQuery($sql4);
-                        if ($res4) {
+                    $sql4 = "UPDATE products set price='$data->costs' WHERE id ='$data->product_id'";
+                    $res4 = $cls->exeQuery($sql4);
+                    if ($res4) {
 
-                            $sql5 = "INSERT INTO purchase_orders_details (purchase_order,product_id,costs,units,total)values('$id','$data->product_id','$data->costs','$data->unit','$data->total')";
-                            $sql5 = $cls->exeQuery($sql5);
-                            if (!$sql5) {
-                                $check = false;
-                            }
-
-                        } else {
-
+                        $sql5 = "INSERT INTO purchase_orders_details (purchase_order,product_id,costs,units,total)values('$id','$data->product_id','$data->costs','$data->unit','$data->total')";
+                        $sql5 = $cls->exeQuery($sql5);
+                        if (!$sql5) {
                             $check = false;
-
                         }
-
 
                     } else {
 
                         $check = false;
 
                     }
-                }
 
-                if ($check) {
-
-                    $cls->commitSet();
-                    $mensaje = array('success' => true, 'mens' => 'Orden de compra registrada con exito.',
-                        'url' => './?view=purchase-order-edit&id=' . $id,
-                        "post_name" => "Orden de compra",
-                        "id" => $id, "title" => "Redireccionando a O/C");
 
                 } else {
 
-                    $mensaje = array('success' => false, 'mens' => 'Hubo un error al insertar los detalles de la tabla de productos. #001');
+                    $check = false;
 
                 }
-            } else {
-                $cls->exeQuery('ROLLBACK');
-                $mensaje = array('success' => false, 'mens' => $res2);
-
             }
 
+            if ($check) {
 
+                $cls->commitSet();
+                $mensaje = array('success' => true, 'mens' => 'Orden de compra registrada con exito.',
+                    'url' => './?view=purchase-order-edit&id=' . $id,
+                    "post_name" => "Orden de compra",
+                    "id" => $id, "title" => "Redireccionando a O/C");
+
+            } else {
+
+                $mensaje = array('success' => false, 'mens' => 'Hubo un error al insertar los detalles de la tabla de productos. #001');
+
+            }
         } else {
-
-            $mensaje = array('success' => false, 'mens' => 'No se puede convertir a O/C, la requisición tiene que estar aprobada');
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res2);
 
         }
-
-
-    } else {
-
-        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su adminsitrador de sistema #001 ');
 
     }
 
@@ -1577,6 +1611,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'CONVERT-TO-PURCHASE-ORDER') {
 
 
 //listo
+//TODO HACER EL CONVERTIR A PEDIDO
 if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PURCHASE-ORDER') {
     $cls->autocommitF();
     $check = true;
@@ -1613,7 +1648,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PURCHASE-ORDER') {
 
     }
 
-    if($check){
+    if ($check) {
 
         $reference = $_POST['reference'];
         $sql1 = "INSERT INTO purchase_orders (id,
@@ -1722,9 +1757,9 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PURCHASE-ORDER') {
     $sqlstatus = "SELECT COUNT(*) AS count FROM purchase_orders WHERE id='$id' AND status =='ACTIVO'";
     $response = $cls->consulQuery($sqlstatus);
 
-    $check=true;
+    $check = true;
 
-    if($response['count'] == 0){
+    if ($response['count'] == 0) {
         $check = false;
         $mensaje = array('success' => false, 'mens' => 'Para editar la requisicióm, esta debe estar activa');
     }
@@ -1829,7 +1864,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-PURCHASE-ORDER') {
 
             $sql2 = "SELECT COUNT(*) AS cont from purchase_orders WHERE id='$id' and status = 'APROBADA'";
             $res2 = $cls->consulQuery($sql2);
-            if($res2['count'] ==0){
+            if ($res2['count'] == 0) {
                 $check = false;
                 $mensaje = array('success' => false,
                     'mens' => 'La orden de compra debe estar APROBADA para poder cerrarla.');
@@ -1872,17 +1907,17 @@ if (isset($_POST['a']) && $_POST['a'] == 'APROVE-PURCHASE-ORDER') {
     if (isset($_POST['id'])) {
 
         $id = $_POST['id'];
-        $check  = true;
+        $check = true;
         $sql2 = "SELECT COUNT(*) AS cont from purchase_orders WHERE id='$id' and status = 'ACTIVO'";
         $res2 = $cls->consulQuery($sql2);
-        if($res2['count'] ==0){
+        if ($res2['count'] == 0) {
             $check = false;
             $mensaje = array('success' => false,
                 'mens' => 'La orden de compra debe estar ACTIVA para poder aprobarla.');
 
         }
 
-        if($check){
+        if ($check) {
             $sql = "UPDATE purchase_orders set status='APROBADA',approved_by='$VAR_SESSION->username',updated_by='$VAR_SESSION->username', approved_at ='$datetime',updated_at ='$datetime' WHERE id ='$id' ";
             $res = $cls->exeQuery($sql);
             if ($res) {
@@ -1895,7 +1930,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'APROVE-PURCHASE-ORDER') {
 
             }
         }
-
 
 
     } else {
@@ -1918,14 +1952,14 @@ if (isset($_POST['a']) && $_POST['a'] == 'CANCEL-PURCHASE-ORDER') {
         //CHECK CANCEL
         $check = true;
 
-        $sqlcheck="SELECT COUNT(*) AS count FROM purchase_orders WHERE id='$id' and status ='ACTIVO' ";
+        $sqlcheck = "SELECT COUNT(*) AS count FROM purchase_orders WHERE id='$id' and status ='ACTIVO' ";
         $resulcheck = $cls->consulQuery($sqlcheck);
-        if($resulcheck['count'] == 0){
+        if ($resulcheck['count'] == 0) {
             $check = false;
             $mensaje = array('success' => false, 'mens' => 'Para cancelar la orden de compra, esta debe estar activa');
         }
 
-        if($check){
+        if ($check) {
 
             $sql = "UPDATE purchase_orders set status='CANCELADA',comment_canceled='$comment_canceled',canceled_by='$VAR_SESSION->username',updated_by='$VAR_SESSION->username', canceled_at ='$datetime',updated_at ='$datetime' WHERE id ='$id' ";
             $res = $cls->exeQuery($sql);
@@ -1939,8 +1973,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'CANCEL-PURCHASE-ORDER') {
 
             }
         }
-
-
 
 
     } else {
@@ -2011,8 +2043,8 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-ORDER-RELATED-PURCHASE-ORDER') {
         $data = [];
         foreach ($result_lis as $result) {
 
-            $data[] = array("Id"=>$result->id,"Fecha"=>$result->date,"Compradas"=>$result->units_buy,
-                "Solicitadas"=>$result->units_request,"Diferencia"=>$result->units_diff,"Status"=>$result->status);
+            $data[] = array("Id" => $result->id, "Fecha" => $result->date, "Compradas" => $result->units_buy,
+                "Solicitadas" => $result->units_request, "Diferencia" => $result->units_diff, "Status" => $result->status);
         }
         $mensaje = $data;
 
