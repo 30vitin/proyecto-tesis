@@ -12,6 +12,7 @@ class Functions extends dba
     private $maximumFileTam = 2097152;
     private $enableClose = true;
     private $enableCancel = true;
+    private $enableControlClosePurchaseOrder = true;
 
 
     public function __construct()
@@ -23,6 +24,11 @@ class Functions extends dba
 
         return $this->enableClose;
     }
+    public function enableControlClosePurchaseOrder(){
+
+        return $this->enableControlClosePurchaseOrder;
+    }
+
     public function enableCancel(){
 
         return $this->enableCancel;
@@ -142,7 +148,11 @@ class Functions extends dba
         foreach ($result_lis as $result) {
             $sql2 = "select sum(t2.units_request) as units from orders t1 join orders_details t2 on t1.id = t2.order_id WHERE t1.purchase_order = '$id' and t2.product_id='$result->id' LIMIT 1";
             $response = $this->consulQuery($sql2);
-            $currentUnits+= ($result->unit - $response['units']);
+            $resunits = 0;
+            if($response){
+                $resunits = $response['units'];
+            }
+            $currentUnits+= ($result->unit - $resunits);
         }
         return ($currentUnits>0);
     }

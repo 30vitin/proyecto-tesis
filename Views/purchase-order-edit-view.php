@@ -18,17 +18,17 @@ if (!$response) {
 $disabled = "";
 $classDisable = "";
 $readOnly = "";
-if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $response['status'] == 'CANCELADA' ) {
+if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $response['status'] == 'CANCELADA') {
     $disabled = "disabled='disabled'";
     $classDisable = "disable-button";
     $readOnly = "readonly='readonly'";
 }
-$disableConvertPedido="";
-$classDisableConvertPedido= "";
+$disableConvertPedido = "";
+$classDisableConvertPedido = "";
 $completeOrder = false;
-if(!$cls->checkIfTotalPurchase($id)){
+if (!$cls->checkIfTotalPurchase($id)) {
     $disableConvertPedido = "disabled='disabled'";
-    $classDisableConvertPedido= "disable-button";
+    $classDisableConvertPedido = "disable-button";
     $completeOrder = true;
 }
 
@@ -118,9 +118,24 @@ $ordenescompra = "active-sublink";
                                                 </button>
 
                                             <?php } ?>
-                                            <button type="button" class="btn btn-success pull-right <?php echo $classDisableConvertPedido;?>"
-                                                    data-form="form" data-reset="false" <?php echo $disableConvertPedido;?>>Convertir a pedido
+                                            <button type="button"
+                                                    class="btn btn-success pull-right <?php echo $classDisableConvertPedido; ?>"
+                                                    data-form="form"
+                                                    data-reset="false" <?php echo $disableConvertPedido; ?>>Convertir a
+                                                pedido
                                             </button>
+                                        <?php } ?>
+                                        <?php if ($completeOrder){ ?>
+
+                                                <button type="button"
+                                                        class="btn btn-success pull-right show-data-modal"
+                                                        data-action="GET-ORDER-RELATED-PURCHASE-ORDER"
+                                                        data-columns="Id,Fecha,Compradas,Solicitadas,Diferencia,Status"
+                                                        data-applylink="true"
+                                                        data-title="Pedidos Relacionados"
+                                                        data-id="<?php echo $id; ?>">Ver pedidos
+
+                                                </button>
                                         <?php } ?>
 
 
@@ -137,7 +152,7 @@ $ordenescompra = "active-sublink";
                                     <?php include 'alert-form.php'; ?>
 
                                     <h4>Datos Generales</h4>
-                                    <?php if($completeOrder){?>
+                                    <?php if ($completeOrder) { ?>
                                         <div class="col-md-12">
                                             <div class="form-group bmd-form-group">
 
@@ -145,7 +160,7 @@ $ordenescompra = "active-sublink";
                                             </div>
                                         </div>
 
-                                    <?php }?>
+                                    <?php } ?>
                                     <hr/>
                                     <div class="row">
                                         <div class="col-md-6">
@@ -164,38 +179,51 @@ $ordenescompra = "active-sublink";
                                                     <label class="col-form-label">Comentario de cancelación</label>
 
                                                     <div class="form-group bmd-form-group">
-                                                            <?php echo $response['comment_canceled'];?>
+                                                        <?php echo $response['comment_canceled']; ?>
                                                     </div>
                                                 </div>
 
                                             <?php } ?>
                                             <div class="col-md-12">
                                                 <label class="col-form-label">Requisición</label>
-                                                <div class="form-group bmd-form-group">
 
-                                                    <?php
-                                                    $sql_CT = "SELECT id from purchase_requests WHERE status='APROBADA'";
-                                                    $result_CT = $cls->consultListQuery($sql_CT);//query
-                                                    ?>
-                                                    <select class="form-control validate select2 <?php echo ($response['status'] == 'CERRADO') ? '' : 'change-and-consult-edit' ?> "
-                                                            name="purchase_request"
-                                                            id="purchase_request"
-                                                            data-action="GET-PURCHASE-REQUEST-TO-ORDER"
-                                                            data-form="form"
-                                                        <?php echo $disabled; ?>>
-                                                        <option value="">-Seleccione-</option>
+                                                <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
+                                                    <div class="form-group bmd-form-group">
+                                                        <a href="./?view=purchase-requests-edit&id=<?php echo $response['purchase_request']; ?>"
+                                                           class="btn btn-outline-info"
+                                                           target="_blank">#<?php echo $response['purchase_request']; ?></a>
+                                                    </div>
+                                                <?php } else { ?>
+
+
+                                                    <div class="form-group bmd-form-group">
+
                                                         <?php
-                                                        foreach ($result_CT as $item) { ?>
+                                                        $sql_CT = "SELECT id from purchase_requests WHERE status='APROBADA'";
+                                                        $result_CT = $cls->consultListQuery($sql_CT);//query
+                                                        ?>
+                                                        <select class="form-control validate select2 <?php echo ($response['status'] == 'CERRADO') ? '' : 'change-and-consult-edit' ?> "
+                                                                name="purchase_request"
+                                                                id="purchase_request"
+                                                                data-action="GET-PURCHASE-REQUEST-TO-ORDER"
+                                                                data-form="form"
+                                                            <?php echo $disabled; ?>>
+                                                            <option value="">-Seleccione-</option>
+                                                            <?php
+                                                            foreach ($result_CT as $item) { ?>
 
-                                                            <option value="<?php echo $item->id; ?>" <?php echo ($response['purchase_request'] == $item->id) ? 'selected' : ''; ?>>
-                                                                #<?php echo $item->id; ?></option>
+                                                                <option value="<?php echo $item->id; ?>" <?php echo ($response['purchase_request'] == $item->id) ? 'selected' : ''; ?>>
+                                                                    #<?php echo $item->id; ?></option>
 
-                                                        <?php } ?>
+                                                            <?php } ?>
 
-                                                    </select>
-                                                    <small class="form-text text-muted purchase_request-error"
-                                                           style="color:red !important;"></small>
-                                                </div>
+                                                        </select>
+                                                        <small class="form-text text-muted purchase_request-error"
+                                                               style="color:red !important;"></small>
+                                                    </div>
+
+                                                <?php } ?>
+
                                             </div>
 
                                             <div class="col-md-12">
@@ -214,7 +242,11 @@ $ordenescompra = "active-sublink";
                                                 <div class="form-group bmd-form-group">
 
                                                     <?php
-                                                    $sql_CT = "SELECT id,name from providers WHERE status='ACTIVO'";
+                                                    if($response['status']=='CERRADO' || $response['status']=='APROBADA' ){
+                                                        $sql_CT = "SELECT id,name from providers";
+                                                    }else{
+                                                        $sql_CT = "SELECT id,name from providers WHERE status='ACTIVO'";
+                                                    }
                                                     $result_CT = $cls->consultListQuery($sql_CT);//query
                                                     ?>
                                                     <select class="form-control validate select2 " name="provider"
@@ -240,7 +272,7 @@ $ordenescompra = "active-sublink";
 
                                                 <div class="form-group bmd-form-group">
                                                     <textarea class="form-control" placeholder="Comentario"
-                                                              name="comment" <?php echo $readOnly; ?>><?php echo $response['comment'];?>  </textarea>
+                                                              name="comment" <?php echo $readOnly; ?>><?php echo $response['comment']; ?>  </textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
@@ -248,8 +280,9 @@ $ordenescompra = "active-sublink";
 
                                                 <div class="form-group bmd-form-group">
                                                     <input type="text" class="form-control" name="reference"
-                                                           value="<?php echo $response['reference'];?>"
-                                                           id="reference" placeholder="Referencia #" <?php echo $readOnly;?>>
+                                                           value="<?php echo $response['reference']; ?>"
+                                                           id="reference"
+                                                           placeholder="Referencia #" <?php echo $readOnly; ?>>
                                                 </div>
                                             </div>
 
@@ -309,6 +342,7 @@ $ordenescompra = "active-sublink";
             </div>
         </div>
         <?php include "scripts/modal-products.php"; ?>
+        <?php include "scripts/modal-global.php"; ?>
         <?php include "footer.php"; ?>
     </div>
 </div>

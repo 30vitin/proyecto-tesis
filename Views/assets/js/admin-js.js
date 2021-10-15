@@ -6,10 +6,10 @@ $(document).ready(function () {
 
     var data_table = [];
     if ($('.table-data-edit').length > 0) {
-        if($('.table-data-add-sect2').length){
+        if ($('.table-data-add-sect2').length) {
             getDataToTableSect2($('.table-data-edit').data('action'), $('.table-data-edit').data('id'), '.table-data-add-sect2')
 
-        }else{
+        } else {
             getDataToTable($('.table-data-edit').data('action'), $('.table-data-edit').data('id'), '.table-data-edit')
 
 
@@ -137,7 +137,7 @@ $(document).ready(function () {
                         $('#total-table').html('0.00')
 
                     }
-                    if ($('.table-data-edit').length > 0 && $('.table-data-add-sect2').length==0) {
+                    if ($('.table-data-edit').length > 0 && $('.table-data-add-sect2').length == 0) {
                         getDataToTable($('.table-data-edit').data('action-change'), request_id, '.table-data-edit')
                     }
                     if ($('.table-data-add-sect2').length > 0) {
@@ -270,32 +270,17 @@ $(document).ready(function () {
                                 type: "POST",
                                 dataType: "JSON",
                                 success: function (data) {
-                                    BtnReset(instance)
-                                    if (data.url) {
-                                        let timerInterval
-                                        Swal.fire({
-                                            title: (data.title) ? data.title : 'Procensando',
-                                            html: (data.subtitle) ? data.subtitle : '...',
-                                            timer: 2000,
-                                            timerProgressBar: true,
-                                            didOpen: () => {
-                                                Swal.showLoading()
-                                            },
-                                            willClose: () => {
-                                                clearInterval(timerInterval)
-                                            }
-                                        }).then((result) => {
-                                            if (result.dismiss === Swal.DismissReason.timer) {
-                                                location.href = data.url;
-                                            }
-                                        })
-                                    } else {
 
-                                        if (data.reload) {
+                                    BtnReset(instance)
+                                    if (data.success) {
+
+
+                                        if (data.url) {
                                             let timerInterval
                                             Swal.fire({
-                                                title: 'Recargando',
-                                                timer: 1000,
+                                                title: (data.title) ? data.title : 'Procensando',
+                                                html: (data.subtitle) ? data.subtitle : '...',
+                                                timer: 2000,
                                                 timerProgressBar: true,
                                                 didOpen: () => {
                                                     Swal.showLoading()
@@ -305,29 +290,61 @@ $(document).ready(function () {
                                                 }
                                             }).then((result) => {
                                                 if (result.dismiss === Swal.DismissReason.timer) {
-                                                    location.reload()
+                                                    location.href = data.url;
                                                 }
                                             })
-
                                         } else {
-                                            manageShowAlertFormSuccess(true);
-                                            manageShowAlertFormError(false);
-                                            $('.new-alert-success').html('<div class="row col-md-12">' +
-                                                '<div class="col-md-12">' +
-                                                '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
-                                                '</div>' +
-                                                ' <div class="col-md-12">' +
-                                                '<h4> <i class="material-icons">check</i> ' + data.mens + '</h4>' +
-                                                '</div>' +
-                                                ' <div class="col-md-12">' +
 
-                                                '</div>' +
-                                                '</div>');
+                                            if (data.reload) {
+                                                let timerInterval
+                                                Swal.fire({
+                                                    title: 'Recargando',
+                                                    timer: 1000,
+                                                    timerProgressBar: true,
+                                                    didOpen: () => {
+                                                        Swal.showLoading()
+                                                    },
+                                                    willClose: () => {
+                                                        clearInterval(timerInterval)
+                                                    }
+                                                }).then((result) => {
+                                                    if (result.dismiss === Swal.DismissReason.timer) {
+                                                        location.reload()
+                                                    }
+                                                })
+
+                                            } else {
+                                                manageShowAlertFormSuccess(true);
+                                                manageShowAlertFormError(false);
+                                                $('.new-alert-success').html('<div class="row col-md-12">' +
+                                                    '<div class="col-md-12">' +
+                                                    '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
+                                                    '</div>' +
+                                                    ' <div class="col-md-12">' +
+                                                    '<h4> <i class="material-icons">check</i> ' + data.mens + '</h4>' +
+                                                    '</div>' +
+                                                    ' <div class="col-md-12">' +
+
+                                                    '</div>' +
+                                                    '</div>');
+                                            }
+
+
                                         }
+                                    } else {
 
+                                        manageShowAlertFormSuccess(false);
+                                        manageShowAlertFormError(true);
 
+                                        $('.new-alert-error').html('<div class="row">' +
+                                            '<div class="col-md-12">' +
+                                            '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-error" data-add="alert-error-none">x</button>' +
+                                            '</div>' +
+                                            ' <div class="col-md-12">' +
+                                            '<h4><i class=\"material-icons\">warning</i> ' + data.mens + ' </h4>' +
+                                            '</div>' +
+                                            '</div>');
                                     }
-
 
                                 },
                                 error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -764,10 +781,10 @@ $(document).ready(function () {
 
 
             } else {
-                var mensaje="<i class=\"material-icons\">warning</i> Las unidades y el costo de los productos deben ser mayor a cero";
-                if($('.table-data-add-sect2').length>0){
+                var mensaje = "<i class=\"material-icons\">warning</i> Las unidades y el costo de los productos deben ser mayor a cero";
+                if ($('.table-data-add-sect2').length > 0) {
 
-                    mensaje="<i class=\"material-icons\">warning</i> Las unidades solicitadas no deben ser mayor a las compradas." +
+                    mensaje = "<i class=\"material-icons\">warning</i> Las unidades solicitadas no deben ser mayor a las compradas." +
                         "<br><i class=\"material-icons\">warning</i> Las solicitadas deben ser mayor a cero";
 
                 }
@@ -781,7 +798,7 @@ $(document).ready(function () {
                     '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-error" data-add="alert-error-none">x</button>' +
                     '</div>' +
                     ' <div class="col-md-12">' +
-                    '<h4>'+mensaje+' </h4>' +
+                    '<h4>' + mensaje + ' </h4>' +
                     '</div>' +
                     '</div>');
             }
@@ -822,32 +839,16 @@ $(document).ready(function () {
                     type: "POST",
                     dataType: "JSON",
                     success: function (data) {
+                        console.log(data)
                         BtnReset(instance)
-                        if (data.url) {
-                            let timerInterval
-                            Swal.fire({
-                                title: 'Procensando',
-                                html: 'Eliminando registro',
-                                timer: 2000,
-                                timerProgressBar: true,
-                                didOpen: () => {
-                                    Swal.showLoading()
-                                },
-                                willClose: () => {
-                                    clearInterval(timerInterval)
-                                }
-                            }).then((result) => {
-                                if (result.dismiss === Swal.DismissReason.timer) {
-                                    location.href = data.url;
-                                }
-                            })
-                        } else {
 
-                            if (data.reload) {
+                        if (data.success) {
+                            if (data.url) {
                                 let timerInterval
                                 Swal.fire({
-                                    title: 'Recargando',
-                                    timer: 1000,
+                                    title: 'Procensando',
+                                    html: 'Eliminando registro',
+                                    timer: 2000,
                                     timerProgressBar: true,
                                     didOpen: () => {
                                         Swal.showLoading()
@@ -857,26 +858,59 @@ $(document).ready(function () {
                                     }
                                 }).then((result) => {
                                     if (result.dismiss === Swal.DismissReason.timer) {
-                                        location.reload()
+                                        location.href = data.url;
                                     }
                                 })
-
                             } else {
-                                manageShowAlertFormSuccess(true);
-                                manageShowAlertFormError(false);
-                                $('.new-alert-success').html('<div class="row col-md-12">' +
-                                    '<div class="col-md-12">' +
-                                    '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
-                                    '</div>' +
-                                    ' <div class="col-md-12">' +
-                                    '<h4> <i class="material-icons">check</i> ' + data.mens + '</h4>' +
-                                    '</div>' +
-                                    ' <div class="col-md-12">' +
 
-                                    '</div>' +
-                                    '</div>');
+                                if (data.reload) {
+                                    let timerInterval
+                                    Swal.fire({
+                                        title: 'Recargando',
+                                        timer: 1000,
+                                        timerProgressBar: true,
+                                        didOpen: () => {
+                                            Swal.showLoading()
+                                        },
+                                        willClose: () => {
+                                            clearInterval(timerInterval)
+                                        }
+                                    }).then((result) => {
+                                        if (result.dismiss === Swal.DismissReason.timer) {
+                                            location.reload()
+                                        }
+                                    })
+
+                                } else {
+                                    manageShowAlertFormSuccess(true);
+                                    manageShowAlertFormError(false);
+                                    $('.new-alert-success').html('<div class="row col-md-12">' +
+                                        '<div class="col-md-12">' +
+                                        '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-success" data-add="alert-success-none">x</button>' +
+                                        '</div>' +
+                                        ' <div class="col-md-12">' +
+                                        '<h4> <i class="material-icons">check</i> ' + data.mens + '</h4>' +
+                                        '</div>' +
+                                        ' <div class="col-md-12">' +
+
+                                        '</div>' +
+                                        '</div>');
+                                }
+
+
                             }
+                        } else {
+                            manageShowAlertFormSuccess(false);
+                            manageShowAlertFormError(true);
 
+                            $('.new-alert-error').html('<div class="row">' +
+                                '<div class="col-md-12">' +
+                                '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-error" data-add="alert-error-none">x</button>' +
+                                '</div>' +
+                                ' <div class="col-md-12">' +
+                                '<h4><i class=\"material-icons\">warning</i> ' + data.mens + ' </h4>' +
+                                '</div>' +
+                                '</div>');
 
                         }
 
@@ -1123,12 +1157,11 @@ $(document).ready(function () {
         var id = $(instance).data('id')
         var units_request = Number($(instance).val());
         var units_diff = Number(0);
-        var unit_purchase =Number(0);
-
+        var unit_purchase = Number(0);
 
 
         //current data line
-       jQuery(data_table).each(function (index, value) {
+        jQuery(data_table).each(function (index, value) {
 
             if (value.dkey == id) {
                 unit_purchase = value.data.unit;
@@ -1138,31 +1171,30 @@ $(document).ready(function () {
 
         });
 
-        if(units_request>unit_purchase){
-            $("#error-"+$(instance).data('id')).css("display","block");
+        if (units_request > unit_purchase) {
+            $("#error-" + $(instance).data('id')).css("display", "block");
             $(instance).val(0)
             return false;
-        }else{
-            $("#error-"+$(instance).data('id')).css("display","none");
+        } else {
+            $("#error-" + $(instance).data('id')).css("display", "none");
         }
 
         //update data
         jQuery(data_table).each(function (index, value) {
 
-                   if (value.dkey == id) {
-                       value.data.units_request = units_request
-                       value.data.units_diff = units_diff
-                       return false;
-                   }
+            if (value.dkey == id) {
+                value.data.units_request = units_request
+                value.data.units_diff = units_diff
+                return false;
+            }
 
         });
 
-        $('#total-diff' + id).html((units_request>0)?units_diff :0)
+        $('#total-diff' + id).html((units_request > 0) ? units_diff : 0)
 
         calculateTotalSect2();
 
     });
-
 
 
     //en el editar
@@ -1250,8 +1282,64 @@ $(document).ready(function () {
 
     });
 
+    //modal global with datable
+    $('.show-data-modal').on('click', function () {
+        var instance = this;
+        var id = $(instance).data('id');
+        var action = $(instance).data('action');
+        var columns = $(instance).data('columns').split(',');
+        var applylink = $(instance).data('applylink');
+        var title = $(instance).data('title');
+
+        $('#modalGlobal').modal('show')
+        $('#modalGlobalLabel').html(title)
+
+        if ($('#table')) {
+
+            //titles
+            $('#header-table').html('');
+            $.each(columns, function (index, value) {
+                $('#header-table').append("<th>" + value + "</th>")
+            });
+
+            var table = $('#table-global').DataTable();
+            table.clear();
+
+            $.ajax({
+
+                data: {a: action, id: id},
+                url: "./?action=admin",
+                type: "POST",
+                dataType: "JSON",
+                success: function (data) {
+                    console.log(data)
+                    if (data.length > 0) {
+
+                        $.each(data, function (index, valuereceived) {
+                            var datos = [];
+                            $.each(columns, function (index, value) {
+                                datos.push(valuereceived[value])
+                            })
+                            table.row.add(datos).draw(false);
+
+                        });
 
 
+                    }
+
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
+
+                }
+
+            });
+
+        }
+
+
+    });
 
     function documentValidate() {
 
@@ -1283,14 +1371,14 @@ $(document).ready(function () {
 
         if (data_table.length > 0) {
 
-            if($('.table-data-add-sect2').length>0){
+            if ($('.table-data-add-sect2').length > 0) {
                 jQuery(data_table).each(function (index, value) {
 
                     if (Number(value.data.units_request) > Number(value.data.unit)) {
                         check = false;
                     }
                     if (Number(value.data.units_request) <= 0) {
-                        if(Number(value.data.unit)>0){
+                        if (Number(value.data.unit) > 0) {
                             check = false;
                         }
 
@@ -1301,7 +1389,7 @@ $(document).ready(function () {
 
                 });
 
-            }else{
+            } else {
 
                 jQuery(data_table).each(function (index, value) {
                     if (Number(value.data.unit) <= 0 || Number(value.data.costs) <= 0 || Number(value.data.total) <= 0) {
@@ -1393,16 +1481,15 @@ $(document).ready(function () {
 
         });
 
-        if ($('#unit-buy').length>0) {
+        if ($('#unit-buy').length > 0) {
             $('#unit-buy').html(units);
         }
-        if ($('#unit-request').length>0) {
+        if ($('#unit-request').length > 0) {
             $('#unit-request').html(units_request);
         }
-        if ($('#unit-diff').length>0) {
+        if ($('#unit-diff').length > 0) {
             $('#unit-diff').html(units_diff);
         }
-
 
 
     }
@@ -1500,7 +1587,12 @@ $(document).ready(function () {
                             var dkey = value.id;
                             var newdata = {
                                 dkey: dkey,
-                                data: {unit: value.unit, units_request: value.units_request, units_diff: value.units_diff, product_id: dkey}
+                                data: {
+                                    unit: value.unit,
+                                    units_request: value.units_request,
+                                    units_diff: value.units_diff,
+                                    product_id: dkey
+                                }
                             };
 
                             data_table.push(newdata);
@@ -1518,12 +1610,12 @@ $(document).ready(function () {
                             html += '<td><input type="number" name="units[]" class="form-control units-line" value="' + value.unit + '"' +
                                 'min="1" data-id="' + value.id + '" id="unit-' + value.id + '" readonly ="readonly"></td>';
 
-                            html += '<td><input type="number" name="units_request[]" class="form-control units-line-request" value="'+value.units_request+'"' +
+                            html += '<td><input type="number" name="units_request[]" class="form-control units-line-request" value="' + value.units_request + '"' +
                                 'min="0" max="' + value.unit + '" data-id="' + value.id + '" id="unit-request-' + value.id + '" ' + readonly + '>' +
-                                '<small class="form-text text-muted error" style="color:red !important;display: none" id="error-' + value.id + '">Limite unit. O/C ('+value.unit+')</small>' +
+                                '<small class="form-text text-muted error" style="color:red !important;display: none" id="error-' + value.id + '">Limite unit. O/C (' + value.unit + ')</small>' +
                                 '</td>';
 
-                            html += '<td><label for="form-control-label " id="total-diff' + value.id + '">'+value.units_diff+'</label></td>';
+                            html += '<td><label for="form-control-label " id="total-diff' + value.id + '">' + value.units_diff + '</label></td>';
 
 
                             html += '</tr>';

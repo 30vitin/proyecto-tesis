@@ -100,7 +100,7 @@ $requisicion = "active-sublink";
                                                         <?php
                                                         foreach ($result_CT as $item) { ?>
 
-                                                            <option value="<?php echo $item->id; ?>"><?php echo $item->name; ?></option>
+                                                            <option value="<?php echo $item->id; ?>">[<?php echo $item->id; ?>] <?php echo $item->name; ?></option>
 
                                                         <?php } ?>
 

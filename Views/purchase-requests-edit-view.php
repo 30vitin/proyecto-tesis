@@ -174,7 +174,12 @@ $requisicion = "active-sublink";
                                                 <div class="form-group bmd-form-group">
 
                                                     <?php
-                                                    $sql_CT = "SELECT id,name from providers WHERE status='ACTIVO'";
+                                                    if($response['status']=='CERRADO' || $response['status']=='APROBADA' ){
+                                                        $sql_CT = "SELECT id,name from providers";
+                                                    }else{
+                                                        $sql_CT = "SELECT id,name from providers WHERE status='ACTIVO'";
+                                                    }
+
                                                     $result_CT = $cls->consultListQuery($sql_CT);//query
                                                     ?>
                                                     <select class="form-control validate select2" name="provider"
@@ -183,7 +188,7 @@ $requisicion = "active-sublink";
                                                         <?php
                                                         foreach ($result_CT as $item) { ?>
 
-                                                            <option value="<?php echo $item->id; ?>" <?php echo ($response['provider'] == $item->id) ? 'selected' : ''; ?>><?php echo $item->name; ?></option>
+                                                            <option value="<?php echo $item->id; ?>" <?php echo ($response['provider'] == $item->id) ? 'selected' : ''; ?>>[<?php echo $item->id; ?>] <?php echo $item->name; ?></option>
 
                                                         <?php } ?>
 

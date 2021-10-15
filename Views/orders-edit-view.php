@@ -91,6 +91,13 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
 
                                         <?php } ?>
                                         <?php if ($response['status'] == 'APROBADA') { ?>
+                                            <?php if($cls->enableClose()) {?>
+                                                <button type="button" class="btn btn-danger pull-right btn-delete-form"
+                                                        data-form="form" data-id="<?php echo $id; ?>"
+                                                        data-action="CLOSE-ORDER"
+                                                        data-text="¿Estas seguro de cerrar este pedido?">Cerrar
+                                                </button>
+                                            <?php }  ?>
                                             <button type="button" class="btn btn-secondary pull-right print"
                                                     data-form="form" data-reset="true"> Imprimir
                                             </button>
@@ -100,6 +107,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
                                             <button type="button" class="btn btn-success pull-right "
                                                     data-form="form" data-reset="false">Convertir a factura
                                             </button>
+
 
                                         <?php } ?>
 
@@ -119,30 +127,49 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="col-md-12">
-                                                <label class="col-form-label">Orden de compra</label>
+                                                <label class="col-form-label">Status</label>
+
                                                 <div class="form-group bmd-form-group">
 
-                                                    <?php
-                                                    $sql_CT = "SELECT id from purchase_orders WHERE status='APROBADA'";
-                                                    $result_CT = $cls->consultListQuery($sql_CT);//query
-                                                    ?>
-                                                    <select class="form-control validate select2 <?php echo ($response['status'] == 'CERRADO') ? '' : 'change-and-consult-edit' ?>"
-                                                            name="purchase_order"
-                                                            id="purchase_order"
-                                                            data-action="GET-PURCHASE-ORDER-TO-ORDER"
-                                                            data-form="form" <?php echo $disabled; ?>>
-                                                        <option value="">-Seleccione-</option>
-                                                        <?php
-                                                        foreach ($result_CT as $item) { ?>
-
-                                                            <option value="<?php echo $item->id; ?>" <?php echo ($response['purchase_order'] == $item->id) ? 'selected' : ''; ?>>#<?php echo $item->id; ?></option>
-
-                                                        <?php } ?>
-
-                                                    </select>
-                                                    <small class="form-text text-muted purchase_order-error"
-                                                           style="color:red !important;"></small>
+                                                    <span class="badge <?php echo $cls->getStatusClass($response['status'])?>"><?php echo $response['status'];?></span>
                                                 </div>
+                                            </div>
+
+
+                                            <div class="col-md-12">
+                                                <label class="col-form-label">Orden de compra</label>
+                                                <?php if($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO'){?>
+                                                   <div class="form-group bmd-form-group">
+                                                       <a href="./?view=purchase-order-edit&id=<?php echo $response['purchase_order'];?>" class="btn btn-outline-info" target="_blank">#<?php echo $response['purchase_order'];?></a>
+                                                   </div>
+                                                <?php }else{?>
+
+                                                        <div class="form-group bmd-form-group">
+
+                                                        <?php
+                                                        $sql_CT = "SELECT id from purchase_orders WHERE status='APROBADA'";
+                                                        $result_CT = $cls->consultListQuery($sql_CT);//query
+                                                        ?>
+                                                        <select class="form-control validate select2 <?php echo ($response['status'] == 'CERRADO') ? '' : 'change-and-consult-edit' ?>"
+                                                                name="purchase_order"
+                                                                id="purchase_order"
+                                                                data-action="GET-PURCHASE-ORDER-TO-ORDER"
+                                                                data-form="form" <?php echo $disabled; ?>>
+                                                            <option value="">-Seleccione-</option>
+                                                            <?php
+                                                            foreach ($result_CT as $item) { ?>
+
+                                                                <option value="<?php echo $item->id; ?>" <?php echo ($response['purchase_order'] == $item->id) ? 'selected' : ''; ?>>#<?php echo $item->id; ?></option>
+
+                                                            <?php } ?>
+
+                                                        </select>
+                                                        <small class="form-text text-muted purchase_order-error"
+                                                               style="color:red !important;"></small>
+                                                    </div>
+
+                                                <?php }?>
+
                                             </div>
                                             <div class="col-md-12">
                                                 <label class="col-form-label">Fecha</label>

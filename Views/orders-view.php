@@ -73,8 +73,11 @@ $page=$_POST['page'];
                             <thead class="text-primary">
                             <tr>
                                 <th>ID</th>
-                                <th>O/C</th>
                                 <th>Fecha</th>
+                                <th>O/C</th>
+                                <th>Compradas</th>
+                                <th>Solicitadas</th>
+                                <th>Diferencia</th>
                                 <td>Status</td>
                                 <th>Acción</th>
                             </tr>
@@ -82,7 +85,14 @@ $page=$_POST['page'];
                             </thead>
                             <tbody>
                             <?php
-                            $sql = "SELECT t1.id, t1.purchase_order,t1.date,t1.status FROM orders t1 WHERE t1.status <>'DELETE'  order by t1.created_at desc ";
+                            $sql = "SELECT  id as id,purchase_order,date,sum(units_buy) as units_buy,sum(units_request) as units_request,sum(units_diff) as units_diff, status FROM (
+                                                    (SELECT  t1.id,t3.units_buy,t3.units_request,t3.units_diff,DATE_FORMAT(t1.date,'%Y-%m-%d') as date,t1.status,t1.purchase_order
+                                                    FROM orders t1 
+                                                    join orders_details t3 on t1.id = t3.order_id 
+                                                    WHERE t1.status <>'DELETE' 
+																										) as datas
+                                                    
+                                            ) group by id ORDER BY date desc ";
 
 
                             $result_lis = $cls->consultListQuery($sql);//query
@@ -92,9 +102,11 @@ $page=$_POST['page'];
                                 <tr>
 
                                     <td><?php echo $item->id; ?></td>
-                                    <td><?php echo $item->purchase_order; ?></td>
                                     <td><?php echo $item->date; ?></td>
-
+                                    <td><?php echo $item->purchase_order; ?></td>
+                                    <td><?php echo $item->units_buy; ?></td>
+                                    <td><?php echo $item->units_request; ?></td>
+                                    <td><?php echo $item->units_diff; ?></td>
                                     <td>
                                         <span class="badge <?php echo $cls->getStatusClass($item->status);?>"><?php echo $item->status;?></span>
                                     </td>
