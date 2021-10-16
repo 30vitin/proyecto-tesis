@@ -77,6 +77,9 @@ if (isset($_POST['page'])) {
                                             <th>Fecha</th>
                                             <th>Cliente</th>
                                             <th>Orden de Compra</th>
+                                            <th>Unidades</th>
+                                            <th>Costo</th>
+                                            <th>Total</th>
                                             <th>Status</th>
                                             <th>Acción</th>
                                         </tr>
@@ -84,7 +87,14 @@ if (isset($_POST['page'])) {
                                         </thead>
                                         <tbody>
                                         <?php
-                                        $sql = "SELECT t1.id, t1.purchase_order, t1.date,t2.name,t1.status FROM quotes t1 join customers t2 on t1.customer = t2.id WHERE t1.status <>'DELETE' order by t1.created_at desc ";
+                                        $sql = "SELECT  id as id,sum(units) as units,sum(costs) as costs,sum(total) as total,date,customer,status,purchase_order FROM (
+                                                    (SELECT   t1.id,t3.units,t3.costs,t3.total,t2.name as customer,t1.status,t1.purchase_order,DATE_FORMAT(t1.date,'%Y-%m-%d') as date
+                                                    FROM quotes t1 
+                                                    join customers t2 on t1.customer = t2.id 
+                                                    join quotes_details t3 on t1.id = t3.quote 
+                                                    WHERE t1.status <>'DELETE' ) as datas
+                                                    
+                                            ) group by id ORDER BY date desc";
 
                                         $result_lis = $cls->consultListQuery($sql);//query
 
@@ -94,8 +104,11 @@ if (isset($_POST['page'])) {
 
                                                 <td><?php echo $item->id; ?></td>
                                                 <td><?php echo $item->date; ?></td>
-                                                <td><?php echo $item->name; ?></td>
+                                                <td><?php echo $item->customer; ?></td>
                                                 <td><?php echo $item->purchase_order; ?></td>
+                                                <td><?php echo $item->units; ?></td>
+                                                <td><?php echo $item->costs; ?></td>
+                                                <td><?php echo $item->total; ?></td>
                                                 <td>
                                                     <span class="badge <?php echo $cls->getStatusClass($item->status);?>">
                                                         <?php echo $item->status;?></span>

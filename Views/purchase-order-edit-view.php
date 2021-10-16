@@ -119,10 +119,12 @@ $ordenescompra = "active-sublink";
 
                                             <?php } ?>
                                             <button type="button"
-                                                    class="btn btn-success pull-right <?php echo $classDisableConvertPedido; ?>"
+                                                    class="btn btn-success pull-right btn-confirm-action <?php echo $classDisableConvertPedido; ?>"
                                                     data-form="form"
-                                                    data-reset="false" <?php echo $disableConvertPedido; ?>>Convertir a
-                                                pedido
+                                                    data-action="CONVERT-TO-ORDER"
+                                                    data-id="<?php echo $id; ?>"
+                                                    data-text="¿Estas seguro de convertir a pedido?"
+                                                <?php echo $disableConvertPedido; ?>>Convertir a pedido
                                             </button>
                                         <?php } ?>
                                         <?php if ($completeOrder){ ?>

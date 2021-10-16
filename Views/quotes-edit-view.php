@@ -67,7 +67,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                         <div class="card ">
                             <div class="card-header card-header-rose card-header-text">
                                 <div class="card-text">
-                                    <h4 class="card-title">Editar Cotización # <?php echo $id;?> </h4>
+                                    <h4 class="card-title">Editar Cotización # <?php echo $id; ?> </h4>
                                 </div>
                             </div>
                             <div class="card-body ">
@@ -76,27 +76,35 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                     <div class="col-md-12 ">
                                         <?php if ($response['status'] == 'ACTIVO') { ?>
 
-                                                <button type="button" class="btn btn-primary pull-right btn-send-form-table" <?php echo $classDisable; ?>
-                                                        data-form="form" <?php echo $disabled; ?>> Guardar Cotización
-                                                </button>
-                                                <button type="button"
-                                                        class="btn btn-success pull-right btn-confirm-action <?php echo $classDisable; ?>"
-                                                        data-id="<?php echo $id; ?>" data-action="APROVE-QUOTE"
-                                                        data-text="¿Estas seguro de aprobar esta cotización?" <?php echo $disabled; ?>
-                                                        data-validform="true"
-                                                        data-validtableform="true">
-                                                    Aprobar para imprimir
-                                                </button>
-                                        <?php }?>
+                                            <button type="button"
+                                                    class="btn btn-primary pull-right btn-send-form-table" <?php echo $classDisable; ?>
+                                                    data-form="form" <?php echo $disabled; ?>> Guardar Cotización
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-success pull-right btn-confirm-action <?php echo $classDisable; ?>"
+                                                    data-id="<?php echo $id; ?>" data-action="APROVE-QUOTE"
+                                                    data-text="¿Estas seguro de aprobar esta cotización?" <?php echo $disabled; ?>
+                                                    data-validform="true"
+                                                    data-validtableform="true">
+                                                Aprobar para imprimir
+                                            </button>
+                                        <?php } ?>
 
                                         <?php if ($response['status'] == 'APROBADA') { ?>
                                             <button type="button" class="btn btn-secondary pull-right print"
                                                     data-form="form" data-reset="true"> Imprimir
                                             </button>
 
-                                        <?php }?>
+                                            <?php if ($cls->enableClose()) { ?>
+                                                <button type="button" class="btn btn-danger pull-right btn-delete-form"
+                                                        data-form="form" data-id="<?php echo $id; ?>"
+                                                        data-action="CLOSE-QUOTE"
+                                                        data-text="¿Estas seguro de cerrar esta cotización?">Cerrar
+                                                </button>
 
+                                            <?php } ?>
 
+                                        <?php } ?>
 
 
                                     </div>
@@ -116,27 +124,52 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="col-md-12">
-                                                <label class="col-form-label">Cliente</label>
+                                                <label class="col-form-label">Status</label>
+
                                                 <div class="form-group bmd-form-group">
 
-                                                    <?php
-                                                    $sql_CT = "SELECT id,name from customers WHERE status='ACTIVO'";
-                                                    $result_CT = $cls->consultListQuery($sql_CT);//query
-                                                    ?>
-                                                    <select class="form-control validate select2 select-form <?php echo $classDisable; ?>" name="customer"
-                                                            id="customer" data-reset-select-field="true" <?php echo $disabled; ?>>
+                                                    <span class="badge <?php echo $cls->getStatusClass($response['status']) ?>"><?php echo $response['status']; ?></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="col-form-label">Cliente</label>
+                                                <div class="form-group bmd-form-group">
+                                                    <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
 
-                                                        <option value="">-Seleccione-</option>
+                                                        <div class="form-group bmd-form-group">
+                                                            <a href="./?view=customers-edit&id=<?php echo $response['customer']; ?>"
+                                                               class="btn btn-outline-info"
+                                                               target="_blank">#<?php echo $response['customer']; ?></a>
+                                                        </div>
+
+
+
+
+                                                    <?php } else { ?>
+
                                                         <?php
-                                                        foreach ($result_CT as $item) { ?>
+                                                        $sql_CT = "SELECT id,name from customers WHERE status='ACTIVO'";
+                                                        $result_CT = $cls->consultListQuery($sql_CT);//query
+                                                        ?>
+                                                        <select class="form-control validate select2 select-form <?php echo $classDisable; ?>"
+                                                                name="customer"
+                                                                id="customer"
+                                                                data-reset-select-field="true" <?php echo $disabled; ?>>
 
-                                                            <option value="<?php echo $item->id; ?>" <?php echo ($response['customer'] == $item->id) ? 'selected' : ''; ?>><?php echo $item->name; ?></option>
+                                                            <option value="">-Seleccione-</option>
+                                                            <?php
+                                                            foreach ($result_CT as $item) { ?>
 
-                                                        <?php } ?>
+                                                                <option value="<?php echo $item->id; ?>" <?php echo ($response['customer'] == $item->id) ? 'selected' : ''; ?>><?php echo $item->name; ?></option>
 
-                                                    </select>
-                                                    <small class="form-text text-muted customer-error"
-                                                           style="color:red !important;"></small>
+                                                            <?php } ?>
+
+                                                        </select>
+                                                        <small class="form-text text-muted customer-error"
+                                                               style="color:red !important;"></small>
+
+                                                    <?php } ?>
+
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
@@ -147,7 +180,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                                            value="<?php echo date_format(date_create($response['date']), 'Y-m-d'); ?>"
                                                            id="date"
                                                            placeholder="Fecha"
-                                                            <?php echo $readOnly?>>
+                                                        <?php echo $readOnly ?>>
                                                     <small class="form-text text-muted date-error"
                                                            style="color:red !important;"></small>
                                                 </div>
@@ -155,27 +188,42 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                             <div class="col-md-12">
                                                 <label class="col-form-label">Orden de compra</label>
                                                 <div class="form-group bmd-form-group">
+                                                    <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
 
-                                                    <?php
-                                                    $sql_CT = "SELECT id from purchase_orders WHERE status='APROBADA'";
-                                                    $result_CT = $cls->consultListQuery($sql_CT);//query
-                                                    ?>
-                                                    <select class="form-control validate select2 change-and-consult-edit"
-                                                            name="purchase_order"
-                                                            id="purchase_order"
-                                                            data-action="GET-PURCHASE-ORDER-TO-QUOTE"
-                                                            data-form="form" disabled="disabled">
-                                                        <option value="">-Seleccione-</option>
+
+                                                        <div class="form-group bmd-form-group">
+                                                            <a href="./?view=purchase-order-edit&id=<?php echo $response['purchase_order']; ?>"
+                                                               class="btn btn-outline-info"
+                                                               target="_blank">#<?php echo $response['purchase_order']; ?></a>
+                                                        </div>
+
+
+                                                    <?php } else { ?>
+
                                                         <?php
-                                                        foreach ($result_CT as $item) { ?>
+                                                        $sql_CT = "SELECT id from purchase_orders WHERE status='APROBADA'";
+                                                        $result_CT = $cls->consultListQuery($sql_CT);//query
+                                                        ?>
+                                                        <select class="form-control validate select2 change-and-consult-edit"
+                                                                name="purchase_order"
+                                                                id="purchase_order"
+                                                                data-action="GET-PURCHASE-ORDER-TO-QUOTE"
+                                                                data-form="form"<?php echo $disabled; ?>>
+                                                            <option value="">-Seleccione-</option>
+                                                            <?php
+                                                            foreach ($result_CT as $item) { ?>
 
-                                                            <option value="<?php echo $item->id; ?>" <?php echo ($response['purchase_order'] == $item->id) ? 'selected' : ''; ?>>#<?php echo $item->id; ?></option>
+                                                                <option value="<?php echo $item->id; ?>" <?php echo ($response['purchase_order'] == $item->id) ? 'selected' : ''; ?>>
+                                                                    #<?php echo $item->id; ?></option>
 
-                                                        <?php } ?>
+                                                            <?php } ?>
 
-                                                    </select>
-                                                    <small class="form-text text-muted purchase_order-error"
-                                                           style="color:red !important;"></small>
+                                                        </select>
+                                                        <small class="form-text text-muted purchase_order-error"
+                                                               style="color:red !important;"></small>
+
+                                                    <?php } ?>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -186,7 +234,8 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                                 <div class="form-group bmd-form-group">
 
                                                     <textarea class="form-control" placeholder="Comentario"
-                                                              name="comment" id="comment"  <?php echo $readOnly?>><?php echo trim($response['comment']); ?></textarea>
+                                                              name="comment"
+                                                              id="comment"  <?php echo $readOnly ?>><?php echo trim($response['comment']); ?></textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
@@ -194,8 +243,9 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
 
                                                 <div class="form-group bmd-form-group">
                                                     <input type="text" class="form-control" name="reference"
-                                                           value="<?php echo $response['reference'];?>"
-                                                           id="reference" placeholder="Referencia #"  <?php echo $readOnly?>>
+                                                           value="<?php echo $response['reference']; ?>"
+                                                           id="reference"
+                                                           placeholder="Referencia #" <?php echo $readOnly ?>>
                                                 </div>
                                             </div>
                                         </div>
@@ -216,6 +266,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                                 </thead>
                                                 <tbody class="table-data-edit disable-button"
                                                        data-action="GET-PURCHASE-ORDER-DETAILS"
+                                                       data-action-change="GET-PURCHASE-ORDER-DETAILS"
                                                        data-id="<?php echo $id; ?>">
 
                                                 </tbody>

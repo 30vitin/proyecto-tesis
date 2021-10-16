@@ -127,6 +127,7 @@ $(document).ready(function () {
                 type: "POST",
                 dataType: "JSON",
                 success: function (data) {
+
                     if ($("#" + $(instance).data("form")).length > 0) {
                         $("#" + $(instance).data("form"))[0].reset();
                     }
@@ -224,14 +225,23 @@ $(document).ready(function () {
                 manageShowAlertFormError(true);
 
                 BtnReset(instance)
+                //condicion aqui
+                var mensaje ="<i class=\"material-icons\">warning</i> Las unidades y el costo de los productos deben ser mayor a cero";
+                if ($('.table-data-add-sect2').length > 0) {
+
+                    mensaje = "<i class=\"material-icons\">warning</i> Las unidades solicitadas no deben ser mayor a las compradas." +
+                        "<br><i class=\"material-icons\">warning</i> Las solicitadas deben ser mayor a cero";
+
+                }
+
                 Swal.fire('¡Alerta!', 'Favor validar los campos de la tabla', 'error')
                 $('.new-alert-error').html('<div class="row">' +
                     '<div class="col-md-12">' +
                     '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-error" data-add="alert-error-none">x</button>' +
                     '</div>' +
-                    ' <div class="col-md-12">' +
-                    '<h4><i class="material-icons">warning</i> Las unidades y el costo de los productos deben ser mayor a cero</h4>' +
-                    '</div>' +
+                        ' <div class="col-md-12">'+
+                            '<h4>'+mensaje+'</h4>' +
+                        '</div>' +
                     '</div>');
                 return false;
             }
@@ -240,6 +250,7 @@ $(document).ready(function () {
             title: (text) ? text : '¿Estas seguro de realizar esta acción?',
             showCancelButton: true,
             confirmButtonText: 'Si',
+            allowOutsideClick: false,
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.value) {
@@ -282,6 +293,7 @@ $(document).ready(function () {
                                                 html: (data.subtitle) ? data.subtitle : '...',
                                                 timer: 2000,
                                                 timerProgressBar: true,
+                                                allowOutsideClick: false,
                                                 didOpen: () => {
                                                     Swal.showLoading()
                                                 },
@@ -474,6 +486,7 @@ $(document).ready(function () {
 
                         if (reset) {
 
+                            form[0].reset();
                             form[0].reset();
 
 
@@ -781,6 +794,8 @@ $(document).ready(function () {
 
 
             } else {
+
+
                 var mensaje = "<i class=\"material-icons\">warning</i> Las unidades y el costo de los productos deben ser mayor a cero";
                 if ($('.table-data-add-sect2').length > 0) {
 
@@ -788,6 +803,7 @@ $(document).ready(function () {
                         "<br><i class=\"material-icons\">warning</i> Las solicitadas deben ser mayor a cero";
 
                 }
+
                 manageShowAlertFormSuccess(false);
                 manageShowAlertFormError(true);
 
@@ -1495,6 +1511,7 @@ $(document).ready(function () {
     }
 
     function getDataToTable(action, id, targetAdd = ".table-data-add") {
+        console.log(action,id,targetAdd)
 
         if (action && id && targetAdd) {
             $.ajax({
