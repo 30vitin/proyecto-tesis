@@ -28,7 +28,7 @@ if (!$response) {
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Editar Cliente | Cafeteria
+        Editar Cliente # <?php echo $id;?> | Cafeteria
     </title>
     <?php include "styles.php"; ?>
 
@@ -44,7 +44,14 @@ if (!$response) {
     <div class="main-panel">
         <!-- Navbar -->
 
-        <?php include "navbar.php"; ?>
+        <?php
+        $breadcrumbData = array(
+            array("name"=>"Lista de Clientes","link"=>"./?view=customers","current"=>false),
+            array("name"=>"Crear Cliente #$id","current"=>true),
+        );
+
+        $breadcrumb = json_decode(json_encode($breadcrumbData), FALSE);
+        include "navbar.php"; ?>
 
         <!-- End Navbar -->
         <div class="content">
@@ -55,7 +62,7 @@ if (!$response) {
 
                     <div class="col-md-12">
                         <div class="card ">
-                            <div class="card-header card-header-rose card-header-text">
+                            <div class="card-header card-header-warning card-header-text">
                                 <div class="card-text">
                                     <h4 class="card-title">Editar Cliente #<?php echo $id; ?></h4>
                                 </div>

@@ -30,7 +30,7 @@ $productos = "active-sublink";
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Editar Producto | Cafeteria
+        Editar Producto # <?php echo $id;?> | Cafeteria
     </title>
 
     <?php include "styles.php"; ?>
@@ -56,7 +56,7 @@ $productos = "active-sublink";
 
                     <div class="col-md-12">
                         <div class="card ">
-                            <div class="card-header card-header-rose card-header-text">
+                            <div class="card-header card-header-warning card-header-text">
                                 <div class="card-text">
                                     <h4 class="card-title">Editar Producto #<?php echo $id; ?> </h4>
                                 </div>

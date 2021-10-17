@@ -4,7 +4,7 @@ $cls = new Functions;  //llamando al objeto
 include 'utils.php';
 
 $sales = "active";
-$cotizacion = "active-sublink";
+$facturas = "active-sublink";
 
 
 if (!isset($_GET['id'])) {
@@ -12,7 +12,7 @@ if (!isset($_GET['id'])) {
 }
 
 $id = $_GET['id'];
-$sql = "SELECT order_id,date,customer,comment,status,reference,days_expired,date_expire FROM quotes WHERE id='$id' and status<>'DELETE'";
+$sql = "SELECT order_id,date,customer,comment,status,reference,credit_term FROM bills WHERE id='$id' and status<>'DELETE'";
 
 $response = $cls->consulQuery($sql);
 if (!$response) {
@@ -38,7 +38,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Editar Cotización # <?php echo $id;?> | Cafeteria
+        Editar Factura # <?php echo $id;?> | Cafeteria
     </title>
     <?php include "styles.php"; ?>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
@@ -56,8 +56,8 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
 
         <?php
         $breadcrumbData = array(
-            array("name"=>"Listar Cotizaciones","link"=>"./?view=quotes","current"=>false),
-            array("name"=>"Editar Cotización #$id","current"=>true),
+            array("name"=>"Lista de Facturas","link"=>"./?view=bills","current"=>false),
+            array("name"=>"Editar Factura #$id","current"=>true),
         );
 
         $breadcrumb = json_decode(json_encode($breadcrumbData), FALSE);
@@ -74,7 +74,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                         <div class="card ">
                             <div class="card-header card-header-warning card-header-text">
                                 <div class="card-text">
-                                    <h4 class="card-title">Editar Cotización # <?php echo $id; ?> </h4>
+                                    <h4 class="card-title">Editar Factura # <?php echo $id; ?> </h4>
                                 </div>
                             </div>
                             <div class="card-body ">
@@ -89,8 +89,8 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                             </button>
                                             <button type="button"
                                                     class="btn btn-success pull-right btn-confirm-action <?php echo $classDisable; ?>"
-                                                    data-id="<?php echo $id; ?>" data-action="APROVE-QUOTE"
-                                                    data-text="¿Estas seguro de aprobar esta cotización?" <?php echo $disabled; ?>
+                                                    data-id="<?php echo $id; ?>" data-action="APROVE-BILLS"
+                                                    data-text="¿Estas seguro de aprobar esta factura?" <?php echo $disabled; ?>
                                                     data-validform="true"
                                                     data-validtableform="true">
                                                 Aprobar para imprimir
@@ -107,7 +107,6 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                         <?php } ?>
 
 
-
                                     </div>
 
                                 </div>
@@ -115,7 +114,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                       action="">
 
 
-                                    <input type="hidden" name="a" value="UPDATE-QUOTE">
+                                    <input type="hidden" name="a" value="UPDATE-BILLS">
                                     <input type="hidden" name="id" value="<?php echo $id; ?>">
 
                                     <?php include 'alert-form.php'; ?>
@@ -154,7 +153,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                                         <select class="form-control validate select2 change-and-consult-edit"
                                                                 name="order_id"
                                                                 id="order_id"
-                                                                data-action="GET-PURCHASE-ORDER-TO-QUOTE"
+                                                                data-action="GET-PURCHASE-ORDER-TO-BILLS"
                                                                 data-form="form"<?php echo $disabled; ?>>
                                                             <option value="">-Seleccione-</option>
                                                             <?php
@@ -228,13 +227,16 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
-                                                <label class="col-form-label">Dias que vencimiento</label>
+                                                <label class="col-form-label">Tipo de Crédito</label>
                                                 <div class="form-group bmd-form-group">
-                                                    <input type="number" class="form-control" name="days_expired"
-                                                           value="<?php echo $response['days_expired'];?>"
-                                                           id="days_expired"
-                                                           placeholder="Dias de vencimiento">
+                                                    <select name="credit_term" id="credit_term"
+                                                            class="form-control validate">
+                                                        <option value="CONTADO" <?php echo ($response['credit_term'] == "CONTADO") ? 'selected' : ''; ?>>CONTADO </option>
+                                                        <option value="CREDITO" <?php echo ($response['credit_term'] == "CREDITO") ? 'selected' : ''; ?>>CREDITO</option>
+                                                    </select>
 
+                                                    <small class="form-text text-muted credit_term-error"
+                                                           style="color:red !important;"></small>
                                                 </div>
 
                                             </div>
@@ -278,7 +280,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                                 </tr>
                                                 </thead>
                                                 <tbody class="table-data-edit disable-button"
-                                                       data-action="GET-QUOTES-DETAILS-TO-QUOTE"
+                                                       data-action="GET-BILLS-DETAILS-TO-BILLS"
                                                        data-action-change="GET-ORDER-DETAILS-TO-QUOTE"
                                                        data-id="<?php echo $id; ?>">
 

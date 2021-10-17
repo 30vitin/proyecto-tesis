@@ -201,7 +201,6 @@ $(document).ready(function () {
 
     });
 
-
     //set status con confirmacion
     $('.btn-confirm-action').on('click', function () {
         var instance = this;
@@ -214,12 +213,13 @@ $(document).ready(function () {
         var validForm = $(this).data('validform');
         var validTableForm = $(this).data('validtableform');
 
+
         if (validForm) {
             if (!documentValidate()) {
                 return false;
             }
         }
-        if (validTableForm) {
+        if (validTableForm) { //validar aqui
             if (!tableValidate()) {
                 manageShowAlertFormSuccess(false);
                 manageShowAlertFormError(true);
@@ -246,6 +246,8 @@ $(document).ready(function () {
                 return false;
             }
         }
+
+
         Swal.fire({
             title: (text) ? text : '¿Estas seguro de realizar esta acción?',
             showCancelButton: true,
@@ -379,7 +381,7 @@ $(document).ready(function () {
                         type: "POST",
                         dataType: "JSON",
                         success: function (data) {
-                            console.log(action, id)
+                            //console.log(data,data.url)
                             BtnReset(instance)
                             if (data.url) {
                                 let timerInterval
@@ -396,7 +398,8 @@ $(document).ready(function () {
                                     }
                                 }).then((result) => {
                                     if (result.dismiss === Swal.DismissReason.timer) {
-                                        location.href = data.url;
+                                        //document.location.href = encodeURI(data.url);
+                                        location.href = encodeURI(data.url)
                                     }
                                 })
                             } else {
@@ -457,7 +460,6 @@ $(document).ready(function () {
         })
 
     });
-
 
     //envio de formularios / envio de formularios con tabla
     $('.btn-send-form').on('click', function (e) {
@@ -1002,8 +1004,7 @@ $(document).ready(function () {
 
         });
     });
-    $('.btn-add-product-table').on('click', function () {
-
+    $('.btn-add-product-table').on('click', function (e) {
         //checked-table
         $('#modalProduct').modal('hide')
 
@@ -1015,6 +1016,7 @@ $(document).ready(function () {
                     ids.push($(this).val());
                 }
             });
+
             if (ids.length > 0) {
                 $.ajax({
 
@@ -1023,6 +1025,7 @@ $(document).ready(function () {
                     type: "POST",
                     dataType: "JSON",
                     success: function (data) {
+
                         if (data.length > 0) {
                             $.each(data, function (index, value) {
                                 var dkey = value.id;
@@ -1030,6 +1033,7 @@ $(document).ready(function () {
                                     dkey: dkey,
                                     data: {unit: 0, costs: value.price, total: 0, product_id: dkey}
                                 };
+
                                 data_table.push(newdata);
 
 
@@ -1361,7 +1365,7 @@ $(document).ready(function () {
 
         var check = true;
         $.each($('.validate'), function (index, value) {
-
+            console.log(this.id,$(value).val())
             if ($(value).val() == '') {
                 $("." + this.id + '-error').html("This field is required!");
                 check = false;
@@ -1521,7 +1525,7 @@ $(document).ready(function () {
                 type: "POST",
                 dataType: "JSON",
                 success: function (data) {
-
+                    //console.log(data)
                     if (data.length > 0) {
                         var disabled = "";
                         var readonly = "";

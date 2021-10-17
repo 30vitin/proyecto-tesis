@@ -53,14 +53,14 @@ if (isset($_POST['page'])) {
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title ">Lista de Facturas</h4>
+                                <h4 class="card-title ">Facturas</h4>
                             </div>
                             <div class="card-body">
 
                                 <div class="row">
                                     <div class="col-md-5 pb-3">
                                         <a href="./?view=bills-create" class="btn btn-primary">
-                                            Registrar cotización
+                                            Registrar factura
                                         </a>
 
                                     </div>
@@ -75,7 +75,10 @@ if (isset($_POST['page'])) {
                                             <th>Id</th>
                                             <th>Fecha</th>
                                             <th>Cliente</th>
-                                            <th>Orden de Compra</th>
+                                            <th>Pedido</th>
+                                            <th>Unidades</th>
+                                            <th>Costo</th>
+                                            <th>Total</th>
                                             <th>Status</th>
                                             <th>Acción</th>
                                         </tr>
@@ -83,7 +86,14 @@ if (isset($_POST['page'])) {
                                         </thead>
                                         <tbody>
                                         <?php
-                                        $sql = "SELECT t1.id, t1.purchase_order, t1.date,t2.name FROM bills t1 join customers t2 on t1.customer = t2.id WHERE t1.status <>'DELETE' order by t1.created_at desc ";
+                                        $sql = "SELECT  id as id,sum(units) as units,sum(costs) as costs,sum(total) as total,date,customer,status,order_id FROM (
+                                                    (SELECT   t1.id,t3.units,t3.costs,t3.total,t2.name as customer,t1.status,t1.order_id,DATE_FORMAT(t1.date,'%Y-%m-%d') as date
+                                                    FROM bills t1 
+                                                    join customers t2 on t1.customer = t2.id 
+                                                    join bills_details t3 on t1.id = t3.bill 
+                                                    WHERE t1.status <>'DELETE' ) as datas
+                                                    
+                                            ) group by id ORDER BY date desc";
 
                                         $result_lis = $cls->consultListQuery($sql);//query
 
@@ -93,9 +103,16 @@ if (isset($_POST['page'])) {
 
                                                 <td><?php echo $item->id; ?></td>
                                                 <td><?php echo $item->date; ?></td>
-                                                <td><?php echo $item->name; ?></td>
-                                                <td><?php echo $item->purchase_order; ?></td>
+                                                <td><?php echo $item->customer; ?></td>
+                                                <td><?php echo $item->order_id; ?></td>
+                                                <td><?php echo $item->units; ?></td>
+                                                <td><?php echo $item->costs; ?></td>
 
+                                                <td><?php echo $item->total ; ?></td>
+                                                <td>
+                                                    <span class="badge <?php echo $cls->getStatusClass($item->status);?>">
+                                                        <?php echo $item->status;?></span>
+                                                </td>
                                                 <td class="td-actions">
                                                     <a href="./?view=bills-edit&id=<?php echo $item->id; ?>"
                                                        rel="tooltip" title="" class="btn btn-primary btn-link btn-sm"

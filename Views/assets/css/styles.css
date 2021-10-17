@@ -1,3 +1,6 @@
+img.img-fluid.loading {
+    height: 106px;
+}
 button.disable-button {
     cursor: not-allowed;
 }
@@ -29,15 +32,14 @@ div.new-alert-success{
 
 
 img.img-fluid.simple-text.logo-normal {
-    height: 80px !important;
-    width: 88% !important;
+    width: 32% !important;
 }
 .sidebar .logo .simple-text{
 
     padding: 0px 0px !important;
 }
 .sidebar[data-color="purple"] li.active>a{
-    background-color: #fbca08 !important;
+    background-color: #1F618D !important;
 
 }
 .sidebar .nav li.active>[data-toggle="collapse"] i{

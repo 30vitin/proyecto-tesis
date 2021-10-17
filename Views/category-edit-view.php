@@ -28,7 +28,7 @@ $categoria = "active-sublink";
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Editar Categoría | Cafeteria
+        Editar Categoría # <?php echo $id;?> | Cafeteria
     </title>
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport'/>
     <?php include "styles.php";?>
@@ -52,7 +52,7 @@ $categoria = "active-sublink";
 
                     <div class="col-md-12">
                         <div class="card ">
-                            <div class="card-header card-header-rose card-header-text">
+                            <div class="card-header card-header-warning card-header-text">
                                 <div class="card-text">
                                     <h4 class="card-title">Editar Categoría #<?php echo $response['id'];?> <i
                                                 class="spinner-border spinner-border-sm"></i></h4>

@@ -28,7 +28,7 @@ $proveedor = "active-sublink";
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Editar Proveedor | Cafeteria
+        Editar Proveedor # <?php echo $id;?> | Cafeteria
     </title>
     <?php include "styles.php"; ?>
 
@@ -55,7 +55,7 @@ $proveedor = "active-sublink";
 
                     <div class="col-md-12">
                         <div class="card ">
-                            <div class="card-header card-header-rose card-header-text">
+                            <div class="card-header card-header-warning card-header-text">
                                 <div class="card-text">
                                     <h4 class="card-title">Editar Proveedor #<?php echo $id;?></h4>
                                 </div>

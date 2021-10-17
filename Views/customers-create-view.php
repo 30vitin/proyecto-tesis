@@ -33,7 +33,14 @@ $clientes ="active-sublink";
     <div class="main-panel">
         <!-- Navbar -->
 
-        <?php include "navbar.php"; ?>
+        <?php
+        $breadcrumbData = array(
+            array("name"=>"Lista de  Clientes","link"=>"./?view=customers","current"=>false),
+            array("name"=>"Crear Cliente","current"=>true),
+        );
+
+        $breadcrumb = json_decode(json_encode($breadcrumbData), FALSE);
+        include "navbar.php"; ?>
 
         <!-- End Navbar -->
         <div class="content">
@@ -44,7 +51,7 @@ $clientes ="active-sublink";
 
                     <div class="col-md-12">
                         <div class="card ">
-                            <div class="card-header card-header-rose card-header-text">
+                            <div class="card-header card-header-warning card-header-text">
                                 <div class="card-text">
                                     <h4 class="card-title">Crear Nuevo Cliente </h4>
                                 </div>

@@ -44,7 +44,7 @@ $ordenescompra = "active-sublink";
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Editar Orden de Compra | Cafeteria
+        Editar Orden de Compra # <?php echo $id;?> | Cafeteria
     </title>
     <?php include "styles.php"; ?>
     <link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet"/>
@@ -74,7 +74,7 @@ $ordenescompra = "active-sublink";
 
                     <div class="col-md-12">
                         <div class="card ">
-                            <div class="card-header card-header-rose card-header-text">
+                            <div class="card-header card-header-warning card-header-text">
                                 <div class="card-text">
                                     <h4 class="card-title">Editar Orden de compra # <?php echo $id; ?> </h4>
                                 </div>
@@ -104,7 +104,7 @@ $ordenescompra = "active-sublink";
                                                     data-text="¿Estas seguro de aprobar esta orden de compra?" <?php echo $disabled; ?>
                                                     data-validform="true"
                                                     data-validtableform="true">
-                                                Aprobar para facturar
+                                                Aprobar para pedido
                                             </button>
 
                                         <?php } ?>
@@ -138,6 +138,14 @@ $ordenescompra = "active-sublink";
                                                         data-id="<?php echo $id; ?>">Ver pedidos
 
                                                 </button>
+                                        <?php } ?>
+                                        <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
+                                            <button type="button" class="btn btn-secondary pull-right print"
+                                                    data-form="form" data-reset="true"> Imprimir
+                                            </button>
+
+
+
                                         <?php } ?>
 
 

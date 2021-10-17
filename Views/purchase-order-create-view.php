@@ -46,7 +46,7 @@ $ordenescompra = "active-sublink";
 
                     <div class="col-md-12">
                         <div class="card ">
-                            <div class="card-header card-header-rose card-header-text">
+                            <div class="card-header card-header-warning card-header-text">
                                 <div class="card-text">
                                     <h4 class="card-title">Crear Nueva Orden de Compra </h4>
                                 </div>

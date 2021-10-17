@@ -34,7 +34,14 @@ $facturas = "active-sublink";
     <div class="main-panel">
         <!-- Navbar -->
 
-        <?php include "navbar.php"; ?>
+        <?php
+        $breadcrumbData = array(
+            array("name"=>"Lista de Facturas","link"=>"./?view=bills","current"=>false),
+            array("name"=>"Crear Factura","current"=>true),
+        );
+
+        $breadcrumb = json_decode(json_encode($breadcrumbData), FALSE);
+        include "navbar.php"; ?>
 
         <!-- End Navbar -->
         <div class="content">
@@ -45,7 +52,7 @@ $facturas = "active-sublink";
 
                     <div class="col-md-12">
                         <div class="card ">
-                            <div class="card-header card-header-rose card-header-text">
+                            <div class="card-header card-header-warning card-header-text">
                                 <div class="card-text">
                                     <h4 class="card-title">Crear Nueva Factura </h4>
                                 </div>
@@ -55,7 +62,7 @@ $facturas = "active-sublink";
                                 <div class="row">
                                     <div class="col-md-12 ">
                                         <button type="button" class="btn btn-primary pull-right btn-send-form-table"
-                                                data-form="form" data-reset="true"> Guardar Cotización
+                                                data-form="form" data-reset="true"> Guardar Factura
                                         </button>
 
                                     </div>
@@ -65,7 +72,7 @@ $facturas = "active-sublink";
                                       action="">
 
 
-                                    <input type="hidden" name="a" value="CREATE-QUOTE">
+                                    <input type="hidden" name="a" value="CREATE-BILLS">
 
                                     <?php include 'alert-form.php'; ?>
 
@@ -73,16 +80,29 @@ $facturas = "active-sublink";
                                     <hr/>
                                     <div class="row">
                                         <div class="col-md-6">
-
                                             <div class="col-md-12">
-                                                <label class="col-form-label">Fecha</label>
-
+                                                <label class="col-form-label">Pedido</label>
                                                 <div class="form-group bmd-form-group">
-                                                    <input type="date" class="form-control validate" name="date"
-                                                           value=""
-                                                           id="date"
-                                                           placeholder="Fecha">
-                                                    <small class="form-text text-muted date-error"
+
+                                                    <?php
+                                                    $sql_CT = "SELECT id from orders WHERE status='APROBADA'";
+                                                    $result_CT = $cls->consultListQuery($sql_CT);//query
+                                                    ?>
+                                                    <select class="form-control validate select2 change-and-consult"
+                                                            name="order_id"
+                                                            id="order_id"
+                                                            data-action="GET-PURCHASE-ORDER-TO-BILLS"
+                                                            data-form="form">
+                                                        <option value="">-Seleccione-</option>
+                                                        <?php
+                                                        foreach ($result_CT as $item) { ?>
+
+                                                            <option value="<?php echo $item->id; ?>">#<?php echo $item->id; ?></option>
+
+                                                        <?php } ?>
+
+                                                    </select>
+                                                    <small class="form-text text-muted purchase_order-error"
                                                            style="color:red !important;"></small>
                                                 </div>
                                             </div>
@@ -94,7 +114,7 @@ $facturas = "active-sublink";
                                                     $sql_CT = "SELECT id,name from customers WHERE status='ACTIVO'";
                                                     $result_CT = $cls->consultListQuery($sql_CT);//query
                                                     ?>
-                                                    <select class="form-control validate select2 select-form" name="customer"
+                                                    <select class="form-control validate select2 " name="customer"
                                                             id="customer" data-reset-select-field="true">
                                                         <option value="">-Seleccione-</option>
                                                         <?php
@@ -110,31 +130,34 @@ $facturas = "active-sublink";
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
-                                                <label class="col-form-label">Orden de compra</label>
+                                                <label class="col-form-label">Fecha</label>
+
                                                 <div class="form-group bmd-form-group">
-
-                                                    <?php
-                                                    $sql_CT = "SELECT id from purchase_orders WHERE status='APROBADA'";
-                                                    $result_CT = $cls->consultListQuery($sql_CT);//query
-                                                    ?>
-                                                    <select class="form-control validate select2 change-and-consult"
-                                                            name="purchase_order"
-                                                            id="purchase_order"
-                                                            data-action="GET-PURCHASE-ORDER-TO-QUOTE"
-                                                            data-form="form">
-                                                        <option value="">-Seleccione-</option>
-                                                        <?php
-                                                        foreach ($result_CT as $item) { ?>
-
-                                                            <option value="<?php echo $item->id; ?>">#<?php echo $item->id; ?></option>
-
-                                                        <?php } ?>
-
-                                                    </select>
-                                                    <small class="form-text text-muted purchase_order-error"
+                                                    <input type="date" class="form-control validate" name="date"
+                                                           value=""
+                                                           id="date"
+                                                           placeholder="Fecha">
+                                                    <small class="form-text text-muted date-error"
                                                            style="color:red !important;"></small>
                                                 </div>
                                             </div>
+                                            <div class="col-md-12">
+                                                <label class="col-form-label">Tipo de Crédito</label>
+                                                <div class="form-group bmd-form-group">
+                                                    <select name="credit_term" id="credit_term"
+                                                            class="form-control validate">
+                                                        <option value="CONTADO">CONTADO </option>
+                                                        <option value="CREDITO">CREDITO</option>
+                                                    </select>
+
+                                                    <small class="form-text text-muted credit_term-error"
+                                                           style="color:red !important;"></small>
+                                                </div>
+
+                                            </div>
+
+
+
                                         </div>
                                         <div class="col-md-6">
                                             <div class="col-md-12">
@@ -173,7 +196,7 @@ $facturas = "active-sublink";
                                                     <th>Total</th>
                                                 </tr>
                                                 </thead>
-                                                <tbody class="table-data-add "  data-action="GET-PURCHASE-ORDER-DETAILS">
+                                                <tbody class="table-data-add disable-button"  data-action="GET-ORDER-DETAILS-TO-BILLS">
 
                                                 </tbody>
                                                 <tfoot>

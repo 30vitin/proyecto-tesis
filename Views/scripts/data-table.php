@@ -29,7 +29,10 @@
                 });
             }else{
                 $('#table').DataTable({
+                    ordering: true,
+                    order: [[ 1, "asc" ]],
                     language: {
+
                         search: "Consultar registro: ",
                         searchPlaceholder: "...",
                         zeroRecords: "No se encontraron resultados",
@@ -45,6 +48,7 @@
 
                     },
                     autoWidth: false, // might need this
+
                 });
             }
 

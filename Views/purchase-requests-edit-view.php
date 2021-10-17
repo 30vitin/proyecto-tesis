@@ -39,7 +39,7 @@ $requisicion = "active-sublink";
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Editar Requisición | Cafeteria
+        Editar Requisición # <?php echo $id;?> | Cafeteria
     </title>
     <?php include "styles.php"; ?>
     <link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet"/>
@@ -69,7 +69,7 @@ $requisicion = "active-sublink";
 
                     <div class="col-md-12">
                         <div class="card ">
-                            <div class="card-header card-header-rose card-header-text">
+                            <div class="card-header card-header-warning card-header-text">
                                 <div class="card-text">
                                     <h4 class="card-title">Editar Requisición # <?php echo $id;?> </h4>
                                 </div>
@@ -123,6 +123,15 @@ $requisicion = "active-sublink";
 
 
                                         <?php }?>
+                                        <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
+                                            <button type="button" class="btn btn-secondary pull-right print"
+                                                    data-form="form" data-reset="true"> Imprimir
+                                            </button>
+
+
+
+                                        <?php } ?>
+
 
                                     </div>
 
@@ -242,7 +251,7 @@ $requisicion = "active-sublink";
                                                     <th>Total</th>
                                                 </tr>
                                                 </thead>
-                                                <tbody class="table-data-add table-data-edit" data-id="<?php echo $id;?>" data-action="GET-PURCHASE-REQUEST-DETAILS">
+                                                <tbody class="/*table-data-add*/ table-data-edit" data-id="<?php echo $id;?>" data-action="GET-PURCHASE-REQUEST-DETAILS">
 
                                                 </tbody>
                                                 <tfoot>

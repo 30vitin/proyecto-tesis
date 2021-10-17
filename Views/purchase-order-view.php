@@ -74,8 +74,8 @@ if (isset($_POST['page'])) {
                                         <thead class="text-primary">
                                         <tr>
                                             <th>ID</th>
-                                            <th>Requisición</th>
                                             <th>Fecha</th>
+                                            <th>Requisición</th>
                                             <th>Proveedor</th>
                                             <th>Unidades</th>
                                             <th>Costo</th>
@@ -103,8 +103,9 @@ if (isset($_POST['page'])) {
                                             <tr>
 
                                                 <td><?php echo $item->id; ?></td>
-                                                <td><?php echo $item->purchase_request; ?></td>
                                                 <td><?php echo $item->date; ?></td>
+                                                <td><?php echo $item->purchase_request; ?></td>
+
 
                                                 <td><?php echo ucwords($item->provider); ?></td>
                                                 <td><?php echo $item->units; ?></td>

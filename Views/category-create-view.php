@@ -43,7 +43,7 @@ $categoria="active-sublink";
 
             <div class="col-md-12">
               <div class="card ">
-                <div class="card-header card-header-rose card-header-text">
+                <div class="card-header card-header-warning card-header-text">
                   <div class="card-text">
                     <h4 class="card-title">Generales Categoría  <i class="spinner-border spinner-border-sm"></i></h4>
                   </div>

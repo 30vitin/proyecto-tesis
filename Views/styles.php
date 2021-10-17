@@ -1,5 +1,4 @@
-<link rel="shortcut icon" href="Views/assets_login/images/favicon-01-ol.ico">
-
+<?php include "favicon.php"; ?>
 <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport'/>
 <!--     Fonts and icons     -->
 <link rel="stylesheet" type="text/css"
@@ -11,4 +10,4 @@
 <!-- CSS Just for demo purpose, don't include it in your project -->
 <!--<link href="Views/assets/demo/demo.css" rel="stylesheet"/>-->
 
-<link href="Views/assets/css/styles.css?v=4" rel="stylesheet"/>
+<link href="Views/assets/css/styles.css?v=5" rel="stylesheet"/>

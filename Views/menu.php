@@ -68,10 +68,18 @@ if (isset($clientes))
 else
     $clientes = "";
 
+
+
+if (isset($configuration))
+    $configuration = ($configuration == '' ? '' : $configuration);
+else
+    $configuration = "";
+
 if (isset($logout))
     $logout = ($logout == '' ? '' : $logout);
 else
     $logout = "";
+
 
 
 
@@ -110,28 +118,28 @@ else
                 <ul class="nav">
                     <li class="nav-item <?php echo $clientes; ?>">
                         <a class="nav-link" href="./?view=customers">
-                            <span class="sidebar-mini"> CL </span>
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
                             <span class="sidebar-normal"> Clientes </span>
                         </a>
                     </li>
 
                     <li class="nav-item <?php echo $pedidos; ?> ">
                         <a class="nav-link" href="./?view=orders">
-                            <span class="sidebar-mini"> PE </span>
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
                             <span class="sidebar-normal"> Pedidos</span>
                         </a>
                     </li>
 
                     <li class="nav-item <?php echo $cotizacion; ?>">
                         <a class="nav-link" href="./?view=quotes">
-                            <span class="sidebar-mini"> CO </span>
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
                             <span class="sidebar-normal"> Cotizaciones </span>
                         </a>
                     </li>
 
                     <li class="nav-item <?php echo $facturas; ?> ">
                         <a class="nav-link" href="./?view=bills">
-                            <span class="sidebar-mini"> FA </span>
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
                             <span class="sidebar-normal"> Facturas </span>
                         </a>
                     </li>
@@ -145,7 +153,7 @@ else
 
         <li class="nav-item <?php echo $purchase; ?> ">
             <a class="nav-link collapsed" data-toggle="collapse" href="#purchase" aria-expanded="false">
-                <i class="material-icons">assignment</i>
+                <i class="fa fa-shopping-cart"></i>
                 <p> Compras
 
                     <b class="caret"></b>
@@ -155,7 +163,7 @@ else
                 <ul class="nav">
                     <li class="nav-item <?php echo $proveedor; ?> ">
                         <a class="nav-link" href="./?view=providers">
-                            <span class="sidebar-mini"> PR </span>
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
                             <span class="sidebar-normal"> Proveedor </span>
                         </a>
                     </li>
@@ -163,14 +171,14 @@ else
 
                     <li class="nav-item <?php echo $requisicion; ?> ">
                         <a class="nav-link" href="./?view=purchase-requests">
-                            <span class="sidebar-mini"> RE </span>
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
                             <span class="sidebar-normal"> Requisición</span>
                         </a>
                     </li>
 
                     <li class="nav-item <?php echo $ordenescompra; ?>">
                         <a class="nav-link" href="./?view=purchase-order">
-                            <span class="sidebar-mini"> OC </span>
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
                             <span class="sidebar-normal"> Ordenes de Compra </span>
                         </a>
                     </li>
@@ -181,7 +189,7 @@ else
 
         <li class="nav-item <?php echo $inventory; ?> ">
             <a class="nav-link collapsed" data-toggle="collapse" href="#inventory" aria-expanded="false">
-                <i class="material-icons">assignment</i>
+                <i class="fa fa-server"></i>
                 <p> Inventario
 
                     <b class="caret"></b>
@@ -191,7 +199,7 @@ else
                 <ul class="nav">
                     <li class="nav-item <?php echo $productos; ?> ">
                         <a class="nav-link" href="./?view=products">
-                            <span class="sidebar-mini"> PR </span>
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
                             <span class="sidebar-normal"> Productos </span>
                         </a>
                     </li>
@@ -199,7 +207,7 @@ else
 
                     <li class="nav-item <?php echo $categoria; ?> ">
                         <a class="nav-link" href="./?view=category-products">
-                            <span class="sidebar-mini"> RE </span>
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
                             <span class="sidebar-normal"> Categoria L1</span>
                         </a>
                     </li>
@@ -208,6 +216,47 @@ else
             </div>
         </li>
 
+        <li class="nav-item <?php echo $configuration; ?> ">
+            <a class="nav-link collapsed" data-toggle="collapse" href="#configuration" aria-expanded="false">
+                <i class="fa fa-cog"></i>
+                <p> Configuración
+
+                    <b class="caret"></b>
+                </p>
+            </a>
+            <div class="collapse" id="configuration" style="">
+                <ul class="nav">
+                    <li class="nav-item <?php echo $productos; ?> ">
+                        <a class="nav-link" href="./?view=products">
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
+                            <span class="sidebar-normal"> Asignar Permisos </span>
+                        </a>
+                    </li>
+                    <li class="nav-item <?php echo $productos; ?> ">
+                        <a class="nav-link" href="./?view=products">
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
+                            <span class="sidebar-normal"> Actualizar contraseña </span>
+                        </a>
+                    </li>
+                    <li class="nav-item <?php echo $productos; ?> ">
+                        <a class="nav-link" href="./?view=products">
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
+                            <span class="sidebar-normal"> Cambiar de status</span>
+                        </a>
+                    </li>
+                    <li class="nav-item <?php echo $productos; ?> ">
+                        <a class="nav-link" href="./?view=products">
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i></span>
+                            <span class="sidebar-normal"> Otras configuraciones</span>
+                        </a>
+                    </li>
+
+
+
+
+                </ul>
+            </div>
+        </li>
 
 
         <li class="nav-item <?php echo $logout; ?> ">

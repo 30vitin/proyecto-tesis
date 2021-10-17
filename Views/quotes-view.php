@@ -75,8 +75,9 @@ if (isset($_POST['page'])) {
                                         <tr>
                                             <th>Id</th>
                                             <th>Fecha</th>
+                                            <th>Expira</th>
                                             <th>Cliente</th>
-                                            <th>Orden de Compra</th>
+                                            <th>Pedido</th>
                                             <th>Unidades</th>
                                             <th>Costo</th>
                                             <th>Total</th>
@@ -87,8 +88,9 @@ if (isset($_POST['page'])) {
                                         </thead>
                                         <tbody>
                                         <?php
-                                        $sql = "SELECT  id as id,sum(units) as units,sum(costs) as costs,sum(total) as total,date,customer,status,purchase_order FROM (
-                                                    (SELECT   t1.id,t3.units,t3.costs,t3.total,t2.name as customer,t1.status,t1.purchase_order,DATE_FORMAT(t1.date,'%Y-%m-%d') as date
+                                        $sql = "SELECT  id as id,sum(units) as units,sum(costs) as costs,sum(total) as total,date,customer,status,order_id,date_expire FROM (
+                                                    (SELECT   t1.id,t3.units,t3.costs,t3.total,t2.name as customer,t1.status,t1.order_id,DATE_FORMAT(t1.date,'%Y-%m-%d') as date,
+                                                                                                                         DATE_FORMAT(t1.date_expire,'%Y-%m-%d') as date_expire
                                                     FROM quotes t1 
                                                     join customers t2 on t1.customer = t2.id 
                                                     join quotes_details t3 on t1.id = t3.quote 
@@ -104,11 +106,12 @@ if (isset($_POST['page'])) {
 
                                                 <td><?php echo $item->id; ?></td>
                                                 <td><?php echo $item->date; ?></td>
+                                                <td><?php echo $item->date_expire; ?></td>
                                                 <td><?php echo $item->customer; ?></td>
-                                                <td><?php echo $item->purchase_order; ?></td>
+                                                <td><?php echo $item->order_id; ?></td>
                                                 <td><?php echo $item->units; ?></td>
                                                 <td><?php echo $item->costs; ?></td>
-                                                <td><?php echo $item->total; ?></td>
+                                                <td><?php echo $item->total ; ?></td>
                                                 <td>
                                                     <span class="badge <?php echo $cls->getStatusClass($item->status);?>">
                                                         <?php echo $item->status;?></span>

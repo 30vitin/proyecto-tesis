@@ -34,6 +34,12 @@ class Functions extends dba
         return $this->enableCancel;
     }
 
+    public function getLogov1(){
+
+        return "Views/assets/img/logo-up.png";
+    }
+
+
 
     public function autocommitF()
     {
@@ -157,6 +163,17 @@ class Functions extends dba
         return ($currentUnits>0);
     }
 
+    public function getUnitsProductsInOrder($order_id,$product_id){
+
+        $sql2 = "SELECT units_request FROM orders_details WHERE order_id ='$order_id' AND product_id='$product_id' limit 1";
+        $units_request = $this->consulQuery($sql2);
+        return $units_request['units_request'];
+    }
+    public function getDaystoAddDays($date,$days){
+
+        return date('Y-m-d', strtotime($date. ' + '.$days.' days'));
+
+    }
 
     public function getKeyPass()
     {

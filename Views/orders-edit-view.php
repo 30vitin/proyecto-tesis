@@ -38,7 +38,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Editar Pedido | Cafeteria
+        Editar Pedido # <?php echo $id;?> | Cafeteria
     </title>
     <?php include "styles.php"; ?>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
@@ -54,7 +54,14 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
     <div class="main-panel">
         <!-- Navbar -->
 
-        <?php include "navbar.php"; ?>
+        <?php
+        $breadcrumbData = array(
+            array("name"=>"Lista de Pedidos","link"=>"./?view=orders","current"=>false),
+            array("name"=>"Editar Pedido #$id","current"=>true),
+        );
+
+        $breadcrumb = json_decode(json_encode($breadcrumbData), FALSE);
+        include "navbar.php"; ?>
 
         <!-- End Navbar -->
         <div class="content">
@@ -65,7 +72,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
 
                     <div class="col-md-12">
                         <div class="card ">
-                            <div class="card-header card-header-rose card-header-text">
+                            <div class="card-header card-header-warning card-header-text">
                                 <div class="card-text">
                                     <h4 class="card-title">Editar Pedido #<?php echo $id;?> </h4>
                                 </div>
@@ -101,11 +108,17 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
                                             <button type="button" class="btn btn-secondary pull-right print"
                                                     data-form="form" data-reset="true"> Imprimir
                                             </button>
-                                            <button type="button" class="btn btn-success pull-right "
-                                                    data-form="form" data-reset="false">Convertir a cotización
+                                            <button type="button" class="btn btn-success pull-right btn-confirm-action"
+                                                    data-form="form"
+                                                    data-action="CONVERT-ORDER-TO-QUOTE"
+                                                    data-id="<?php echo $id; ?>"
+                                                    data-text="¿Estas seguro de convertir a cotización?">Convertir a cotización
                                             </button>
-                                            <button type="button" class="btn btn-success pull-right "
-                                                    data-form="form" data-reset="false">Convertir a factura
+                                            <button type="button" class="btn btn-success pull-right btn-confirm-action"
+                                                    data-form="form"
+                                                    data-action="CONVERT-ORDER-TO-BILLS"
+                                                    data-id="<?php echo $id; ?>"
+                                                    data-text="¿Estas seguro de convertir a factura?">Convertir a factura
                                             </button>
 
 
@@ -119,7 +132,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
 
 
                                     <input type="hidden" name="a" value="UPDATE-ORDER">
-
+                                    <input type="hidden" name="id" value="<?php echo $id;?>">
                                     <?php include 'alert-form.php'; ?>
 
                                     <h4>Datos Generales</h4>

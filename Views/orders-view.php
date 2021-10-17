@@ -78,7 +78,7 @@ $page=$_POST['page'];
                                 <th>Compradas</th>
                                 <th>Solicitadas</th>
                                 <th>Diferencia</th>
-                                <td>Status</td>
+                                <th>Status</th>
                                 <th>Acción</th>
                             </tr>
                             </tr>

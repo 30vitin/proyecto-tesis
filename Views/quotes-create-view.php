@@ -34,7 +34,14 @@ $cotizacion = "active-sublink";
     <div class="main-panel">
         <!-- Navbar -->
 
-        <?php include "navbar.php"; ?>
+        <?php
+        $breadcrumbData = array(
+            array("name"=>"Listar Cotizaciones","link"=>"./?view=quotes","current"=>false),
+            array("name"=>"Crear Cotización","current"=>true),
+        );
+
+        $breadcrumb = json_decode(json_encode($breadcrumbData), FALSE);
+        include "navbar.php"; ?>
 
         <!-- End Navbar -->
         <div class="content">
@@ -45,7 +52,7 @@ $cotizacion = "active-sublink";
 
                     <div class="col-md-12">
                         <div class="card ">
-                            <div class="card-header card-header-rose card-header-text">
+                            <div class="card-header card-header-warning card-header-text">
                                 <div class="card-text">
                                     <h4 class="card-title">Crear Nueva Cotización </h4>
                                 </div>
@@ -74,51 +81,16 @@ $cotizacion = "active-sublink";
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="col-md-12">
-                                                <label class="col-form-label">Fecha</label>
-
-                                                <div class="form-group bmd-form-group">
-                                                    <input type="date" class="form-control validate" name="date"
-                                                           value=""
-                                                           id="date"
-                                                           placeholder="Fecha">
-                                                    <small class="form-text text-muted date-error"
-                                                           style="color:red !important;"></small>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <label class="col-form-label">Cliente</label>
+                                                <label class="col-form-label">Pedido</label>
                                                 <div class="form-group bmd-form-group">
 
                                                     <?php
-                                                    $sql_CT = "SELECT id,name from customers WHERE status='ACTIVO'";
-                                                    $result_CT = $cls->consultListQuery($sql_CT);//query
-                                                    ?>
-                                                    <select class="form-control validate select2 select-form" name="customer"
-                                                            id="customer" data-reset-select-field="true">
-                                                        <option value="">-Seleccione-</option>
-                                                        <?php
-                                                        foreach ($result_CT as $item) { ?>
-
-                                                            <option value="<?php echo $item->id; ?>"><?php echo $item->name; ?></option>
-
-                                                        <?php } ?>
-
-                                                    </select>
-                                                    <small class="form-text text-muted customer-error"
-                                                           style="color:red !important;"></small>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <label class="col-form-label">Orden de compra</label>
-                                                <div class="form-group bmd-form-group">
-
-                                                    <?php
-                                                    $sql_CT = "SELECT id from purchase_orders WHERE status='APROBADA'";
+                                                    $sql_CT = "SELECT id from orders WHERE status='APROBADA'";
                                                     $result_CT = $cls->consultListQuery($sql_CT);//query
                                                     ?>
                                                     <select class="form-control validate select2 change-and-consult"
-                                                            name="purchase_order"
-                                                            id="purchase_order"
+                                                            name="order_id"
+                                                            id="order_id"
                                                             data-action="GET-PURCHASE-ORDER-TO-QUOTE"
                                                             data-form="form">
                                                         <option value="">-Seleccione-</option>
@@ -134,6 +106,54 @@ $cotizacion = "active-sublink";
                                                            style="color:red !important;"></small>
                                                 </div>
                                             </div>
+                                            <div class="col-md-12">
+                                                <label class="col-form-label">Cliente</label>
+                                                <div class="form-group bmd-form-group">
+
+                                                    <?php
+                                                    $sql_CT = "SELECT id,name from customers WHERE status='ACTIVO'";
+                                                    $result_CT = $cls->consultListQuery($sql_CT);//query
+                                                    ?>
+                                                    <select class="form-control validate select2 " name="customer"
+                                                            id="customer" data-reset-select-field="true">
+                                                        <option value="">-Seleccione-</option>
+                                                        <?php
+                                                        foreach ($result_CT as $item) { ?>
+
+                                                            <option value="<?php echo $item->id; ?>"><?php echo $item->name; ?></option>
+
+                                                        <?php } ?>
+
+                                                    </select>
+                                                    <small class="form-text text-muted customer-error"
+                                                           style="color:red !important;"></small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="col-form-label">Fecha</label>
+
+                                                <div class="form-group bmd-form-group">
+                                                    <input type="date" class="form-control validate" name="date"
+                                                           value=""
+                                                           id="date"
+                                                           placeholder="Fecha">
+                                                    <small class="form-text text-muted date-error"
+                                                           style="color:red !important;"></small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="col-form-label">Dias de vencimiento</label>
+
+                                                <div class="form-group bmd-form-group">
+                                                    <input type="number" class="form-control" name="days_expired"
+                                                           value="0"
+                                                           id="days_expired"
+                                                           placeholder="Dias de vencimiento">
+
+                                                </div>
+                                            </div>
+
+
                                         </div>
                                         <div class="col-md-6">
                                             <div class="col-md-12">
@@ -172,7 +192,7 @@ $cotizacion = "active-sublink";
                                                     <th>Total</th>
                                                 </tr>
                                                 </thead>
-                                                <tbody class="table-data-add disable-button"  data-action="GET-PURCHASE-ORDER-DETAILS">
+                                                <tbody class="table-data-add disable-button"  data-action="GET-ORDER-DETAILS-TO-QUOTE">
 
                                                 </tbody>
                                                 <tfoot>

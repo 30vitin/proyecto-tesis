@@ -8,24 +8,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
 
-	<link rel="shortcut icon" href="Views/assets_login/images/favicon-01-ol.ico" />
+    <?php include "favicon.php"; ?>
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="Views/assets_login/vendor/bootstrap/css/bootstrap.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="Views/assets_login/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-<!--===============================================================================================-->
+
 	<link rel="stylesheet" type="text/css" href="Views/assets_login/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="Views/assets_login/vendor/animate/animate.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="Views/assets_login/vendor/css-hamburgers/hamburgers.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="Views/assets_login/vendor/animsition/css/animsition.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="Views/assets_login/vendor/select2/select2.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="Views/assets_login/vendor/daterangepicker/daterangepicker.css">
-<!--===============================================================================================-->
+
 	<link rel="stylesheet" type="text/css" href="Views/assets_login/css/util.css">
 	<link rel="stylesheet" type="text/css" href="Views/assets_login/css/main.css">
 <!--===============================================================================================-->
@@ -37,7 +26,7 @@
 .loader p { color: #fe4c1c; margin-top: 5px; font-size: 30px; animation: shake 5s ease-in-out infinite; }
 
 .login100-form-btn{
-        background: #fbca08 !important;
+        background: #1F618D !important;
     -webkit-linear-gradient(left, #fbca08, #fbca08 , #fbca08 ) !important;
 }
 
@@ -46,17 +35,13 @@
 </head>
 <body>
 
-<div id="ht-preloader">
-  <div class="loader clear-loader">
-    <img class="img-fluid" src="Views/assets_login/images/loader.gif" alt="">
-  </div>
-</div>
+<?php include 'loader.php'; ?>
 
 	<div class="limiter">
 		<div class="container-login100" >
 			<div class="wrap-login100 p-t-30 p-b-50">
-				<span class="login100-form-title p-b-41">
-					Gestion de Pedidos
+				<span class="login100-form-title p-3">
+					Gestion de Pedidos - Cafeteria CRUV
 				</span>
 				<form class="login100-form validate-form p-b-33 p-t-5" id="formlogin"  >
 
@@ -92,18 +77,11 @@
 
 <!--===============================================================================================-->
 	<script src="Views/assets_login/vendor/jquery/jquery-3.2.1.min.js"></script>
-<!--===============================================================================================-->
-	<script src="Views/assets_login/vendor/animsition/js/animsition.min.js"></script>
+
 <!--===============================================================================================-->
 	<script src="Views/assets_login/vendor/bootstrap/js/popper.js"></script>
 	<script src="Views/assets_login/vendor/bootstrap/js/bootstrap.min.js"></script>
-<!--===============================================================================================-->
-	<script src="Views/assets_login/vendor/select2/select2.min.js"></script>
-<!--===============================================================================================-->
-	<script src="Views/assets_login/vendor/daterangepicker/moment.min.js"></script>
-	<script src="Views/assets_login/vendor/daterangepicker/daterangepicker.js"></script>
-<!--===============================================================================================-->
-	<script src="Views/assets_login/vendor/countdowntime/countdowntime.js"></script>
+
 <!--===============================================================================================-->
 	<script src="Views/assets_login/js/main.js?id=23"></script>
 	<script>
