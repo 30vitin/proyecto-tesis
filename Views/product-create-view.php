@@ -33,7 +33,14 @@ $productos = "active-sublink";
     <?php include "sidebar.php"; ?>
     <div class="main-panel">
         <!-- Navbar -->
-        <?php include "navbar.php"; ?>
+        <?php
+        $breadcrumbData = array(
+            array("name"=>"Lista de Productos","link"=>"./?view=products","current"=>false),
+            array("name"=>"Crear Producto","current"=>true),
+        );
+
+        $breadcrumb = json_decode(json_encode($breadcrumbData), FALSE);
+        include "navbar.php"; ?>
 
         <!-- End Navbar -->
         <div class="content">

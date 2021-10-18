@@ -62,7 +62,15 @@ $ordenescompra = "active-sublink";
         <!-- Navbar -->
 
 
-        <?php include "navbar.php"; ?>
+        <?php
+        $breadcrumbData = array(
+            array("name"=>"Lista de Ordenes de Compra","link"=>"./?view=purchase-order","current"=>false),
+            array("name"=>"Editar Orden de Compra #$id","current"=>true),
+
+        );
+
+        $breadcrumb = json_decode(json_encode($breadcrumbData), FALSE);
+        include "navbar.php"; ?>
 
         <!-- End Navbar -->
         <div class="content">

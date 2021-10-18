@@ -35,7 +35,14 @@ $requisicion = "active-sublink";
         <!-- Navbar -->
 
 
-        <?php include "navbar.php"; ?>
+        <?php
+        $breadcrumbData = array(
+            array("name"=>"Lista de Requisiciones","link"=>"./?view=purchase-requests","current"=>false),
+            array("name"=>"Crear Requisición","current"=>true),
+        );
+
+        $breadcrumb = json_decode(json_encode($breadcrumbData), FALSE);
+        include "navbar.php"; ?>
 
         <!-- End Navbar -->
         <div class="content">

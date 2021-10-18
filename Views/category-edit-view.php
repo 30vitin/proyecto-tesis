@@ -41,7 +41,14 @@ $categoria = "active-sublink";
     <?php include "sidebar.php";?>
     <div class="main-panel">
         <!-- Navbar -->
-        <?php include "navbar.php"; ?>
+        <?php
+        $breadcrumbData = array(
+            array("name"=>"Lista de Categorias","link"=>"./?view=category-products","current"=>false),
+            array("name"=>"Editar Categoría #$id","current"=>true),
+        );
+
+        $breadcrumb = json_decode(json_encode($breadcrumbData), FALSE);
+        include "navbar.php"; ?>
 
         <!-- End Navbar -->
         <div class="content" >

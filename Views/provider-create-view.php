@@ -33,7 +33,14 @@ $proveedor = "active-sublink";
     <div class="main-panel">
         <!-- Navbar -->
 
-        <?php include "navbar.php"; ?>
+        <?php
+        $breadcrumbData = array(
+            array("name"=>"Lista de Proveedores","link"=>"./?view=providers","current"=>false),
+            array("name"=>"Crear Proveedor","current"=>true),
+        );
+
+        $breadcrumb = json_decode(json_encode($breadcrumbData), FALSE);
+        include "navbar.php"; ?>
 
         <!-- End Navbar -->
         <div class="content">
