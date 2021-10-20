@@ -206,6 +206,33 @@ class Functions extends dba
 
     }
 
+    public function checkUnitsReceivedDispatch($data_table,$received_id,$dispatch_id){
+
+        //current received units
+        $sql1="SELECT sum(units) as units FROM received_merchant_details WHERE received ='$received_id'";
+        $res1 = $this->consulQuery($sql1);
+        $units1 = $res1['units'];
+
+        //current units in otther documents without this dispatch
+        $sql2="SELECT sum(t1.units_request) as units FROM dispatch_merchant_details t1 join dispatch_merchant t2 on t1.dispatch = t2.id WHERE t2.received='$received_id' and t2.id<>'$dispatch_id'";
+        $res2 = $this->consulQuery($sql2);
+        $units2 = $res2['units'];
+
+        //get current request units
+        $unitsdocrequest = $this->getCurrentRequestUnits($data_table);
+
+        return ($units2+$unitsdocrequest)<=$units1;
+    }
+
+    public function getCurrentRequestUnits($data_table){
+
+        $units = 0;
+        foreach ($data_table as $data) {
+            $units+=$data->units_request;
+        }
+        return $units;
+    }
+
     public function getUnitsProductsInOrder($order_id,$product_id){
 
         $sql2 = "SELECT units_request FROM orders_details WHERE order_id ='$order_id' AND product_id='$product_id' limit 1";

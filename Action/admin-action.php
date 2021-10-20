@@ -513,6 +513,13 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-DISPATCH-MERCHANT') {
 
     }
 
+    //checar unidades que traigo con las que ya entan en otros despachos
+    if(!$cls->checkUnitsReceivedDispatch(json_decode($_POST['data_table']),$received,$dispatch_id)){
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => "No se puede editar este despacho, favor validar las unidades solicitadas puede quedar en negativo.");
+
+    }
+
     if ($check) {
 
         $date = $_POST['date'];
@@ -536,11 +543,10 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-DISPATCH-MERCHANT') {
             if ($res21) {
 
                 $data_table = json_decode($_POST['data_table']);
-                $check = true; // check data table
+
                 foreach ($data_table as $data) {
 
-                    if ($data->unit > 0) {
-
+                    if (($data->unit == 0 && $data->units_request == 0) || ($data->unit > 0 && $data->units_request > 0)) {
 
                         $sql2 = "INSERT INTO dispatch_merchant_details (dispatch,product_id,units_buy,units_request,units_diff)values
                                                                                        ('$dispatch_id',
