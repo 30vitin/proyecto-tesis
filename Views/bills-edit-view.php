@@ -97,10 +97,20 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                             </button>
                                         <?php } ?>
 
-                                        <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
-                                            <button type="button" class="btn btn-secondary pull-right print"
-                                                    data-form="form" data-reset="true"> Imprimir
-                                            </button>
+                                        <?php if ($response['status'] == 'APROBADA') { ?>
+                                            <?php if($cls->enableClose()) {?>
+                                                <button type="button" class="btn btn-danger pull-right btn-delete-form"
+                                                        data-form="form" data-id="<?php echo $id; ?>"
+                                                        data-action="CLOSE-BILLS"
+                                                        data-text="¿Estas seguro de cerrar esta factura?">Cerrar
+                                                </button>
+                                            <?php }  ?>
+                                            <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
+                                                <button type="button" class="btn btn-secondary pull-right print"
+                                                        data-form="form" data-reset="true"> Imprimir
+                                                </button>
+
+                                            <?php } ?>
 
 
 

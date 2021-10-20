@@ -6,10 +6,9 @@
 //TODO MODULO DE ALMACEN (DESCONTAR UNIDADES DE LA FACTURA (RECEPCION), TAL COMO LO HACE DE LA ORDEN DE COMPRA (DESPACHO))
 //TODO COLOCAR EL APROBADO POR
 //TODO COLOAR ALGO PARA DIFERENCIAR CUANDO LAS UNIDADES SON COMPRADAS Y CUANDO SON FACTURADAS
-//TODO AGREGAR CERRAR RECEPCION DE MERCANCIA
 //TODO AL CARGAR DOCUMENTOS QUE CARGE TODO MENOS LA REFERENCIA (ESTE PUEDE SER EL ID ACTUAL DE ELLOS)
 //TODO CREAR LOS PDF (METODO) NECESARIOS CON PAGINACION
-//TODO CHECAR LAS UNIDADES DESPUES DE GUARDAR, CHECAR QUE LA SUMA NO SOBRE LA CANTIDAD FACTURADA/COMPRADA TOMANDO EN CUENTA LOS DOCUMENTOS QUE YA ESTEN ECHO
+
 
 #Error #001: id no enviados
 #Error #002: error al subir archivo
@@ -83,6 +82,14 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-RECEIVE-MERCHANT') {
 
         $check = false;
         $mensaje = array('success' => false, 'mens' => "No se puede crear esta recepción de mercancía porque la factura #" . $bills . " debe estar APROBADA");
+
+    }
+
+    //checar si ya fue completada
+    if($cls->chetIfBillsIsComplete($bills)){
+
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'La factura # '.$bills.' ya fue completada');
 
     }
 
@@ -286,10 +293,9 @@ if (isset($_POST['a']) && $_POST['a'] == 'APROVE-RECEIVE-MERCHANT') {
     if ($rescheck['count'] == 0) {
 
         $check = false;
-        $mensaje = array('success' => false, 'mens' => "No se puede crear esta factura porque la factura #" . $bills . " debe estar APROBADA");
+        $mensaje = array('success' => false, 'mens' => "No se puede crear esta recepción porque la factura #" . $bills . " debe estar APROBADA");
 
     }
-
 
 
     if ($resl11['status'] != "ACTIVO") {
@@ -318,6 +324,54 @@ if (isset($_POST['a']) && $_POST['a'] == 'APROVE-RECEIVE-MERCHANT') {
 
 }
 
+
+if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-RECEIVE-MERCHANT') {
+    $cls->autocommitF();
+
+    $check = true;
+
+    if (!isset($_POST['id'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su administrador de sistema #001');
+
+    }
+
+
+    $id = $_POST['id'];
+
+    $sqlstatus = "SELECT COUNT(*) AS count FROM received_merchant WHERE id='$id' AND status ='APROBADA'";
+    $response = $cls->consulQuery($sqlstatus);
+    if ($response['count'] == 0) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Para cerrar esta recepción debe estar APROBADO');
+    }
+
+
+    $sqlc="SELECT COUNT(*) as count FROM dispatch_merchant WHERE received ='$id' and status ='ACTIVO'";
+    $responsesc= $cls->consulQuery($sqlc);
+    if ($responsesc['count'] >0) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'No se puede cerrr esta recepción porque tiene despachos ACTIVOS');
+    }
+
+    if ($check) {
+
+        $sql = "UPDATE received_merchant set status='CERRADO',updated_by='$VAR_SESSION->username',updated_at ='$datetime' WHERE id ='$id' ";
+        $res = $cls->exeQuery($sql);
+        if ($res) {
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'mens' => 'Recepción ha sido cerrado con exito.', 'reload' => true);
+
+        } else {
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res);
+
+        }
+
+    }
+
+
+}
 
 
 if (isset($_POST['a']) && $_POST['a'] == 'GET-RECEIVED-MERCHANT-TO-DISPATCH-MERCHANT') {
@@ -444,8 +498,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-DISPATCH-MERCHANT') {
         }
 
 
-
-
     }
 
 
@@ -469,8 +521,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-DISPATCH-MERCHANT-DETAILS-TO-DISPA
 
     }
 }
-
-
 if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-DISPATCH-MERCHANT') {
 
     $mensaje = $_POST;
@@ -514,7 +564,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-DISPATCH-MERCHANT') {
     }
 
     //checar unidades que traigo con las que ya entan en otros despachos
-    if(!$cls->checkUnitsReceivedDispatch(json_decode($_POST['data_table']),$received,$dispatch_id)){
+    if (!$cls->checkUnitsReceivedDispatch(json_decode($_POST['data_table']), $received, $dispatch_id)) {
         $check = false;
         $mensaje = array('success' => false, 'mens' => "No se puede editar este despacho, favor validar las unidades solicitadas puede quedar en negativo.");
 
@@ -592,6 +642,99 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-DISPATCH-MERCHANT') {
 
 
     }
+
+}
+if (isset($_POST['a']) && $_POST['a'] == 'APROVE-DISPATCH-MERCHANT') {
+    $cls->autocommitF();
+    $check = true;
+    if (!isset($_POST['id'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su administrador de sistema #001');
+
+    }
+
+    $id = $_POST['id'];
+
+
+    $sql11 = "SELECT received,status FROM dispatch_merchant WHERE id ='$id'";
+    $resl11 = $cls->consulQuery($sql11);
+
+    $received = $resl11['received'];
+
+
+    $sqlcheck = "SELECT COUNT(*) as count FROM received_merchant WHERE id ='$received' and status ='APROBADA'";
+    $rescheck = $cls->consulQuery($sqlcheck);
+    if ($rescheck['count'] == 0) {
+
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => "No se puede crear este despacho porque la recepción #" . $received . " debe estar APROBADA " . $sqlcheck);
+
+    }
+
+
+    if ($resl11['status'] != "ACTIVO") {
+
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => "No se puede APROBAR este despacho de mercancía porque debe estar ACTIVA");
+
+    }
+
+    if ($check) {
+
+        $sql = "UPDATE dispatch_merchant set status='APROBADA',approved_by='$VAR_SESSION->username',updated_by='$VAR_SESSION->username', approved_at ='$datetime',updated_at ='$datetime' WHERE id ='$id' ";
+        $res = $cls->exeQuery($sql);
+        if ($res) {
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'mens' => 'Despacho de mercancía ha sido aprobada con exito.', 'reload' => true);
+
+        } else {
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res);
+
+        }
+
+    }
+
+
+}
+
+if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-DISPATCH-MERCHANT') {
+    $cls->autocommitF();
+
+    $check = true;
+
+    if (!isset($_POST['id'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su administrador de sistema #001');
+
+    }
+
+
+    $id = $_POST['id'];
+
+    $sqlstatus = "SELECT COUNT(*) AS count FROM dispatch_merchant WHERE id='$id' AND status ='APROBADA'";
+    $response = $cls->consulQuery($sqlstatus);
+    if ($response['count'] == 0) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Para cerrar este despacho, debe estar APROBADO');
+    }
+
+    if ($check) {
+
+        $sql = "UPDATE dispatch_merchant set status='CERRADO',updated_by='$VAR_SESSION->username',updated_at ='$datetime' WHERE id ='$id' ";
+        $res = $cls->exeQuery($sql);
+        if ($res) {
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'mens' => 'Despacho ha sido cerrado con exito.', 'reload' => true);
+
+        } else {
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res);
+
+        }
+
+    }
+
 
 }
 
@@ -1183,6 +1326,47 @@ if (isset($_POST['a']) && $_POST['a'] == 'APROVE-BILLS') {
 
         $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su administrador de sistema #001');
     }
+
+}
+
+if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-BILLS') {
+    $cls->autocommitF();
+
+
+    $check = true;
+
+    if (!isset($_POST['id'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su administrador de sistema #001');
+
+    }
+
+
+    $id = $_POST['id'];
+
+    $sqlstatus = "SELECT COUNT(*) AS count FROM bills WHERE id='$id' AND status ='APROBADA'";
+    $response = $cls->consulQuery($sqlstatus);
+    if ($response['count'] == 0) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Para cerrar esta factura, debe estar APROBADO');
+    }
+
+    if ($check) {
+
+        $sql = "UPDATE bills set status='CERRADO',updated_by='$VAR_SESSION->username',updated_at ='$datetime' WHERE id ='$id' ";
+        $res = $cls->exeQuery($sql);
+        if ($res) {
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'mens' => 'Factura ha sido cerrado con exito.', 'reload' => true);
+
+        } else {
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res);
+
+        }
+
+    }
+
 
 }
 
@@ -1932,6 +2116,13 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-ORDER') {
 
     }
 
+    //checar unidades que traigo con las que ya entan en otros despachos
+    if (!$cls->checkUnitsPurchaseOrderToOrder(json_decode($_POST['data_table']), $purchase_order, $order_id)) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => "No se puede editar este pedido, favor validar las unidades solicitadas puede quedar en negativo.");
+
+    }
+
     if ($check) {
 
         $date = $_POST['date'];
@@ -1958,8 +2149,8 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-ORDER') {
                 $check = true; // check data table
                 foreach ($data_table as $data) {
 
-                    if ($data->unit > 0) {
-
+                    // if ($data->unit > 0) {
+                    if (($data->unit == 0 && $data->units_request == 0) || ($data->unit > 0 && $data->units_request > 0)) {
 
                         $sql2 = "INSERT INTO orders_details (order_id,product_id,units_buy,units_request,units_diff)values
                                                                                        ('$order_id',
@@ -1974,7 +2165,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-ORDER') {
 
 
                     } else {
-
                         $check = false;
 
                     }

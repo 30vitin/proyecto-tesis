@@ -1027,9 +1027,11 @@ $(document).ready(function () {
                                 if (data.reload) {
                                     let timerInterval
                                     Swal.fire({
-                                        title: 'Recargando',
-                                        timer: 1000,
+                                        title: (data.title) ? data.title : 'Recargando',
+                                        html: (data.mens) ? data.mens : '...',
+                                        timer: 2000,
                                         timerProgressBar: true,
+                                        allowOutsideClick: false,
                                         didOpen: () => {
                                             Swal.showLoading()
                                         },

@@ -32,7 +32,7 @@ Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/j
 <!-- Material Dashboard DEMO methods, don't include it in your project! -->
 <script src="Views/assets/demo/demo.js"></script>
 
-<script src="Views/assets/js/admin-js.js?v=16"></script>
+<script src="Views/assets/js/admin-js.js?v=17"></script>
 <script src="Views/assets/js/utils.js?v=2"></script>
 <script>
     if (window.history.replaceState) { // verificamos disponibilidad

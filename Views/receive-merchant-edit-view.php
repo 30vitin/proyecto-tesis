@@ -38,7 +38,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Editar Recepción de Mercancía # <?php echo $id;?> | Cafeteria
+        Editar Recepción de Mercancía # <?php echo $id; ?> | Cafeteria
     </title>
     <?php include "styles.php"; ?>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
@@ -56,8 +56,8 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
 
         <?php
         $breadcrumbData = array(
-            array("name"=>"Lista de Recepción de Mercancía","link"=>"./?view=receive-merchant","current"=>false),
-            array("name"=>"Crear  Recepción de Mercancía","current"=>true),
+            array("name" => "Lista de Recepción de Mercancía", "link" => "./?view=receive-merchant", "current" => false),
+            array("name" => "Crear  Recepción de Mercancía", "current" => true),
         );
 
         $breadcrumb = json_decode(json_encode($breadcrumbData), FALSE);
@@ -93,16 +93,25 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                                     data-text="¿Estas seguro de aprobar esta recepción de mercancía?" <?php echo $disabled; ?>
                                                     data-validform="true"
                                                     data-validtableform="true">
-                                                    Aprobar para imprimir
+                                                Aprobar para imprimir
                                             </button>
                                         <?php } ?>
 
-                                        <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
-                                            <button type="button" class="btn btn-secondary pull-right print"
-                                                    data-form="form" data-reset="true"> Imprimir
-                                            </button>
+                                        <?php if ($response['status'] == 'APROBADA') { ?>
+                                            <?php if ($cls->enableClose()) { ?>
+                                                <button type="button" class="btn btn-danger pull-right btn-delete-form"
+                                                        data-form="form" data-id="<?php echo $id; ?>"
+                                                        data-action="CLOSE-RECEIVE-MERCHANT"
+                                                        data-text="¿Estas seguro de cerrar este recepción de mercancía?">
+                                                    Cerrar
+                                                </button>
+                                            <?php } ?>
+                                            <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
+                                                <button type="button" class="btn btn-secondary pull-right print"
+                                                        data-form="form" data-reset="true"> Imprimir
+                                                </button>
 
-
+                                            <?php } ?>
 
                                         <?php } ?>
 
@@ -132,7 +141,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
-                                                <label class="col-form-label">Pedido</label>
+                                                <label class="col-form-label">Factura</label>
                                                 <div class="form-group bmd-form-group">
                                                     <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
 

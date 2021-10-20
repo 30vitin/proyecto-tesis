@@ -90,8 +90,8 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
                                             </button>
                                             <button type="button"
                                                     class="btn btn-success pull-right btn-confirm-action <?php echo $classDisable; ?>"
-                                                    data-id="<?php echo $id; ?>" data-action="APROVE-ORDER"
-                                                    data-text="¿Estas seguro de aprobar este pedido?" <?php echo $disabled; ?>
+                                                    data-id="<?php echo $id; ?>" data-action="APROVE-DISPATCH-MERCHANT"
+                                                    data-text="¿Estas seguro de aprobar este depacho de mercancía?" <?php echo $disabled; ?>
                                                     data-validform="true"
                                                     data-validtableform="true">
                                                 Aprobar para imprimir
@@ -102,13 +102,16 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
                                             <?php if($cls->enableClose()) {?>
                                                 <button type="button" class="btn btn-danger pull-right btn-delete-form"
                                                         data-form="form" data-id="<?php echo $id; ?>"
-                                                        data-action="CLOSE-ORDER"
-                                                        data-text="¿Estas seguro de cerrar este pedido?">Cerrar
+                                                        data-action="CLOSE-DISPATCH-MERCHANT"
+                                                        data-text="¿Estas seguro de cerrar este depacho de mercancía?">Cerrar
                                                 </button>
                                             <?php }  ?>
-                                            <button type="button" class="btn btn-secondary pull-right print"
-                                                    data-form="form" data-reset="true"> Imprimir
-                                            </button>
+                                            <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
+                                                <button type="button" class="btn btn-secondary pull-right print"
+                                                        data-form="form" data-reset="true"> Imprimir
+                                                </button>
+
+                                            <?php } ?>
 
 
 
@@ -143,7 +146,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
                                                 <label class="col-form-label">Recepción</label>
                                                 <?php if($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO'){?>
                                                     <div class="form-group bmd-form-group">
-                                                        <a href="./?view=purchase-order-edit&id=<?php echo $response['received'];?>" class="btn btn-outline-info" target="_blank">#<?php echo $response['purchase_order'];?></a>
+                                                        <a href="./?view=receive-merchant-edit&id=<?php echo $response['received'];?>" class="btn btn-outline-info" target="_blank">#<?php echo $response['received'];?></a>
                                                     </div>
                                                 <?php }else{?>
 

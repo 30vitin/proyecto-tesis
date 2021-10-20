@@ -165,6 +165,18 @@ class Functions extends dba
         }
         return ($currentUnits>0);
     }
+    public function chetIfBillsIsComplete($id){
+
+        $sql1="SELECT sum(t2.units) as units FROM received_merchant t1 join received_merchant_details t2 on t1.id= t2.received WHERE t1.bills='$id'";
+        $res1= $this->consulQuery($sql1);
+        $untis1 = $res1['units'];
+
+
+        $sql2="SELECT sum(t2.units) as units FROM  bills_details t2  WHERE t2.bill='$id'";
+        $res2= $this->consulQuery($sql2);
+        $untis2 = $res2['units'];
+        return ($untis1 == $untis2);
+    }
 
     public function getPurchaseOrderToOrders($id){
         $res = [];
@@ -223,6 +235,26 @@ class Functions extends dba
 
         return ($units2+$unitsdocrequest)<=$units1;
     }
+
+    public function checkUnitsPurchaseOrderToOrder($data_table,$purchase_order_id,$order_id){
+
+        //current received units
+        $sql1="SELECT sum(units) as units FROM purchase_orders_details WHERE purchase_order ='$purchase_order_id'";
+        $res1 = $this->consulQuery($sql1);
+        $units1 = $res1['units'];
+
+        //current units in otther documents without this
+        $sql2="SELECT sum(t1.units_request) as units FROM orders_details t1 join orders t2 on t1.order_id = t2.id WHERE t2.purchase_order='$purchase_order_id' and t2.id<>'$order_id'";
+        $res2 = $this->consulQuery($sql2);
+        $units2 = $res2['units'];
+
+        //get current request units
+        $unitsdocrequest = $this->getCurrentRequestUnits($data_table);
+
+        return ($units2+$unitsdocrequest)<=$units1;
+
+    }
+
 
     public function getCurrentRequestUnits($data_table){
 
