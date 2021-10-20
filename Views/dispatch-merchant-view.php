@@ -4,8 +4,8 @@ $cls = new Functions;  //llamando al objeto
 include 'utils.php';
 
 
-$sales = "active";
-$facturas = "active-sublink";
+$almacen = "active";
+$des_mercancia = "active-sublink";
 
 if (isset($_POST['page'])) {
 
@@ -24,7 +24,7 @@ if (isset($_POST['page'])) {
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Factura | Cafeteria
+        Despacho de Mercancía | Cafeteria
     </title>
     <?php include "styles.php"; ?>
     <link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet"/>
@@ -40,7 +40,7 @@ if (isset($_POST['page'])) {
         <!-- Navbar -->
 
         <?php
-        $navbar="Lista de Facturas";
+        $navbar="Lista de Despacho de Mercancía";
         include 'navbar.php'; ?>
 
         <!-- End Navbar -->
@@ -53,14 +53,14 @@ if (isset($_POST['page'])) {
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title ">Facturas</h4>
+                                <h4 class="card-title ">Despacho de mercancía</h4>
                             </div>
                             <div class="card-body">
 
                                 <div class="row">
                                     <div class="col-md-5 pb-3">
-                                        <a href="./?view=bills-create" class="btn btn-primary">
-                                            Registrar factura
+                                        <a href="./?view=dispatch-merchant-create" class="btn btn-primary">
+                                            Registrar despacho
                                         </a>
 
                                     </div>
@@ -74,11 +74,10 @@ if (isset($_POST['page'])) {
                                         <tr>
                                             <th>Id</th>
                                             <th>Fecha</th>
-                                            <th>Cliente</th>
-                                            <th>Pedido</th>
-                                            <th>Unidades</th>
-                                            <th>Costo</th>
-                                            <th>Total</th>
+                                            <th>Recepción</th>
+                                            <th>Facturadas</th>
+                                            <th>Solicitadas</th>
+                                            <th>Diferencia</th>
                                             <th>Status</th>
                                             <th>Acción</th>
                                         </tr>
@@ -86,12 +85,12 @@ if (isset($_POST['page'])) {
                                         </thead>
                                         <tbody>
                                         <?php
-                                        $sql = "SELECT  id as id,sum(units) as units,sum(costs) as costs,sum(total) as total,date,customer,status,order_id FROM (
-                                                    (SELECT   t1.id,t3.units,t3.costs,t3.total,t2.name as customer,t1.status,t1.order_id,DATE_FORMAT(t1.date,'%Y-%m-%d') as date
-                                                    FROM bills t1 
-                                                    left join customers t2 on t1.customer = t2.id 
-                                                    join bills_details t3 on t1.id = t3.bill 
-                                                    WHERE t1.status <>'DELETE' ) as datas
+                                        $sql = "SELECT  id as id,received,date,sum(units_buy) as units_buy,sum(units_request) as units_request,sum(units_diff) as units_diff, status FROM (
+                                                    (SELECT  t1.id,t3.units_buy,t3.units_request,t3.units_diff,DATE_FORMAT(t1.date,'%Y-%m-%d') as date,t1.status,t1.received
+                                                    FROM dispatch_merchant t1 
+                                                    join dispatch_merchant_details t3 on t1.id = t3.dispatch 
+                                                    WHERE t1.status <>'DELETE' 
+																										) as datas
                                                     
                                             ) group by id ORDER BY date desc";
 
@@ -103,20 +102,18 @@ if (isset($_POST['page'])) {
 
                                                 <td><?php echo $item->id; ?></td>
                                                 <td><?php echo $item->date; ?></td>
-                                                <td><?php echo $item->customer; ?></td>
-                                                <td><?php echo $item->order_id; ?></td>
-                                                <td><?php echo $item->units; ?></td>
-                                                <td><?php echo $item->costs; ?></td>
-
-                                                <td><?php echo $item->total ; ?></td>
+                                                <td><?php echo $item->received; ?></td>
+                                                <td><?php echo $item->units_buy; ?></td>
+                                                <td><?php echo $item->units_request; ?></td>
+                                                <td><?php echo $item->units_diff; ?></td>
                                                 <td>
                                                     <span class="badge <?php echo $cls->getStatusClass($item->status);?>">
                                                         <?php echo $item->status;?></span>
                                                 </td>
                                                 <td class="td-actions">
-                                                    <a href="./?view=bills-edit&id=<?php echo $item->id; ?>"
+                                                    <a href="./?view=dispatch-merchant-edit&id=<?php echo $item->id; ?>"
                                                        rel="tooltip" title="" class="btn btn-primary btn-link btn-sm"
-                                                       data-original-title="Mostrar Factura">
+                                                       data-original-title="Mostrar Recepción">
                                                         <i class="material-icons">edit</i>
                                                         <div class="ripple-container"></div>
                                                     </a>

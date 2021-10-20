@@ -75,14 +75,48 @@ if (isset($configuration))
 else
     $configuration = "";
 
+
+
+
+if (isset($actualizarPassword))
+    $actualizarPassword = ($actualizarPassword == '' ? '' : $actualizarPassword);
+else
+    $actualizarPassword = "";
+
+
+if (isset($cambiarstatus))
+    $cambiarstatus = ($cambiarstatus == '' ? '' : $cambiarstatus);
+else
+    $cambiarstatus = "";
+
+if (isset($almacen))
+    $almacen = ($almacen == '' ? '' : $almacen);
+else
+    $almacen = "";
+
+
+if (isset($rep_mercancia))
+    $rep_mercancia = ($rep_mercancia == '' ? '' : $rep_mercancia);
+else
+
+
+if (isset($des_mercancia))
+    $des_mercancia = ($des_mercancia == '' ? '' : $des_mercancia);
+else
+    $des_mercancia = "";
+
+
+if (isset($usersregister))
+    $usersregister = ($usersregister == '' ? '' : $usersregister);
+else
+    $usersregister = "";
+
+
+
 if (isset($logout))
     $logout = ($logout == '' ? '' : $logout);
 else
     $logout = "";
-
-
-
-
 
 //seguir
 ?>
@@ -216,6 +250,35 @@ else
             </div>
         </li>
 
+        <li class="nav-item <?php echo $almacen; ?> ">
+            <a class="nav-link collapsed" data-toggle="collapse" href="#almacen" aria-expanded="false">
+                <i class="fa fa-paste"></i>
+                <p> Almacen
+
+                    <b class="caret"></b>
+                </p>
+            </a>
+            <div class="collapse" id="almacen" style="">
+                <ul class="nav">
+                    <li class="nav-item <?php echo $rep_mercancia; ?> ">
+                        <a class="nav-link" href="./?view=receive-merchant">
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
+                            <span class="sidebar-normal"> Recepción de Mercancía </span>
+                        </a>
+                    </li>
+
+
+                    <li class="nav-item <?php echo $des_mercancia; ?> ">
+                        <a class="nav-link" href="./?view=dispatch-merchant">
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
+                            <span class="sidebar-normal"> Despacho de Mercancía</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </li>
+
         <li class="nav-item <?php echo $configuration; ?> ">
             <a class="nav-link collapsed" data-toggle="collapse" href="#configuration" aria-expanded="false">
                 <i class="fa fa-cog"></i>
@@ -226,28 +289,28 @@ else
             </a>
             <div class="collapse" id="configuration" style="">
                 <ul class="nav">
-                    <li class="nav-item <?php echo $productos; ?> ">
-                        <a class="nav-link" href="./?view=products">
-                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
-                            <span class="sidebar-normal"> Asignar Permisos </span>
-                        </a>
-                    </li>
-                    <li class="nav-item <?php echo $productos; ?> ">
-                        <a class="nav-link" href="./?view=products">
+                    <li class="nav-item <?php echo $actualizarPassword; ?> ">
+                        <a class="nav-link" href="./?view=update-password">
                             <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
                             <span class="sidebar-normal"> Actualizar contraseña </span>
                         </a>
                     </li>
-                    <li class="nav-item <?php echo $productos; ?> ">
-                        <a class="nav-link" href="./?view=products">
+                    <li class="nav-item <?php echo $cambiarstatus; ?> ">
+                        <a class="nav-link" href="./?view=change-status">
                             <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
                             <span class="sidebar-normal"> Cambiar de status</span>
                         </a>
                     </li>
+                    <li class="nav-item <?php echo $usersregister; ?> ">
+                        <a class="nav-link" href="./?view=users">
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
+                            <span class="sidebar-normal">Usuarios </span>
+                        </a>
+                    </li>
                     <li class="nav-item <?php echo $productos; ?> ">
                         <a class="nav-link" href="./?view=products">
-                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i></span>
-                            <span class="sidebar-normal"> Otras configuraciones</span>
+                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
+                            <span class="sidebar-normal"> Asignar Permisos </span>
                         </a>
                     </li>
 

@@ -122,7 +122,17 @@ $page=$_POST['page'];
                                     </td>
                                 </tr>
                             <?php } ?>
+
                             </tbody>
+                            <tfoot>
+                            <tr>
+                                <th colspan="3" style="text-align:right">Total:</th>
+                                <th id="total-buy-tbl"></th>
+                                <th id="total-unrequest-tbl"></th>
+                                <th id="total-diff-tbl"></th>
+
+                            </tr>
+                            </tfoot>
 
                         </table>
                     </div>

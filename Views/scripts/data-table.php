@@ -48,6 +48,67 @@
 
                     },
                     autoWidth: false, // might need this
+                    footerCallback: function ( row, data, start, end, display ) {
+
+                        if($("#total-buy-tbl").length>0){
+                            var api = this.api(), data;
+                            // Remove the formatting to get integer data for summation
+                            var intVal = function ( i ) {
+                                return typeof i === 'string' ?
+                                    i.replace(/[\$,]/g, '')*1 :
+                                    typeof i === 'number' ?
+                                        i : 0;
+                            };
+
+                            total = api
+                                .column( 3,{filter:'applied'} )
+                                .data()
+                                .reduce( function (a, b) {
+                                    return intVal(a) + intVal(b);
+                                }, 0 );
+                            $("#total-buy-tbl" ).html(Number(total));
+                        }
+                        if($("#total-unrequest-tbl").length>0){
+                            var api = this.api(), data;
+                            // Remove the formatting to get integer data for summation
+                            var intVal = function ( i ) {
+                                return typeof i === 'string' ?
+                                    i.replace(/[\$,]/g, '')*1 :
+                                    typeof i === 'number' ?
+                                        i : 0;
+                            };
+
+                            total = api
+                                .column( 4,{filter:'applied'} )
+                                .data()
+                                .reduce( function (a, b) {
+                                    return intVal(a) + intVal(b);
+                                }, 0 );
+                            $("#total-unrequest-tbl" ).html(Number(total));
+                        }
+                        if($("#total-diff-tbl").length>0){
+                            var api = this.api(), data;
+                            // Remove the formatting to get integer data for summation
+                            var intVal = function ( i ) {
+                                return typeof i === 'string' ?
+                                    i.replace(/[\$,]/g, '')*1 :
+                                    typeof i === 'number' ?
+                                        i : 0;
+                            };
+
+                            total = api
+                                .column( 5,{filter:'applied'} )
+                                .data()
+                                .reduce( function (a, b) {
+                                    return intVal(a) + intVal(b);
+                                }, 0 );
+                            $("#total-diff-tbl" ).html(Number(total));
+                        }
+
+
+
+
+                    }
 
                 });
             }

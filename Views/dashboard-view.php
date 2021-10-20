@@ -50,10 +50,10 @@ $dashboard = "active";
 
 
                             <div class="row d-flex justify-content-center">
-                                <a href="./?view=purchase-requests-create" class="col-md-2 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar requisición</a>
-                                <a href="./?view=purchase-order-create" class="col-md-2 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar O/C</a>
-                                <a href="./?view=orders-create" class=" col-md-2 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar Pedido</a>
-                                <a href="./?view=bills-create" class="col-md-2 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar Factura</a>
+                                <a href="./?view=purchase-requests-create" class="col-md-3 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar requisición</a>
+                                <a href="./?view=purchase-order-create" class="col-md-3 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar O/C</a>
+                                <a href="./?view=orders-create" class=" col-md-3 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar Pedido</a>
+                                <a href="./?view=bills-create" class="col-md-3 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar Factura</a>
                             </div>
 
 

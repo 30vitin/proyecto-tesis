@@ -31,7 +31,7 @@ $(document).ready(function () {
                 type: "POST",
                 dataType: "JSON",
                 success: function (data) {
-                    //console.log(data)
+
                     if ($("#" + $(instance).data("form")).length > 0) {
                         $("#" + $(instance).data("form"))[0].reset();
                     }
@@ -201,147 +201,6 @@ $(document).ready(function () {
 
     });
 
-    $('.set-status-document').on('click', function (e) {
-        e.preventDefault()
-        var action = $(this).data('action');
-        var id = $(this).data('id')
-        var myArrayOfThings = [
-            {id: 'ACTIVO', name: 'ACTIVO'},
-            {id: 'CERRADO', name: 'CERRADO'},
-            {id: 'APROBADA', name: 'APROBADA'},
-            {id: 'CANCELADA', name: 'CANCELADA'}
-        ];
-
-
-        $.ajax({
-            data: {a: action + '-GET-CURRENT-STATUS', id: id},
-            url: "./?action=admin",
-            type: "POST",
-            dataType: "JSON",
-            success: function (data) {
-
-                if (data.success) {
-
-                    var currentStatus = data.status;
-                    var options = {};
-                    $.map(myArrayOfThings, function (data) {
-                        options[data.id] = data.name;
-                    });
-
-                    Swal.fire({
-                        title: 'Selecione status',
-                        input: 'select',
-                        inputOptions: options,
-                        inputValue: currentStatus,
-                        showCancelButton: true,
-                        inputValidator: function (value) {
-                            return new Promise(function (resolve, reject) {
-                                if (value !== '') {
-
-                                    if (value == currentStatus) {
-
-                                        resolve('Nose puede actualizar con el mismo status');
-                                    } else {
-
-                                        resolve();
-                                    }
-                                } else {
-                                    resolve('Este campo es requerido');
-                                }
-                            });
-                        }
-                    }).then(function (result) {
-                        if (result.isConfirmed) {
-
-                            $.ajax({
-
-                                data: {a: action, id: id,status:result.value},
-                                url: "./?action=admin",
-                                type: "POST",
-                                dataType: "JSON",
-                                success: function (data) {
-
-                                    if (data.success) {
-                                        if (data.reload) {
-                                            let timerInterval
-                                            Swal.fire({
-                                                title: 'Recargando',
-                                                html: data.mens,
-                                                timer: 1000,
-                                                timerProgressBar: true,
-                                                didOpen: () => {
-                                                    Swal.showLoading()
-                                                },
-                                                willClose: () => {
-                                                    clearInterval(timerInterval)
-                                                }
-                                            }).then((result) => {
-                                                if (result.dismiss === Swal.DismissReason.timer) {
-                                                    location.reload()
-                                                }
-                                            })
-
-                                        }
-
-
-
-                                    } else {
-
-                                        manageShowAlertFormError(true);
-
-                                        $("#ht-preloader").css("display", "none");
-
-                                        Swal.fire('¡Alerta!', data.mens, 'error')
-                                        $('.new-alert-error').html('<div class="row">' +
-                                            '<div class="col-md-12">' +
-                                            '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-error" data-add="alert-error-none">x</button>' +
-                                            '</div>' +
-                                            ' <div class="col-md-12">' +
-                                            '<h4><i class="material-icons">warning</i> ' + data.mens + '</h4>' +
-                                            '</div>' +
-                                            '</div>');
-
-
-                                    }
-
-
-                                },
-                                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                    BtnReset(instance)
-                                    console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
-
-                                }
-
-                            });
-
-                        }
-                    });
-
-                } else {
-
-                    //currentStatus="Error - "+data.mens
-                    Swal.fire('¡Alerta!', data.mens, 'error')
-                    $('.new-alert-error').html('<div class="row">' +
-                        '<div class="col-md-12">' +
-                        '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-error" data-add="alert-error-none">x</button>' +
-                        '</div>' +
-                        ' <div class="col-md-12">' +
-                        '<h4>' + data.mens + '</h4>' +
-                        '</div>' +
-                        '</div>');
-                }
-
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log("Status: " + textStatus + " Error: " + XMLHttpRequest.responseText);
-
-            }
-
-        });
-
-
-    })
-
     //set status con confirmacion
     $('.btn-confirm-action').on('click', function () {
         var instance = this;
@@ -367,7 +226,7 @@ $(document).ready(function () {
 
                 BtnReset(instance)
                 //condicion aqui
-                var mensaje = "<i class=\"material-icons\">warning</i> Las unidades y el costo de los productos deben ser mayor a cero";
+                var mensaje ="<i class=\"material-icons\">warning</i> Las unidades y el costo de los productos deben ser mayor a cero";
                 if ($('.table-data-add-sect2').length > 0) {
 
                     mensaje = "<i class=\"material-icons\">warning</i> Las unidades solicitadas no deben ser mayor a las compradas." +
@@ -380,9 +239,9 @@ $(document).ready(function () {
                     '<div class="col-md-12">' +
                     '<button type="button" class="close pull-right close-alert-div" data-target="new-alert-error" data-add="alert-error-none">x</button>' +
                     '</div>' +
-                    ' <div class="col-md-12">' +
-                    '<h4>' + mensaje + '</h4>' +
-                    '</div>' +
+                        ' <div class="col-md-12">'+
+                            '<h4>'+mensaje+'</h4>' +
+                        '</div>' +
                     '</div>');
                 return false;
             }
@@ -1526,9 +1385,9 @@ $(document).ready(function () {
             }
             if ($(value).attr("name") == 'new_password') {
 
-                if ($('.password_confirm').length > 0) {
+                if($('.password_confirm').length>0){
 
-                    if ($(value).val() != $('.password_confirm').val()) {
+                    if($(value).val() !=$('.password_confirm').val()){
                         $(".password_confirm-error").html("¡Las contraseñas no coinciden!");
                         check = false;
                     }
@@ -1669,7 +1528,7 @@ $(document).ready(function () {
     }
 
     function getDataToTable(action, id, targetAdd = ".table-data-add") {
-        console.log(action, id, targetAdd)
+        console.log(action,id,targetAdd)
 
         if (action && id && targetAdd) {
             $.ajax({
@@ -1810,6 +1669,5 @@ $(document).ready(function () {
 
         }
     }
-
 
 });

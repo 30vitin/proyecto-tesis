@@ -44,15 +44,15 @@ $categoria="active-sublink";
       <!-- End Navbar -->
       <div class="content">
         <div class="container-fluid">
-          <div class="row">
+          <div class="row d-flex justify-content-center">
 
             <div class="col-8 col-lg-1"></div>
 
-            <div class="col-md-12">
+            <div class="col-md-7">
               <div class="card ">
                 <div class="card-header card-header-warning card-header-text">
                   <div class="card-text">
-                    <h4 class="card-title">Generales Categoría  <i class="spinner-border spinner-border-sm"></i></h4>
+                    <h4 class="card-title">Crear Nueva Categoría </h4>
                   </div>
                 </div>
                 <div class="card-body ">
