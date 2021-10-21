@@ -104,42 +104,104 @@ if (!$response) {
                                         <div class="col-sm-12">
 
 
-                                            <div id="jQuery_accordion">
+                                            <div class="accordion" id="accordionModuleSale">
+                                                <div class="card">
+                                                    <div class="card-header" id="headingOne">
+                                                        <h5 class="mb-0">
+                                                            <button class="btn btn-link" type="button"
+                                                                    data-toggle="collapse"
+                                                                    data-target="#collapseOne" aria-expanded="true"
+                                                                    aria-controls="collapseOne">
+                                                                Módulo de Ventas
+                                                            </button>
+                                                        </h5>
+                                                    </div>
+                                                     <div id="collapseOne" class="collapse"
+                                                         aria-labelledby="headingOne"
+                                                         data-parent="#accordionModuleSale">
+                                                        <div class="card-body row pl-5">
 
-                                                <div class="accordion" id="accordionExample">
-                                                    <div class="card">
-                                                        <div class="card-header" id="headingOne">
-                                                            <h5 class="mb-0">
-                                                                <button class="btn btn-link" type="button"
-                                                                        data-toggle="collapse"
-                                                                        data-target="#collapseOne" aria-expanded="true"
-                                                                        aria-controls="collapseOne">
-                                                                    Módulo de Ventas
-                                                                </button>
-                                                            </h5>
-                                                        </div>
-
-                                                        <div id="collapseOne" class="collapse show"
-                                                             aria-labelledby="headingOne"
-                                                             data-parent="#accordionExample">
-                                                            <div class="card-body">
-
-
-                                                                <label>
-                                                                    <input type="checkbox" id="cbox1"
-                                                                              value="first_checkbox" name="checkbox"> Este es mi primer
-                                                                    checkbox</label><br>
-                                                                <label>
-                                                                    <input type="checkbox" id="cbox3"
-                                                                           value="first_checkbox"  name="checkbox"> Este es mi primer
-                                                                    checkbox</label><br>
+                                                            <?php
+                                                            $sql1 = "SELECT permission,name,module FROM permission WHERE module='Ventas' and submodulo<>'Ventas'";
+                                                            $res1 = $cls->consultListQuery($sql1);
+                                                            foreach ($res1 as $item) {
+                                                                $checked = "";
+                                                                if (isset($VAR_SESSION->permission) &&
+                                                                    in_array($item->permission, $VAR_SESSION->permission))
+                                                                {
+                                                                    $checked="checked ='checked'";
+                                                                }
+                                                                ?>
+                                                                <div class="col-md-12">
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                           value="<?php echo $item->permission; ?>"
+                                                                           id="id<?php echo $item->permission; ?>" <?php echo $checked;?>>
+                                                                    <label class="form-check-label"
+                                                                           for="id<?php echo $item->permission; ?>">
+                                                                        <?php echo $item->name; ?>
+                                                                    </label>
+                                                                </div>
 
 
-                                                            </div>
+                                                            <?php } ?>
+
+
                                                         </div>
                                                     </div>
+
                                                 </div>
+
                                             </div>
+
+                                            <div class="accordion" id="accordionModulePurchase">
+                                                <div class="card">
+                                                    <div class="card-header" id="headingOne">
+                                                        <h5 class="mb-0">
+                                                            <button class="btn btn-link" type="button"
+                                                                    data-toggle="collapse"
+                                                                    data-target="#collapseTwo" aria-expanded="true"
+                                                                    aria-controls="collapseTwo">
+                                                                Módulo de Compras
+                                                            </button>
+                                                        </h5>
+                                                    </div>
+                                                    <div id="collapseTwo" class="collapse"
+                                                         aria-labelledby="headingOne"
+                                                         data-parent="#accordionModulePurchase">
+                                                        <div class="card-body row pl-5">
+
+                                                            <?php
+                                                            $sql1 = "SELECT permission,name,module FROM permission WHERE module='Compras'";
+                                                            $res1 = $cls->consultListQuery($sql1);
+                                                            foreach ($res1 as $item) {
+                                                                $checked = "";
+                                                                if (isset($VAR_SESSION->permission) &&
+                                                                    in_array($item->permission, $VAR_SESSION->permission))
+                                                                {
+                                                                    $checked="checked ='checked'";
+                                                                }
+                                                                ?>
+                                                                <div class="col-md-12">
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                           value="<?php echo $item->permission; ?>"
+                                                                           id="id<?php echo $item->permission; ?>" <?php echo $checked;?>>
+                                                                    <label class="form-check-label"
+                                                                           for="id<?php echo $item->permission; ?>">
+                                                                        <?php echo $item->name; ?>
+                                                                    </label>
+                                                                </div>
+
+
+                                                            <?php } ?>
+
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
 
                                         </div>
 
@@ -169,11 +231,7 @@ if (!$response) {
 <?php include "scripts/select2.php"; ?>
 <script src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
 
-<script>
-    $(function () {
-        $("#jQuery_accordion").accordion();
-    });
-</script>
+
 </body>
 
 </html>
