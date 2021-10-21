@@ -13,6 +13,8 @@
 #Error #002: error al subir archivo
 #Error #003: error al actualizar la imagen del producto
 #Error #004: error al actualizar el status
+#Error #005: error al guardar permisos,no se postearon los permisos
+
 require_once 'Config/Functions.php';
 $VAR_SESSION = Session::getInstance();
 
@@ -42,7 +44,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-BILLS-TO-RECEIVE-MERCHANT') {
                 array('type' => 'input', 'id' => 'comment', 'value' => $result_lis['comment'])
             ));*/
 
-       // $mensaje = $inputs;
+        // $mensaje = $inputs;
     }
 
 }
@@ -85,10 +87,10 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-RECEIVE-MERCHANT') {
     }
 
     //checar si ya fue completada
-    if($cls->chetIfBillsIsComplete($bills)){
+    if ($cls->chetIfBillsIsComplete($bills)) {
 
         $check = false;
-        $mensaje = array('success' => false, 'mens' => 'La factura # '.$bills.' ya fue completada');
+        $mensaje = array('success' => false, 'mens' => 'La factura # ' . $bills . ' ya fue completada');
 
     }
 
@@ -346,9 +348,9 @@ if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-RECEIVE-MERCHANT') {
     }
 
 
-    $sqlc="SELECT COUNT(*) as count FROM dispatch_merchant WHERE received ='$id' and status ='ACTIVO'";
-    $responsesc= $cls->consulQuery($sqlc);
-    if ($responsesc['count'] >0) {
+    $sqlc = "SELECT COUNT(*) as count FROM dispatch_merchant WHERE received ='$id' and status ='ACTIVO'";
+    $responsesc = $cls->consulQuery($sqlc);
+    if ($responsesc['count'] > 0) {
         $check = false;
         $mensaje = array('success' => false, 'mens' => 'No se puede cerrr esta recepción porque tiene despachos ACTIVOS');
     }
@@ -378,7 +380,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-RECEIVED-MERCHANT-TO-DISPATCH-MERC
     if (isset($_POST['id'])) {
         $id = $_POST['id'];
         $sql = "SELECT DATE_FORMAT(date,'%Y-%m-%d') as date,comment,reference FROM received_merchant  WHERE id = '$id' ";
-       // $result_lis = $cls->consulQuery($sql);//query
+        // $result_lis = $cls->consulQuery($sql);//query
         /*$inputs = array("id" => $id,
             "data" => array(array('type' => 'input', 'id' => 'date', 'value' => $result_lis['date']),
                 array('type' => 'input', 'id' => 'reference', 'value' => $result_lis['reference']),
@@ -2141,7 +2143,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'CONVERT-TO-ORDER') {
     $response3 = $cls->consulQuery($sqlcheck3);
     if ($response3['count'] == 0) {
         $check = false;
-        $mensaje = array('success' => false, 'mens' => 'No se puede convertir a pedido, la requisición de compra # '.$purchase_request.' tiene que estar APROBADA');
+        $mensaje = array('success' => false, 'mens' => 'No se puede convertir a pedido, la requisición de compra # ' . $purchase_request . ' tiene que estar APROBADA');
 
     }
 
@@ -2618,12 +2620,12 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-ORDER-TO-ORDER') {
         $id = $_POST['id'];
         $sql = "SELECT DATE_FORMAT(date,'%Y-%m-%d') as date,comment,reference FROM purchase_orders t1 WHERE t1.id = '$id' ";
         //$result_lis = $cls->consulQuery($sql);//query
-       /* $inputs = array("id" => $id,
-            "data" => array(
-                array('type' => 'input', 'id' => 'date', 'value' => $result_lis['date']),
-                array('type' => 'input', 'id' => 'comment', 'value' => $result_lis['comment']),
-                array('type' => 'input', 'id' => 'reference', 'value' => $result_lis['reference'])
-            ));*/
+        /* $inputs = array("id" => $id,
+             "data" => array(
+                 array('type' => 'input', 'id' => 'date', 'value' => $result_lis['date']),
+                 array('type' => 'input', 'id' => 'comment', 'value' => $result_lis['comment']),
+                 array('type' => 'input', 'id' => 'reference', 'value' => $result_lis['reference'])
+             ));*/
 
         //$mensaje = $inputs;
     }
@@ -3480,7 +3482,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-REQUEST') {
         }
 
 
-
         $check = true;
         $sqlcheck = "SELECT COUNT(*) as count FROM purchase_requests WHERE id ='$id' AND status='APROBADA'";
         $response = $cls->consulQuery($sqlcheck);
@@ -3491,7 +3492,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-REQUEST') {
             }
 
         }
-
 
 
         if ($check) {
@@ -3883,8 +3883,8 @@ if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-PURCHASE-ORDER') {
         //NO DEJA CERRAR LA OC HASTA QUE SE COMPLETE LAS UNIDADES EN PEDIDOS
         //if ($cls->checkIfTotalPurchase($id)) {
 
-           // $checkUnitsTotal = false;
-       // }
+        // $checkUnitsTotal = false;
+        // }
 
     }
 
@@ -4066,14 +4066,14 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-ORDER-TO-QUOTE') {
     if (isset($_POST['id'])) {
         $id = $_POST['id'];
         $sql = "SELECT DATE_FORMAT(date,'%Y-%m-%d') as date,comment,reference FROM orders  WHERE id = '$id' ";
-       // $result_lis = $cls->consulQuery($sql);//query
-       /*$inputs = array("id" => $id,
-            "data" => array(array('type' => 'input', 'id' => 'date', 'value' => $result_lis['date']),
-                array('type' => 'input', 'id' => 'reference', 'value' => $result_lis['reference']),
-                array('type' => 'input', 'id' => 'comment', 'value' => $result_lis['comment'])
-            ));*/
+        // $result_lis = $cls->consulQuery($sql);//query
+        /*$inputs = array("id" => $id,
+             "data" => array(array('type' => 'input', 'id' => 'date', 'value' => $result_lis['date']),
+                 array('type' => 'input', 'id' => 'reference', 'value' => $result_lis['reference']),
+                 array('type' => 'input', 'id' => 'comment', 'value' => $result_lis['comment'])
+             ));*/
 
-       // $mensaje = $inputs;
+        // $mensaje = $inputs;
     }
 
 }
@@ -4212,12 +4212,12 @@ if (isset($_POST['a']) && $_POST['a'] == 'LOGIN') {
                 // Let's store datas in the session
                 $VAR_SESSION->username = $username;
                 $VAR_SESSION->loggedin = true;
-                $sqlper="SELECT permission FROM users_permission WHERE username ='$username'";
+                $sqlper = "SELECT permission FROM users_permission WHERE username ='$username'";
                 $resper = $cls->consultListQuery($sqlper);
                 $permission = array();
-                if(count($resper)>0){
-                    foreach ($resper as $per){
-                        $permission[]=$per->permission;
+                if (count($resper) > 0) {
+                    foreach ($resper as $per) {
+                        $permission[] = $per->permission;
 
                     }
                 }
@@ -4400,6 +4400,29 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-USERS') {
 
     }
 
+
+}
+
+if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-USERS-PERMISSION') {
+    $cls->autocommitF();
+
+    $check = true;
+
+    if (!isset($_POST['permission'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Ha ocurrido un error al guardar permisos #005');
+    }
+
+    if (!isset($_POST['id'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su administrador de sistema #001');
+    }
+    $permissions = $_POST['permission'];
+
+    foreach ($permissions as $per) {
+        
+
+    }
 
 }
 

@@ -91,7 +91,7 @@ if (!$response) {
                                 <form class="form-horizontal" id="form" onkeydown="return event.key != 'Enter';"
                                       action="">
 
-                                    <input type="hidden" name="a" value="UPDATE-USERS">
+                                    <input type="hidden" name="a" value="UPDATE-USERS-PERMISSION">
                                     <input type="hidden" name="id" value="<?php echo $id; ?>">
 
 
@@ -135,7 +135,7 @@ if (!$response) {
                                                                 <div class="col-md-12">
                                                                     <input class="form-check-input" type="checkbox"
                                                                            value="<?php echo $item->permission; ?>"
-                                                                           id="id<?php echo $item->permission; ?>" <?php echo $checked;?>>
+                                                                           id="id<?php echo $item->permission; ?>" <?php echo $checked;?> name="permission[]">
                                                                     <label class="form-check-label"
                                                                            for="id<?php echo $item->permission; ?>">
                                                                         <?php echo $item->name; ?>
@@ -184,7 +184,7 @@ if (!$response) {
                                                                 <div class="col-md-12">
                                                                     <input class="form-check-input" type="checkbox"
                                                                            value="<?php echo $item->permission; ?>"
-                                                                           id="id<?php echo $item->permission; ?>" <?php echo $checked;?>>
+                                                                           id="id<?php echo $item->permission; ?>" <?php echo $checked;?> name="permission[]">
                                                                     <label class="form-check-label"
                                                                            for="id<?php echo $item->permission; ?>">
                                                                         <?php echo $item->name; ?>
@@ -202,6 +202,152 @@ if (!$response) {
 
                                             </div>
 
+                                            <div class="accordion" id="accordionModuleInventory">
+                                                <div class="card">
+                                                    <div class="card-header" id="headingOne">
+                                                        <h5 class="mb-0">
+                                                            <button class="btn btn-link" type="button"
+                                                                    data-toggle="collapse"
+                                                                    data-target="#collapseThree" aria-expanded="true"
+                                                                    aria-controls="collapseThree">
+                                                                Módulo de Inventario
+                                                            </button>
+                                                        </h5>
+                                                    </div>
+                                                    <div id="collapseThree" class="collapse"
+                                                         aria-labelledby="headingOne"
+                                                         data-parent="#accordionModuleInventory">
+                                                        <div class="card-body row pl-5">
+
+                                                            <?php
+                                                            $sql1 = "SELECT permission,name,module FROM permission WHERE module='Inventario'";
+                                                            $res1 = $cls->consultListQuery($sql1);
+                                                            foreach ($res1 as $item) {
+                                                                $checked = "";
+                                                                if (isset($VAR_SESSION->permission) &&
+                                                                    in_array($item->permission, $VAR_SESSION->permission))
+                                                                {
+                                                                    $checked="checked ='checked'";
+                                                                }
+                                                                ?>
+                                                                <div class="col-md-12">
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                           value="<?php echo $item->permission; ?>"
+                                                                           id="id<?php echo $item->permission; ?>" <?php echo $checked;?> name="permission[]">
+                                                                    <label class="form-check-label"
+                                                                           for="id<?php echo $item->permission; ?>">
+                                                                        <?php echo $item->name; ?>
+                                                                    </label>
+                                                                </div>
+
+
+                                                            <?php } ?>
+
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <div class="accordion" id="accordionModuleStore">
+                                                <div class="card">
+                                                    <div class="card-header" id="headingOne">
+                                                        <h5 class="mb-0">
+                                                            <button class="btn btn-link" type="button"
+                                                                    data-toggle="collapse"
+                                                                    data-target="#collapseFour" aria-expanded="true"
+                                                                    aria-controls="collapseFour">
+                                                                Módulo de Almacen
+                                                            </button>
+                                                        </h5>
+                                                    </div>
+                                                    <div id="collapseFour" class="collapse"
+                                                         aria-labelledby="headingOne"
+                                                         data-parent="#accordionModuleStore">
+                                                        <div class="card-body row pl-5">
+
+                                                            <?php
+                                                            $sql1 = "SELECT permission,name,module FROM permission WHERE module='Almacen'";
+                                                            $res1 = $cls->consultListQuery($sql1);
+                                                            foreach ($res1 as $item) {
+                                                                $checked = "";
+                                                                if (isset($VAR_SESSION->permission) &&
+                                                                    in_array($item->permission, $VAR_SESSION->permission))
+                                                                {
+                                                                    $checked="checked ='checked'";
+                                                                }
+                                                                ?>
+                                                                <div class="col-md-12">
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                           value="<?php echo $item->permission; ?>"
+                                                                           id="id<?php echo $item->permission; ?>" <?php echo $checked;?> name="permission[]">
+                                                                    <label class="form-check-label"
+                                                                           for="id<?php echo $item->permission; ?>">
+                                                                        <?php echo $item->name; ?>
+                                                                    </label>
+                                                                </div>
+
+
+                                                            <?php } ?>
+
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <div class="accordion" id="accordionModuleConfig">
+                                                <div class="card">
+                                                    <div class="card-header" id="headingOne">
+                                                        <h5 class="mb-0">
+                                                            <button class="btn btn-link" type="button"
+                                                                    data-toggle="collapse"
+                                                                    data-target="#collapseFive" aria-expanded="true"
+                                                                    aria-controls="collapseFive">
+                                                                Módulo de Configuración
+                                                            </button>
+                                                        </h5>
+                                                    </div>
+                                                    <div id="collapseFive" class="collapse"
+                                                         aria-labelledby="headingOne"
+                                                         data-parent="#accordionModuleConfig">
+                                                        <div class="card-body row pl-5">
+
+                                                            <?php
+                                                            $sql1 = "SELECT permission,name,module FROM permission WHERE module='Configuración'";
+                                                            $res1 = $cls->consultListQuery($sql1);
+                                                            foreach ($res1 as $item) {
+                                                                $checked = "";
+                                                                if (isset($VAR_SESSION->permission) &&
+                                                                    in_array($item->permission, $VAR_SESSION->permission))
+                                                                {
+                                                                    $checked="checked ='checked'";
+                                                                }
+                                                                ?>
+                                                                <div class="col-md-12">
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                           value="<?php echo $item->permission; ?>"
+                                                                           id="id<?php echo $item->permission; ?>" <?php echo $checked;?> name="permission[]">
+                                                                    <label class="form-check-label"
+                                                                           for="id<?php echo $item->permission; ?>">
+                                                                        <?php echo $item->name; ?>
+                                                                    </label>
+                                                                </div>
+
+
+                                                            <?php } ?>
+
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
 
                                         </div>
 
