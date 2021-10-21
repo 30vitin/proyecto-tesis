@@ -104,29 +104,36 @@ if (!$response) {
                                         <div class="col-sm-12">
 
 
-
-
-
-
                                             <div id="jQuery_accordion">
 
                                                 <div class="accordion" id="accordionExample">
                                                     <div class="card">
                                                         <div class="card-header" id="headingOne">
                                                             <h5 class="mb-0">
-                                                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                                <button class="btn btn-link" type="button"
+                                                                        data-toggle="collapse"
+                                                                        data-target="#collapseOne" aria-expanded="true"
+                                                                        aria-controls="collapseOne">
                                                                     Módulo de Ventas
                                                                 </button>
                                                             </h5>
                                                         </div>
 
-                                                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                                        <div id="collapseOne" class="collapse show"
+                                                             aria-labelledby="headingOne"
+                                                             data-parent="#accordionExample">
                                                             <div class="card-body">
-                        
-                                                                    <input class="form-check-input" type="checkbox" value="" id="modulo_ventas">
-                                                                    <label class="form-check-label" for="modulo_ventas">
-                                                                        Módulo de Ventas
-                                                                    </label>
+
+
+                                                                <label>
+                                                                    <input type="checkbox" id="cbox1"
+                                                                              value="first_checkbox" name="checkbox"> Este es mi primer
+                                                                    checkbox</label><br>
+                                                                <label>
+                                                                    <input type="checkbox" id="cbox3"
+                                                                           value="first_checkbox"  name="checkbox"> Este es mi primer
+                                                                    checkbox</label><br>
+
 
                                                             </div>
                                                         </div>
@@ -163,8 +170,8 @@ if (!$response) {
 <script src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
 
 <script>
-    $(function() {
-        $( "#jQuery_accordion" ).accordion();
+    $(function () {
+        $("#jQuery_accordion").accordion();
     });
 </script>
 </body>
