@@ -20,25 +20,29 @@ class Functions extends dba
 
     }
 
-    public function enableClose(){
+    public function enableClose()
+    {
 
         return $this->enableClose;
     }
-    public function enableControlClosePurchaseOrder(){
+
+    public function enableControlClosePurchaseOrder()
+    {
 
         return $this->enableControlClosePurchaseOrder;
     }
 
-    public function enableCancel(){
+    public function enableCancel()
+    {
 
         return $this->enableCancel;
     }
 
-    public function getLogov1(){
+    public function getLogov1()
+    {
 
         return "Views/assets/img/logo-up.png";
     }
-
 
 
     public function autocommitF()
@@ -150,35 +154,52 @@ class Functions extends dba
         return $result;
     }
 
-    public function checkIfTotalPurchase($id){
+    public function checkIfTotalPurchase($id)
+    {
         $currentUnits = 0;
-        $sql = "SELECT t1.product_id as id,0 as units_diff,t1.units as unit,0 as units_request,t2.unidad_para_compra,t2.name FROM purchase_orders_details t1 join products t2 on t1.product_id = t2.id WHERE t1.purchase_order = '$id' ";
-        $result_lis = $this->consultListQuery($sql);//query
-        foreach ($result_lis as $result) {
-            $sql2 = "select sum(t2.units_request) as units from orders t1 join orders_details t2 on t1.id = t2.order_id WHERE t1.purchase_order = '$id' and t2.product_id='$result->id' LIMIT 1";
-            $response = $this->consulQuery($sql2);
-            $resunits = 0;
-            if($response){
-                $resunits = $response['units'];
-            }
-            $currentUnits+= ($result->unit - $resunits);
-        }
-        return ($currentUnits>0);
-    }
-    public function chetIfBillsIsComplete($id){
 
-        $sql1="SELECT sum(t2.units) as units FROM received_merchant t1 join received_merchant_details t2 on t1.id= t2.received WHERE t1.bills='$id'";
-        $res1= $this->consulQuery($sql1);
+        $sql = "SELECT SUM(t1.units) as units FROM purchase_orders_details t1 join products t2 on t1.product_id = t2.id WHERE t1.purchase_order = '$id'";
+        $res1 = $this->consulQuery($sql);
+        $units = $res1['units'];
+
+
+        $sql2 = "select sum(t2.units_request) as request from orders t1 join orders_details t2 on t1.id = t2.order_id WHERE t1.purchase_order = '$id'";
+        $res2 = $this->consulQuery($sql2);
+        $request = $res2['request'];
+
+        return (($units + $request) > 0);
+    }
+
+    public function chetIfReceiveMerchantIsComplete($id)
+    {
+
+        $sql1 = "SELECT sum(t2.units) as units FROM received_merchant t1 join received_merchant_details t2 on t1.id= t2.received WHERE t1.bills='$id'";
+        $res1 = $this->consulQuery($sql1);
         $untis1 = $res1['units'];
 
 
-        $sql2="SELECT sum(t2.units) as units FROM  bills_details t2  WHERE t2.bill='$id'";
-        $res2= $this->consulQuery($sql2);
+        $sql2 = "SELECT sum(t2.units) as units FROM  bills_details t2  WHERE t2.bill='$id'";
+        $res2 = $this->consulQuery($sql2);
         $untis2 = $res2['units'];
         return ($untis1 == $untis2);
     }
 
-    public function getPurchaseOrderToOrders($id){
+    public function chetIfBillsIsComplete($id)
+    {
+
+        $sql1 = "SELECT sum(t2.units) as units FROM received_merchant t1 join received_merchant_details t2 on t1.id= t2.received WHERE t1.id='$id'";
+        $res1 = $this->consulQuery($sql1);
+        $untis1 = $res1['units'];
+
+        $sql2 = "SELECT sum(t2.units_request) as units FROM dispatch_merchant t1 join dispatch_merchant_details t2 on t1.id= t2.dispatch WHERE t1.received='$id'";
+        $res2 = $this->consulQuery($sql2);
+        $untis2 = $res2['units'];
+
+        return ($untis1 == $untis2);
+    }
+
+    public function getPurchaseOrderToOrders($id)
+    {
         $res = [];
         $sql = "SELECT t1.product_id as id,0 as units_diff,t1.units as unit,0 as units_request,t2.unidad_para_compra,t2.name FROM purchase_orders_details t1 join products t2 on t1.product_id = t2.id WHERE t1.purchase_order = '$id' ";
         $result_lis = $this->consultListQuery($sql);//query
@@ -198,7 +219,8 @@ class Functions extends dba
 
     }
 
-    public function getReceivedMerchantToDispatch($id){
+    public function getReceivedMerchantToDispatch($id)
+    {
         $res = [];
         $sql = "SELECT t1.product_id as id,0 as units_diff,t1.units as unit,0 as units_request,t2.unidad_para_almacen,t2.name FROM received_merchant_details t1 join products t2 on t1.product_id = t2.id WHERE t1.received = '$id' ";
         $result_lis = $this->consultListQuery($sql);//query
@@ -218,62 +240,68 @@ class Functions extends dba
 
     }
 
-    public function checkUnitsReceivedDispatch($data_table,$received_id,$dispatch_id){
+    public function checkUnitsReceivedDispatch($data_table, $received_id, $dispatch_id)
+    {
 
         //current received units
-        $sql1="SELECT sum(units) as units FROM received_merchant_details WHERE received ='$received_id'";
+        $sql1 = "SELECT sum(units) as units FROM received_merchant_details WHERE received ='$received_id'";
         $res1 = $this->consulQuery($sql1);
         $units1 = $res1['units'];
 
         //current units in otther documents without this dispatch
-        $sql2="SELECT sum(t1.units_request) as units FROM dispatch_merchant_details t1 join dispatch_merchant t2 on t1.dispatch = t2.id WHERE t2.received='$received_id' and t2.id<>'$dispatch_id'";
+        $sql2 = "SELECT sum(t1.units_request) as units FROM dispatch_merchant_details t1 join dispatch_merchant t2 on t1.dispatch = t2.id WHERE t2.received='$received_id' and t2.id<>'$dispatch_id'";
         $res2 = $this->consulQuery($sql2);
         $units2 = $res2['units'];
 
         //get current request units
         $unitsdocrequest = $this->getCurrentRequestUnits($data_table);
 
-        return ($units2+$unitsdocrequest)<=$units1;
+        return ($units2 + $unitsdocrequest) <= $units1;
     }
 
-    public function checkUnitsPurchaseOrderToOrder($data_table,$purchase_order_id,$order_id){
+    public function checkUnitsPurchaseOrderToOrder($data_table, $purchase_order_id, $order_id)
+    {
 
         //current received units
-        $sql1="SELECT sum(units) as units FROM purchase_orders_details WHERE purchase_order ='$purchase_order_id'";
+        $sql1 = "SELECT sum(units) as units FROM purchase_orders_details WHERE purchase_order ='$purchase_order_id'";
         $res1 = $this->consulQuery($sql1);
         $units1 = $res1['units'];
 
         //current units in otther documents without this
-        $sql2="SELECT sum(t1.units_request) as units FROM orders_details t1 join orders t2 on t1.order_id = t2.id WHERE t2.purchase_order='$purchase_order_id' and t2.id<>'$order_id'";
+        $sql2 = "SELECT sum(t1.units_request) as units FROM orders_details t1 join orders t2 on t1.order_id = t2.id WHERE t2.purchase_order='$purchase_order_id' and t2.id<>'$order_id'";
         $res2 = $this->consulQuery($sql2);
         $units2 = $res2['units'];
 
         //get current request units
         $unitsdocrequest = $this->getCurrentRequestUnits($data_table);
 
-        return ($units2+$unitsdocrequest)<=$units1;
+        return ($units2 + $unitsdocrequest) <= $units1;
 
     }
 
 
-    public function getCurrentRequestUnits($data_table){
+    public function getCurrentRequestUnits($data_table)
+    {
 
         $units = 0;
         foreach ($data_table as $data) {
-            $units+=$data->units_request;
+            $units += $data->units_request;
         }
         return $units;
     }
 
-    public function getUnitsProductsInOrder($order_id,$product_id){
+    public function getUnitsProductsInOrder($order_id, $product_id)
+    {
 
         $sql2 = "SELECT units_request FROM orders_details WHERE order_id ='$order_id' AND product_id='$product_id' limit 1";
         $units_request = $this->consulQuery($sql2);
         return $units_request['units_request'];
     }
-    public function getDaystoAddDays($date,$days){
 
-        return date('Y-m-d', strtotime($date. ' + '.$days.' days'));
+    public function getDaystoAddDays($date, $days)
+    {
+
+        return date('Y-m-d', strtotime($date . ' + ' . $days . ' days'));
 
     }
 

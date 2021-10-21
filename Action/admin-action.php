@@ -2,13 +2,12 @@
 
 //TODO
 
-
-//TODO MODULO DE ALMACEN (DESCONTAR UNIDADES DE LA FACTURA (RECEPCION), TAL COMO LO HACE DE LA ORDEN DE COMPRA (DESPACHO))
-//TODO COLOCAR EL APROBADO POR
-//TODO COLOAR ALGO PARA DIFERENCIAR CUANDO LAS UNIDADES SON COMPRADAS Y CUANDO SON FACTURADAS
-//TODO AL CARGAR DOCUMENTOS QUE CARGE TODO MENOS LA REFERENCIA (ESTE PUEDE SER EL ID ACTUAL DE ELLOS)
 //TODO CREAR LOS PDF (METODO) NECESARIOS CON PAGINACION
 
+//TODO REPORTES (PREGUNTAR PRIMERO)
+//DOCUMENTOS LISTOS PENDIENTES POR CERRAR
+//RECEPCION CON UNIDADES POR DESPACHAR
+//OC CON UNIDADES POR PEDIR Y FACTURAR
 
 #Error #001: id no enviados
 #Error #002: error al subir archivo
@@ -36,14 +35,14 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-BILLS-TO-RECEIVE-MERCHANT') {
     if (isset($_POST['id'])) {
         $id = $_POST['id'];
         $sql = "SELECT DATE_FORMAT(date,'%Y-%m-%d') as date,comment,reference FROM bills  WHERE id = '$id' ";
-        $result_lis = $cls->consulQuery($sql);//query
-        $inputs = array("id" => $id,
+        //$result_lis = $cls->consulQuery($sql);//query
+        /*$inputs = array("id" => $id,
             "data" => array(array('type' => 'input', 'id' => 'date', 'value' => $result_lis['date']),
                 array('type' => 'input', 'id' => 'reference', 'value' => $result_lis['reference']),
                 array('type' => 'input', 'id' => 'comment', 'value' => $result_lis['comment'])
-            ));
+            ));*/
 
-        $mensaje = $inputs;
+       // $mensaje = $inputs;
     }
 
 }
@@ -379,14 +378,14 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-RECEIVED-MERCHANT-TO-DISPATCH-MERC
     if (isset($_POST['id'])) {
         $id = $_POST['id'];
         $sql = "SELECT DATE_FORMAT(date,'%Y-%m-%d') as date,comment,reference FROM received_merchant  WHERE id = '$id' ";
-        $result_lis = $cls->consulQuery($sql);//query
-        $inputs = array("id" => $id,
+       // $result_lis = $cls->consulQuery($sql);//query
+        /*$inputs = array("id" => $id,
             "data" => array(array('type' => 'input', 'id' => 'date', 'value' => $result_lis['date']),
                 array('type' => 'input', 'id' => 'reference', 'value' => $result_lis['reference']),
                 array('type' => 'input', 'id' => 'comment', 'value' => $result_lis['comment'])
-            ));
+            ));*/
 
-        $mensaje = $inputs;
+        //$mensaje = $inputs;
     }
 
 }
@@ -737,6 +736,30 @@ if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-DISPATCH-MERCHANT') {
 
 
 }
+if (isset($_POST['a']) && $_POST['a'] == 'GET-DISPATCH-RELATED-RECEIVE-MERCHANT') {
+    $mensaje = [];
+    if (isset($_POST['id'])) {
+        $id = $_POST['id'];
+        $sql = "SELECT  id as id,received,date,sum(units_buy) as units_buy,sum(units_request) as units_request,sum(units_diff) as units_diff, status FROM (
+                                                    (SELECT  t1.id,t3.units_buy,t3.units_request,t3.units_diff,DATE_FORMAT(t1.date,'%Y-%m-%d') as date,t1.status,t1.received
+                                                    FROM dispatch_merchant t1 
+                                                    join dispatch_merchant_details t3 on t1.id = t3.dispatch 
+                                                    WHERE t1.status <>'DELETE' and t1.received='$id'
+																										) as datas
+                                                    
+                                            ) group by id ORDER BY date desc";
+        $result_lis = $cls->consultListQuery($sql);//query
+        $data = [];
+        foreach ($result_lis as $result) {
+
+            $data[] = array("Id" => $result->id, "Fecha" => $result->date, "Compradas" => $result->units_buy,
+                "Solicitadas" => $result->units_request, "Diferencia" => $result->units_diff, "Status" => $result->status);
+        }
+        $mensaje = $data;
+
+    }
+
+}
 
 /**
  * CONFIGURACIONES
@@ -1019,6 +1042,119 @@ if (isset($_POST['a']) && $_POST['a'] == 'BILLS-SET-STATUS') {
 
 }
 
+if (isset($_POST['a']) && $_POST['a'] == 'RECEIVE-MERCHANT-SET-STATUS-GET-CURRENT-STATUS') {
+
+    $check = true;
+    if (!isset($_POST['id'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su administrador de sistema #001');
+    }
+    $id = $_POST['id'];
+
+    $sql = "SELECT status FROM received_merchant WHERE id ='$id' limit 1";
+    $res = $cls->consulQuery($sql);
+    $status = $res['status'];
+    $mensaje = array('success' => true, 'status' => $status);
+
+
+}
+if (isset($_POST['a']) && $_POST['a'] == 'RECEIVE-MERCHANT-SET-STATUS') {
+
+    $check = true;
+    if (!isset($_POST['id'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su administrador de sistema #001');
+    }
+    if (!isset($_POST['status'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su administrador de sistema #002');
+    }
+    $id = $_POST['id'];
+    $status = $_POST['status'];
+
+    if ($check) {
+        $extraitem = "";
+        if ($status == "CANCELADA") {
+            $extraitem = ",comment_canceled ='Cancelada desde el administrador',canceled_by='$VAR_SESSION->username',canceled_at='$datetime'";
+        }
+        $observations = "";
+        if ($extraitem == "") {
+            $observations = ",observations='Cambio efectuado desde el administrado de status [$status] :: $datetime'";
+        }
+
+        $sql = "UPDATE received_merchant SET status ='$status',updated_by='$VAR_SESSION->username',updated_at ='$datetime' $extraitem $observations WHERE id ='$id' limit 1";
+        $res = $cls->exeQuery($sql);
+        if ($res) {
+
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'mens' => 'Status actualizado con exito.', 'reload' => true);
+        } else {
+
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res);
+
+        }
+
+    }
+
+}
+
+if (isset($_POST['a']) && $_POST['a'] == 'DISPATCH-MERCHANT-SET-STATUS-GET-CURRENT-STATUS') {
+
+    $check = true;
+    if (!isset($_POST['id'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su administrador de sistema #001');
+    }
+    $id = $_POST['id'];
+
+    $sql = "SELECT status FROM dispatch_merchant WHERE id ='$id' limit 1";
+    $res = $cls->consulQuery($sql);
+    $status = $res['status'];
+    $mensaje = array('success' => true, 'status' => $status);
+
+
+}
+if (isset($_POST['a']) && $_POST['a'] == 'DISPATCH-MERCHANT-SET-STATUS') {
+
+    $check = true;
+    if (!isset($_POST['id'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su administrador de sistema #001');
+    }
+    if (!isset($_POST['status'])) {
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su administrador de sistema #002');
+    }
+    $id = $_POST['id'];
+    $status = $_POST['status'];
+
+    if ($check) {
+        $extraitem = "";
+        if ($status == "CANCELADA") {
+            $extraitem = ",comment_canceled ='Cancelada desde el administrador',canceled_by='$VAR_SESSION->username',canceled_at='$datetime'";
+        }
+        $observations = "";
+        if ($extraitem == "") {
+            $observations = ",observations='Cambio efectuado desde el administrado de status [$status] :: $datetime'";
+        }
+
+        $sql = "UPDATE dispatch_merchant SET status ='$status',updated_by='$VAR_SESSION->username',updated_at ='$datetime' $extraitem $observations WHERE id ='$id' limit 1";
+        $res = $cls->exeQuery($sql);
+        if ($res) {
+
+            $cls->commitSet();
+            $mensaje = array('success' => true, 'mens' => 'Status actualizado con exito.', 'reload' => true);
+        } else {
+
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res);
+
+        }
+
+    }
+
+}
 
 /**
  * VENTAS
@@ -2005,7 +2141,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'CONVERT-TO-ORDER') {
     $response3 = $cls->consulQuery($sqlcheck3);
     if ($response3['count'] == 0) {
         $check = false;
-        $mensaje = array('success' => false, 'mens' => 'No se puede convertir a pedido, la requisición de compra tiene que estar APROBADA');
+        $mensaje = array('success' => false, 'mens' => 'No se puede convertir a pedido, la requisición de compra # '.$purchase_request.' tiene que estar APROBADA');
 
     }
 
@@ -2481,15 +2617,15 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-ORDER-TO-ORDER') {
     if (isset($_POST['id'])) {
         $id = $_POST['id'];
         $sql = "SELECT DATE_FORMAT(date,'%Y-%m-%d') as date,comment,reference FROM purchase_orders t1 WHERE t1.id = '$id' ";
-        $result_lis = $cls->consulQuery($sql);//query
-        $inputs = array("id" => $id,
+        //$result_lis = $cls->consulQuery($sql);//query
+       /* $inputs = array("id" => $id,
             "data" => array(
                 array('type' => 'input', 'id' => 'date', 'value' => $result_lis['date']),
                 array('type' => 'input', 'id' => 'comment', 'value' => $result_lis['comment']),
                 array('type' => 'input', 'id' => 'reference', 'value' => $result_lis['reference'])
-            ));
+            ));*/
 
-        $mensaje = $inputs;
+        //$mensaje = $inputs;
     }
 
 }
@@ -3337,19 +3473,26 @@ if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-REQUEST') {
         if ((int)$resl['cont'] > 0) {
             if ($cls->enableClose()) {
                 $check = false;
+                $mensaje = array('success' => false,
+                    'mens' => 'No se puede cerrar esta requisición porque tiene ordenes de compra relacionadas (ACTIVAS),<br>Debe cerrar/aprobar para poder cerrar esta requisición');
+
             }
         }
 
+
+
         $check = true;
-        $sqlcheck = "SELECT COUNT(*) as count FROM purchase_requests WHERE id ='$provider' AND status='ACTIVO'";
+        $sqlcheck = "SELECT COUNT(*) as count FROM purchase_requests WHERE id ='$id' AND status='APROBADA'";
         $response = $cls->consulQuery($sqlcheck);
         if ($response['count'] == 0) {
             if ($cls->enableClose()) {
                 $check = false;
-                $mensaje = array('success' => false, 'mens' => 'No se puede CERRAR esta requisición porque debe estar activa.');
+                $mensaje = array('success' => false, 'mens' => 'No se puede CERRAR esta requisición porque debe estar APROBADA.');
             }
 
         }
+
+
 
         if ($check) {
 
@@ -3364,11 +3507,6 @@ if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-REQUEST') {
                 $mensaje = array('success' => false, 'mens' => $res);
 
             }
-
-        } else {
-
-            $mensaje = array('success' => false,
-                'mens' => 'No se puede cerrar esta requisición porque tiene ordenes de compra relacionadas (ACTIVAS),<br>Debe cerrar/aprobar para poder cerrar esta requisición');
 
         }
 
@@ -3742,11 +3880,11 @@ if (isset($_POST['a']) && $_POST['a'] == 'CLOSE-PURCHASE-ORDER') {
 
     $checkUnitsTotal = true;
     if ($cls->enableControlClosePurchaseOrder()) {
+        //NO DEJA CERRAR LA OC HASTA QUE SE COMPLETE LAS UNIDADES EN PEDIDOS
+        //if ($cls->checkIfTotalPurchase($id)) {
 
-        if ($cls->checkIfTotalPurchase($id)) {
-
-            $checkUnitsTotal = false;
-        }
+           // $checkUnitsTotal = false;
+       // }
 
     }
 
@@ -3908,15 +4046,15 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-REQUEST-TO-ORDER') {
     if (isset($_POST['id'])) {
         $id = $_POST['id'];
         $sql = "SELECT DATE_FORMAT(date,'%Y-%m-%d') as date ,provider,comment,reference FROM purchase_requests t1 WHERE t1.id = '$id' ";
-        $result_lis = $cls->consulQuery($sql);//query
-        $inputs = array("id" => $id,
+        //$result_lis = $cls->consulQuery($sql);//query
+        /*$inputs = array("id" => $id,
             "data" => array(array('type' => 'input', 'id' => 'date', 'value' => $result_lis['date']),
                 array('type' => 'select', 'id' => 'provider', 'value' => $result_lis['provider']),
                 array('type' => 'input', 'id' => 'comment', 'value' => $result_lis['comment']),
                 array('type' => 'input', 'id' => 'reference', 'value' => $result_lis['reference'])
-            ));
+            ));*/
 
-        $mensaje = $inputs;
+        //$mensaje = $inputs;
     }
 
 }
@@ -3928,14 +4066,14 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-ORDER-TO-QUOTE') {
     if (isset($_POST['id'])) {
         $id = $_POST['id'];
         $sql = "SELECT DATE_FORMAT(date,'%Y-%m-%d') as date,comment,reference FROM orders  WHERE id = '$id' ";
-        $result_lis = $cls->consulQuery($sql);//query
-        $inputs = array("id" => $id,
+       // $result_lis = $cls->consulQuery($sql);//query
+       /*$inputs = array("id" => $id,
             "data" => array(array('type' => 'input', 'id' => 'date', 'value' => $result_lis['date']),
                 array('type' => 'input', 'id' => 'reference', 'value' => $result_lis['reference']),
                 array('type' => 'input', 'id' => 'comment', 'value' => $result_lis['comment'])
-            ));
+            ));*/
 
-        $mensaje = $inputs;
+       // $mensaje = $inputs;
     }
 
 }
@@ -3945,14 +4083,14 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-ORDER-TO-BILLS') {
     if (isset($_POST['id'])) {
         $id = $_POST['id'];
         $sql = "SELECT DATE_FORMAT(date,'%Y-%m-%d') as date,comment,reference FROM orders  WHERE id = '$id' ";
-        $result_lis = $cls->consulQuery($sql);//query
+        /*$result_lis = $cls->consulQuery($sql);//query
         $inputs = array("id" => $id,
             "data" => array(array('type' => 'input', 'id' => 'date', 'value' => $result_lis['date']),
                 array('type' => 'input', 'id' => 'reference', 'value' => $result_lis['reference']),
                 array('type' => 'input', 'id' => 'comment', 'value' => $result_lis['comment'])
             ));
 
-        $mensaje = $inputs;
+        $mensaje = $inputs;*/
     }
 
 }
@@ -4074,6 +4212,18 @@ if (isset($_POST['a']) && $_POST['a'] == 'LOGIN') {
                 // Let's store datas in the session
                 $VAR_SESSION->username = $username;
                 $VAR_SESSION->loggedin = true;
+                $sqlper="SELECT permission FROM users_permission WHERE username ='$username'";
+                $resper = $cls->consultListQuery($sqlper);
+                $permission = array();
+                if(count($resper)>0){
+                    foreach ($resper as $per){
+                        $permission[]=$per->permission;
+
+                    }
+                }
+
+                $VAR_SESSION->permission = $permission;
+
                 $SESSIONID = session_id();
                 session_write_close();
 
@@ -4106,7 +4256,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'LOGIN') {
         } else {
 
             $type = "error";
-            $mens = "Usuario no registrado como admin!";
+            $mens = "Usuario no encontrado en nuestros registros.";
             $url = "";
 
         }
@@ -4114,7 +4264,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'LOGIN') {
 
     } else {
         $type = "error";
-        $mens = "Dijiste un email y una contraseña valida";
+        $mens = "Dijiste un usuario y una contraseña valida";
         $url = "";
 
     }

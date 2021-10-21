@@ -105,7 +105,30 @@
                             $("#total-diff-tbl" ).html(Number(total));
                         }
 
+                        if($('#custom-total').length>0){
+                            var col = $('#custom-total').data('colum');
+                            var api = this.api(), data;
+                            // Remove the formatting to get integer data for summation
+                            var intVal = function ( i ) {
+                                return typeof i === 'string' ?
+                                    i.replace(/[\$,]/g, '')*1 :
+                                    typeof i === 'number' ?
+                                        i : 0;
+                            };
 
+                            total = api
+                                .column( col,{filter:'applied'} )
+                                .data()
+                                .reduce( function (a, b) {
+                                    return intVal(a) + intVal(b);
+                                }, 0 );
+                            if($('#custom-total').data('fixed')=="NO"){
+                                $("#custom-total" ).html(Number(total));
+                            }else{
+                                $("#custom-total" ).html(Number(total).toFixed(2));
+                            }
+
+                        }
 
 
                     }

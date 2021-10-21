@@ -11,7 +11,7 @@ if (!isset($_GET['id'])) {
 }
 
 $id = $_GET['id'];
-$sql = "SELECT date,received,comment,status,reference  FROM dispatch_merchant WHERE id='$id' and status<>'DELETE'";
+$sql = "SELECT date,received,comment,status,reference,updated_by,approved_by,updated_at,approved_at  FROM dispatch_merchant WHERE id='$id' and status<>'DELETE'";
 
 
 $response = $cls->consulQuery($sql);
@@ -106,14 +106,13 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
                                                         data-text="¿Estas seguro de cerrar este depacho de mercancía?">Cerrar
                                                 </button>
                                             <?php }  ?>
-                                            <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
-                                                <button type="button" class="btn btn-secondary pull-right print"
-                                                        data-form="form" data-reset="true"> Imprimir
-                                                </button>
 
-                                            <?php } ?>
+                                        <?php } ?>
 
-
+                                        <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
+                                            <button type="button" class="btn btn-secondary pull-right print"
+                                                    data-form="form" data-reset="true"> Imprimir
+                                            </button>
 
                                         <?php } ?>
 
@@ -140,6 +139,36 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
                                                     <span class="badge <?php echo $cls->getStatusClass($response['status'])?>"><?php echo $response['status'];?></span>
                                                 </div>
                                             </div>
+
+                                            <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
+
+                                                <div class="col-md-12 row">
+
+                                                    <div class="col-md-6">
+                                                        <label class="col-form-label">Aprobado por</label>
+
+                                                        <div class="form-group bmd-form-group">
+                                                            <?php echo $response['approved_by']; ?>
+                                                            <p><?php echo $response['approved_at']; ?></p>
+                                                        </div>
+
+
+                                                    </div>
+
+                                                    <?php if ($response['status'] == 'CERRADO') { ?>
+                                                        <div class="col-md-6">
+                                                            <label class="col-form-label">Cerrado por</label>
+
+                                                            <div class="form-group bmd-form-group">
+                                                                <?php echo $response['updated_by']; ?>
+                                                                <p><?php echo $response['updated_at']; ?></p>
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
+
+                                                </div>
+
+                                            <?php } ?>
 
 
                                             <div class="col-md-12">

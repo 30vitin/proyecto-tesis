@@ -154,12 +154,12 @@ $des_mercancia = "active-sublink";
                                                     <th>ID</th>
                                                     <th>Nombre</th>
                                                     <th>UoM Unid</th>
-                                                    <th>Unt. Facturadas</th>
+                                                    <th>Unt. Recibidas</th>
                                                     <th>Unt. Solicitadas</th>
                                                     <th>Diferencia</th>
                                                 </tr>
                                                 </thead>
-                                                <tbody class="table-data-add-sect2" data-action="GET-RECEIVED-MERCHANT-DETAILS-TO-DISPATCH-MERCHANT">
+                                                <tbody class="table-data-add-sect2" data-section="2" data-action="GET-RECEIVED-MERCHANT-DETAILS-TO-DISPATCH-MERCHANT">
 
                                                 </tbody>
                                                 <tfoot>

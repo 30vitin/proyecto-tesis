@@ -126,6 +126,15 @@ if (isset($_POST['page'])) {
                                             </tr>
                                         <?php } ?>
                                         </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <th colspan="5" style="text-align:right">Total:</th>
+
+                                            <th id="custom-total" data-colum="5"></th>
+                                            <th ></th>
+
+                                        </tr>
+                                        </tfoot>
 
                                     </table>
                                 </div>

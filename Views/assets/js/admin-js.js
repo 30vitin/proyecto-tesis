@@ -370,8 +370,16 @@ $(document).ready(function () {
                 var mensaje = "<i class=\"material-icons\">warning</i> Las unidades y el costo de los productos deben ser mayor a cero";
                 if ($('.table-data-add-sect2').length > 0) {
 
-                    mensaje = "<i class=\"material-icons\">warning</i> Las unidades solicitadas no deben ser mayor a las compradas." +
-                        "<br><i class=\"material-icons\">warning</i> Las solicitadas deben ser mayor a cero";
+
+                    if($('.table-data-add-sect2').data('section')==2){
+                        mensaje = "<i class=\"material-icons\">warning</i> Las unidades solicitadas no deben ser mayor a las recibidas." +
+                            "<br><i class=\"material-icons\">warning</i> Las solicitadas deben ser mayor a cero";
+
+                    }else{
+                        mensaje = "<i class=\"material-icons\">warning</i> Las unidades solicitadas no deben ser mayor a las compradas." +
+                            "<br><i class=\"material-icons\">warning</i> Las solicitadas deben ser mayor a cero";
+
+                    }
 
                 }
 
@@ -943,9 +951,14 @@ $(document).ready(function () {
 
                 var mensaje = "<i class=\"material-icons\">warning</i> Las unidades y el costo de los productos deben ser mayor a cero";
                 if ($('.table-data-add-sect2').length > 0) {
+                    if($('.table-data-add-sect2').data('section')==2){
+                        mensaje = "<i class=\"material-icons\">warning</i> Las unidades solicitadas no deben ser mayor a las recibidas." +
+                            "<br><i class=\"material-icons\">warning</i> Las solicitadas deben ser mayor a cero";
+                    }else{
+                        mensaje = "<i class=\"material-icons\">warning</i> Las unidades solicitadas no deben ser mayor a las compradas." +
+                            "<br><i class=\"material-icons\">warning</i> Las solicitadas deben ser mayor a cero";
+                    }
 
-                    mensaje = "<i class=\"material-icons\">warning</i> Las unidades solicitadas no deben ser mayor a las compradas." +
-                        "<br><i class=\"material-icons\">warning</i> Las solicitadas deben ser mayor a cero";
 
                 }
 

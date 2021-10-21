@@ -12,7 +12,7 @@ if (!isset($_GET['id'])) {
 }
 
 $id = $_GET['id'];
-$sql = "SELECT order_id,date,customer,comment,status,reference,days_expired,date_expire FROM quotes WHERE id='$id' and status<>'DELETE'";
+$sql = "SELECT order_id,date,customer,comment,status,reference,days_expired,date_expire,approved_by,approved_at FROM quotes WHERE id='$id' and status<>'DELETE'";
 
 $response = $cls->consulQuery($sql);
 if (!$response) {
@@ -132,6 +132,27 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                                     <span class="badge <?php echo $cls->getStatusClass($response['status']) ?>"><?php echo $response['status']; ?></span>
                                                 </div>
                                             </div>
+
+
+                                            <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
+
+                                                <div class="col-md-12 row">
+
+                                                    <div class="col-md-6">
+                                                        <label class="col-form-label">Aprobado por</label>
+
+                                                        <div class="form-group bmd-form-group">
+                                                            <?php echo $response['approved_by']; ?>
+                                                            <p><?php echo $response['approved_at']; ?></p>
+                                                        </div>
+
+
+                                                    </div>
+                                                </div>
+
+                                            <?php } ?>
+
+
                                             <div class="col-md-12">
                                                 <label class="col-form-label">Pedido</label>
                                                 <div class="form-group bmd-form-group">

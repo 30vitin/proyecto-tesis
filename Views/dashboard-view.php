@@ -4,6 +4,8 @@ $cls = new Functions;  //llamando al objeto
 include 'utils.php';
 
 
+
+
 $dashboard = "active";
 
 ?>
@@ -35,6 +37,8 @@ $dashboard = "active";
         <?php include "navbar.php"; ?>
 
         <!-- End Navbar -->
+        <!--colocar permisos -->
+
         <div class="content">
             <div class="container-fluid ">
 
@@ -46,15 +50,19 @@ $dashboard = "active";
                             <h2 class="text-muted"> Control de Pedidos</h2>
                             <p class="text-muted"> CRUV - Departamento de Cafetería. </p>
 
-                            <p class="pt-4">Links de acceso rapido</p>
+                            <?php if (isset($VAR_SESSION->permission) &&  in_array("PER0012",$VAR_SESSION->permission)){?>
+                                        <p class="pt-4">Links de acceso rapido</p>
+                                        <div class="row d-flex justify-content-center">
+                                            <a href="./?view=purchase-requests-create" class="col-md-3 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar requisición</a>
+                                            <a href="./?view=purchase-order-create" class="col-md-3 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar O/C</a>
+                                            <a href="./?view=orders-create" class=" col-md-3 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar Pedido</a>
+                                            <a href="./?view=bills-create" class="col-md-3 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar Factura</a>
+                                        </div>
+                            <?php }?>
 
-
-                            <div class="row d-flex justify-content-center">
-                                <a href="./?view=purchase-requests-create" class="col-md-3 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar requisición</a>
-                                <a href="./?view=purchase-order-create" class="col-md-3 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar O/C</a>
-                                <a href="./?view=orders-create" class=" col-md-3 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar Pedido</a>
-                                <a href="./?view=bills-create" class="col-md-3 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Registrar Factura</a>
-                            </div>
+                            <?php if (isset($VAR_SESSION->permission) &&  in_array("PER0004",$VAR_SESSION->permission)){?>
+                                <p class="pt-4">Links de acceso rapido</p>
+                            <?php }?>
 
 
                         </div>
@@ -62,8 +70,8 @@ $dashboard = "active";
                     </div>
                 </div>
 
-
-                <div class="row d-flex justify-content-center">
+                <?php if (isset($VAR_SESSION->permission) &&  in_array("PER0012",$VAR_SESSION->permission)){?>
+                        <div class="row d-flex justify-content-center">
                     <div class="col-lg-12 col-md-6 col-sm-6">
                         <div class="card card-stats">
                             <div class="card-header card-header-warning card-header-icon">
@@ -215,6 +223,16 @@ $dashboard = "active";
                                             </tr>
                                         <?php } ?>
                                         </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <th colspan="4" style="text-align:right">Total:</th>
+
+                                            <th id="custom-total" data-colum="4" data-fixed="NO"></th>
+                                            <th ></th>
+
+                                        </tr>
+                                        </tfoot>
+
 
                                     </table>
                                 </div>
@@ -308,6 +326,7 @@ $dashboard = "active";
 
                 </div>
 
+                <?php }?>
 
             </div>
         </div>

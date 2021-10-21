@@ -9,7 +9,7 @@ if (!isset($_GET['id'])) {
 }
 
 $id = $_GET['id'];
-$sql = "SELECT date,provider,comment,status,purchase_request,comment_canceled,reference  FROM purchase_orders WHERE id='$id' and status<>'DELETE'";
+$sql = "SELECT date,provider,comment,status,purchase_request,comment_canceled,reference,updated_by,approved_by,updated_at,approved_at  FROM purchase_orders WHERE id='$id' and status<>'DELETE'";
 
 $response = $cls->consulQuery($sql);
 if (!$response) {
@@ -192,6 +192,36 @@ $ordenescompra = "active-sublink";
                                                     <span class="badge <?php echo $cls->getStatusClass($response['status']) ?>"><?php echo $response['status']; ?></span>
                                                 </div>
                                             </div>
+                                            <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
+
+                                                <div class="col-md-12 row">
+
+                                                    <div class="col-md-6">
+                                                        <label class="col-form-label">Aprobado por</label>
+
+                                                        <div class="form-group bmd-form-group">
+                                                            <?php echo $response['approved_by']; ?>
+                                                            <p><?php echo $response['approved_at']; ?></p>
+                                                        </div>
+
+
+                                                    </div>
+
+                                                    <?php if ($response['status'] == 'CERRADO') { ?>
+                                                        <div class="col-md-6">
+                                                            <label class="col-form-label">Cerrado por</label>
+
+                                                            <div class="form-group bmd-form-group">
+                                                                <?php echo $response['updated_by']; ?>
+                                                                <p><?php echo $response['updated_at']; ?></p>
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
+
+                                                </div>
+
+                                            <?php } ?>
+
                                             <?php if ($response['status'] == 'CANCELADA') { ?>
                                                 <div class="col-md-12">
                                                     <label class="col-form-label">Comentario de cancelación</label>

@@ -75,6 +75,7 @@ if (isset($_POST['page'])) {
                                             <th>Id</th>
                                             <th>Fecha</th>
                                             <th>Cliente</th>
+                                            <th>Tipo de Crédito</th>
                                             <th>Pedido</th>
                                             <th>Unidades</th>
                                             <th>Costo</th>
@@ -86,8 +87,8 @@ if (isset($_POST['page'])) {
                                         </thead>
                                         <tbody>
                                         <?php
-                                        $sql = "SELECT  id as id,sum(units) as units,sum(costs) as costs,sum(total) as total,date,customer,status,order_id FROM (
-                                                    (SELECT   t1.id,t3.units,t3.costs,t3.total,t2.name as customer,t1.status,t1.order_id,DATE_FORMAT(t1.date,'%Y-%m-%d') as date
+                                        $sql = "SELECT  id as id,sum(units) as units,sum(costs) as costs,sum(total) as total,date,customer,status,order_id,credit_term FROM (
+                                                    (SELECT   t1.credit_term,t1.id,t3.units,t3.costs,t3.total,t2.name as customer,t1.status,t1.order_id,DATE_FORMAT(t1.date,'%Y-%m-%d') as date
                                                     FROM bills t1 
                                                     left join customers t2 on t1.customer = t2.id 
                                                     join bills_details t3 on t1.id = t3.bill 
@@ -104,6 +105,8 @@ if (isset($_POST['page'])) {
                                                 <td><?php echo $item->id; ?></td>
                                                 <td><?php echo $item->date; ?></td>
                                                 <td><?php echo $item->customer; ?></td>
+                                                <td><?php echo $item->credit_term; ?></td>
+
                                                 <td><?php echo $item->order_id; ?></td>
                                                 <td><?php echo $item->units; ?></td>
                                                 <td><?php echo $item->costs; ?></td>
@@ -125,6 +128,15 @@ if (isset($_POST['page'])) {
                                             </tr>
                                         <?php } ?>
                                         </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <th colspan="7" style="text-align:right">Total:</th>
+
+                                            <th id="custom-total" data-colum="7"></th>
+                                            <th ></th>
+
+                                        </tr>
+                                        </tfoot>
 
                                     </table>
                                 </div>

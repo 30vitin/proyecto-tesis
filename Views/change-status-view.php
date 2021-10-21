@@ -57,10 +57,13 @@ $cambiarstatus="active-sublink";
                                     <div class="row pl-4">
                                         <div class="col-sm-12">
                                             <div class="row ">
-                                                <a href="./?view=change-status-list&option=1" class="col-md-12 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Cambiar status a requisición</a>
-                                                <a href="./?view=change-status-list&option=2" class="col-md-12 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Cambiar status a O/C</a>
-                                                <a href="./?view=change-status-list&option=3" class=" col-md-12 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Cambiar status a Pedido</a>
-                                                <a href="./?view=change-status-list&option=4" class="col-md-12 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Cambiar status a Factura</a>
+                                                <a href="./?view=change-status-list&option=1" class="col-md-12 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Cambiar Status a requisición</a>
+                                                <a href="./?view=change-status-list&option=2" class="col-md-12 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Cambiar Status a O/C</a>
+                                                <a href="./?view=change-status-list&option=3" class=" col-md-12 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Cambiar Status a Pedido</a>
+                                                <a href="./?view=change-status-list&option=4" class="col-md-12 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Cambiar Status a Factura</a>
+                                                <a href="./?view=change-status-list&option=5" class="col-md-12 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Cambiar Status a Recepción de Mercancía</a>
+                                                <a href="./?view=change-status-list&option=6" class="col-md-12 p-2 list-group-item-action"><i class="fa fa-external-link"></i> Cambiar Status a Despacho de Mercancía</a>
+
                                             </div>
                                         </div>
 

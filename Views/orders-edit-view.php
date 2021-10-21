@@ -11,7 +11,7 @@ if (!isset($_GET['id'])) {
 }
 
 $id = $_GET['id'];
-$sql = "SELECT date,purchase_order,comment,status,reference  FROM orders WHERE id='$id' and status<>'DELETE'";
+$sql = "SELECT date,purchase_order,comment,status,reference,updated_by,approved_by,updated_at,approved_at   FROM orders WHERE id='$id' and status<>'DELETE'";
 
 
 $response = $cls->consulQuery($sql);
@@ -38,7 +38,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
-        Editar Pedido # <?php echo $id;?> | Cafeteria
+        Editar Pedido # <?php echo $id; ?> | Cafeteria
     </title>
     <?php include "styles.php"; ?>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
@@ -56,8 +56,8 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
 
         <?php
         $breadcrumbData = array(
-            array("name"=>"Lista de Pedidos","link"=>"./?view=orders","current"=>false),
-            array("name"=>"Editar Pedido #$id","current"=>true),
+            array("name" => "Lista de Pedidos", "link" => "./?view=orders", "current" => false),
+            array("name" => "Editar Pedido #$id", "current" => true),
         );
 
         $breadcrumb = json_decode(json_encode($breadcrumbData), FALSE);
@@ -74,7 +74,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
                         <div class="card ">
                             <div class="card-header card-header-warning card-header-text">
                                 <div class="card-text">
-                                    <h4 class="card-title">Editar Pedido #<?php echo $id;?> </h4>
+                                    <h4 class="card-title">Editar Pedido #<?php echo $id; ?> </h4>
                                 </div>
                             </div>
                             <div class="card-body ">
@@ -97,28 +97,33 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
                                             </button>
 
                                         <?php } ?>
+                                        <?php if ($response['status'] == 'APROBADA' || $response['status']=="CERRADO") { ?>
+                                                <button type="button" class="btn btn-secondary pull-right print"
+                                                        data-form="form" data-reset="true"> Imprimir
+                                                </button>
+                                        <?php }?>
                                         <?php if ($response['status'] == 'APROBADA') { ?>
-                                            <?php if($cls->enableClose()) {?>
+                                            <?php if ($cls->enableClose()) { ?>
                                                 <button type="button" class="btn btn-danger pull-right btn-delete-form"
                                                         data-form="form" data-id="<?php echo $id; ?>"
                                                         data-action="CLOSE-ORDER"
                                                         data-text="¿Estas seguro de cerrar este pedido?">Cerrar
                                                 </button>
-                                            <?php }  ?>
-                                            <button type="button" class="btn btn-secondary pull-right print"
-                                                    data-form="form" data-reset="true"> Imprimir
-                                            </button>
+                                            <?php } ?>
+
                                             <button type="button" class="btn btn-success pull-right btn-confirm-action"
                                                     data-form="form"
                                                     data-action="CONVERT-ORDER-TO-QUOTE"
                                                     data-id="<?php echo $id; ?>"
-                                                    data-text="¿Estas seguro de convertir a cotización?">Convertir a cotización
+                                                    data-text="¿Estas seguro de convertir a cotización?">Convertir a
+                                                cotización
                                             </button>
                                             <button type="button" class="btn btn-success pull-right btn-confirm-action"
                                                     data-form="form"
                                                     data-action="CONVERT-ORDER-TO-BILLS"
                                                     data-id="<?php echo $id; ?>"
-                                                    data-text="¿Estas seguro de convertir a factura?">Convertir a factura
+                                                    data-text="¿Estas seguro de convertir a factura?">Convertir a
+                                                factura
                                             </button>
 
 
@@ -132,7 +137,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
 
 
                                     <input type="hidden" name="a" value="UPDATE-ORDER">
-                                    <input type="hidden" name="id" value="<?php echo $id;?>">
+                                    <input type="hidden" name="id" value="<?php echo $id; ?>">
                                     <?php include 'alert-form.php'; ?>
 
                                     <h4>Datos Generales</h4>
@@ -144,20 +149,51 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
 
                                                 <div class="form-group bmd-form-group">
 
-                                                    <span class="badge <?php echo $cls->getStatusClass($response['status'])?>"><?php echo $response['status'];?></span>
+                                                    <span class="badge <?php echo $cls->getStatusClass($response['status']) ?>"><?php echo $response['status']; ?></span>
                                                 </div>
                                             </div>
+                                            <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
+
+                                                <div class="col-md-12 row">
+
+                                                    <div class="col-md-6">
+                                                        <label class="col-form-label">Aprobado por</label>
+
+                                                        <div class="form-group bmd-form-group">
+                                                            <?php echo $response['approved_by']; ?>
+                                                            <p><?php echo $response['approved_at']; ?></p>
+                                                        </div>
+
+
+                                                    </div>
+
+                                                    <?php if ($response['status'] == 'CERRADO') { ?>
+                                                        <div class="col-md-6">
+                                                            <label class="col-form-label">Cerrado por</label>
+
+                                                            <div class="form-group bmd-form-group">
+                                                                <?php echo $response['updated_by']; ?>
+                                                                <p><?php echo $response['updated_at']; ?></p>
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
+
+                                                </div>
+
+                                            <?php } ?>
 
 
                                             <div class="col-md-12">
                                                 <label class="col-form-label">Orden de compra</label>
-                                                <?php if($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO'){?>
-                                                   <div class="form-group bmd-form-group">
-                                                       <a href="./?view=purchase-order-edit&id=<?php echo $response['purchase_order'];?>" class="btn btn-outline-info" target="_blank">#<?php echo $response['purchase_order'];?></a>
-                                                   </div>
-                                                <?php }else{?>
+                                                <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
+                                                    <div class="form-group bmd-form-group">
+                                                        <a href="./?view=purchase-order-edit&id=<?php echo $response['purchase_order']; ?>"
+                                                           class="btn btn-outline-info"
+                                                           target="_blank">#<?php echo $response['purchase_order']; ?></a>
+                                                    </div>
+                                                <?php } else { ?>
 
-                                                        <div class="form-group bmd-form-group">
+                                                    <div class="form-group bmd-form-group">
 
                                                         <?php
                                                         $sql_CT = "SELECT id from purchase_orders WHERE status='APROBADA'";
@@ -172,7 +208,8 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
                                                             <?php
                                                             foreach ($result_CT as $item) { ?>
 
-                                                                <option value="<?php echo $item->id; ?>" <?php echo ($response['purchase_order'] == $item->id) ? 'selected' : ''; ?>>#<?php echo $item->id; ?></option>
+                                                                <option value="<?php echo $item->id; ?>" <?php echo ($response['purchase_order'] == $item->id) ? 'selected' : ''; ?>>
+                                                                    #<?php echo $item->id; ?></option>
 
                                                             <?php } ?>
 
@@ -181,7 +218,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
                                                                style="color:red !important;"></small>
                                                     </div>
 
-                                                <?php }?>
+                                                <?php } ?>
 
                                             </div>
                                             <div class="col-md-12">
@@ -191,7 +228,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
                                                     <input type="date" class="form-control validate" name="date"
                                                            value="<?php echo date_format(date_create($response['date']), 'Y-m-d'); ?>"
                                                            id="date"
-                                                           placeholder="Fecha" <?php echo $readOnly;?>>
+                                                           placeholder="Fecha" <?php echo $readOnly; ?>>
                                                     <small class="form-text text-muted date-error"
                                                            style="color:red !important;"></small>
                                                 </div>
@@ -206,7 +243,8 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
                                                 <div class="form-group bmd-form-group">
 
                                                     <textarea class="form-control" placeholder="Comentario"
-                                                              name="comment" id="comment" <?php echo $readOnly;?>><?php echo trim($response['comment']);?></textarea>
+                                                              name="comment"
+                                                              id="comment" <?php echo $readOnly; ?>><?php echo trim($response['comment']); ?></textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
@@ -214,8 +252,9 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
 
                                                 <div class="form-group bmd-form-group">
                                                     <input type="text" class="form-control" name="reference"
-                                                           value="<?php echo $response['reference'];?>"
-                                                           id="reference" placeholder="Referencia #" <?php echo $readOnly;?>>
+                                                           value="<?php echo $response['reference']; ?>"
+                                                           id="reference"
+                                                           placeholder="Referencia #" <?php echo $readOnly; ?>>
                                                 </div>
                                             </div>
                                         </div>
@@ -234,7 +273,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA' || $re
                                                 </tr>
                                                 </thead>
                                                 <tbody class="table-data-edit table-data-add-sect2 <?php if ($response['status'] == 'APROBADA') { ?>disable-button<?php } ?>"
-                                                       data-id="<?php echo $id;?>"
+                                                       data-id="<?php echo $id; ?>"
                                                        data-action-change="GET-PURCHASE-ORDER-DETAILS-TO-ORDER"
                                                        data-action="GET-ORDERS-DETAILS">
 

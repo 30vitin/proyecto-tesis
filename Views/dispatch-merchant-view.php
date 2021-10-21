@@ -75,7 +75,7 @@ if (isset($_POST['page'])) {
                                             <th>Id</th>
                                             <th>Fecha</th>
                                             <th>Recepción</th>
-                                            <th>Facturadas</th>
+                                            <th>Recibidas</th>
                                             <th>Solicitadas</th>
                                             <th>Diferencia</th>
                                             <th>Status</th>
@@ -124,10 +124,10 @@ if (isset($_POST['page'])) {
                                         </tbody>
                                         <tfoot>
                                         <tr>
-                                            <th colspan="3" style="text-align:right">Total:</th>
-                                            <th id="total-buy-tbl"></th>
-                                            <th id="total-unrequest-tbl"></th>
-                                            <th id="total-diff-tbl"></th>
+                                            <th colspan="4" style="text-align:right">Total:</th>
+
+                                            <th id="custom-total" data-colum="4" data-fixed="NO"></th>
+                                            <th ></th>
 
                                         </tr>
                                         </tfoot>
