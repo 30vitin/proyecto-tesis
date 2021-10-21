@@ -4419,10 +4419,17 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-USERS-PERMISSION') {
     }
     $permissions = $_POST['permission'];
 
-    foreach ($permissions as $per) {
-        
+    if($check){
+
+        //delete
+        foreach ($permissions as $per) {
+            //insert
+
+        }
+
 
     }
+
 
 }
 
