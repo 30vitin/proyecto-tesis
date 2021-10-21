@@ -8,6 +8,10 @@ include 'utils.php';
 $configuration = "active";
 $usersregister = "active-sublink";
 
+if (isset($VAR_SESSION->permission) && !in_array("PER0014", $VAR_SESSION->permission)) {
+
+    header('location:?view=nopermission');
+}
 if (isset($_POST['page'])) {
 
     $page = $_POST['page'];
@@ -15,6 +19,8 @@ if (isset($_POST['page'])) {
 } else {
     $page = 1;
 }
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -102,6 +108,13 @@ if (isset($_POST['page'])) {
                                                        rel="tooltip" title="" class="btn btn-primary btn-link btn-sm"
                                                        data-original-title="Ver Usuario">
                                                         <i class="material-icons">edit</i>
+                                                        <div class="ripple-container"></div>
+                                                    </a>
+
+                                                    <a href="./?view=users-permission&id=<?php echo $item->username; ?>"
+                                                       rel="tooltip" title="" class="btn btn-primary btn-link btn-sm"
+                                                       data-original-title="Ver Permisos">
+                                                        <i class="material-icons">lock</i>
                                                         <div class="ripple-container"></div>
                                                     </a>
 

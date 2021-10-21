@@ -1,3 +1,6 @@
+.cursor-pointer{
+    cursor: pointer;
+}
 img.img-fluid.loading {
     height: 106px;
 }

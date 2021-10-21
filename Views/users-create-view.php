@@ -6,7 +6,10 @@ include 'utils.php';
 
 $configuration="active";
 $usersregister="active-sublink";
+if (isset($VAR_SESSION->permission) && !in_array("PER0014", $VAR_SESSION->permission)) {
 
+    header('location:?view=nopermission');
+}
 ?>
 
 <!DOCTYPE html>

@@ -7,6 +7,10 @@ include 'utils.php';
 if (!isset($_GET['id'])) {
     header("Location:javascript:window.history.go(-2);");
 }
+if (isset($VAR_SESSION->permission) && !in_array("PER0002", $VAR_SESSION->permission)) {
+
+    header('location:?view=nopermission');
+}
 $id = $_GET['id'];
 $sql = "SELECT date,provider,comment,status,comment_canceled,reference,updated_by,approved_by,updated_at,approved_at FROM purchase_requests WHERE id='$id' and status<>'DELETE'";
 

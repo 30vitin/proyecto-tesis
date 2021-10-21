@@ -9,7 +9,10 @@ $des_mercancia = "active-sublink";
 if (!isset($_GET['id'])) {
     header("Location:javascript:window.history.go(-2);");
 }
+if (isset($VAR_SESSION->permission) && !in_array("PER0004", $VAR_SESSION->permission)) {
 
+    header('location:?view=nopermission');
+}
 $id = $_GET['id'];
 $sql = "SELECT date,received,comment,status,reference,updated_by,approved_by,updated_at,approved_at  FROM dispatch_merchant WHERE id='$id' and status<>'DELETE'";
 

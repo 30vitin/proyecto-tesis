@@ -7,7 +7,10 @@ include 'utils.php';
 if (!isset($_GET['id'])) {
     header("Location:javascript:window.history.go(-2);");
 }
+if (isset($VAR_SESSION->permission) && !in_array("PER0002", $VAR_SESSION->permission)) {
 
+    header('location:?view=nopermission');
+}
 $id = $_GET['id'];
 $sql = "SELECT name,email,telephone1,telephone2,fax,account,address FROM providers WHERE id='$id' and status='ACTIVO'";
 $response = $cls->consulQuery($sql);

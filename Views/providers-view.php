@@ -7,6 +7,11 @@ include 'utils.php';
 $purchase = "active";
 $proveedor = "active-sublink";
 
+if (isset($VAR_SESSION->permission) && !in_array("PER0002", $VAR_SESSION->permission)) {
+
+    header('location:?view=nopermission');
+}
+
 if (isset($_POST['page'])) {
 
     $page = $_POST['page'];

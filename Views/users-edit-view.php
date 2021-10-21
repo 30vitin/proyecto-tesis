@@ -9,6 +9,10 @@ $usersregister="active-sublink";
 if (!isset($_GET['id'])) {
     header("Location:javascript:window.history.go(-2);");
 }
+if (isset($VAR_SESSION->permission) && !in_array("PER0014", $VAR_SESSION->permission)) {
+
+    header('location:?view=nopermission');
+}
 $id = $_GET['id'];
 $sql = "SELECT name,username,status from users_access where username = '$id' limit 1";
 

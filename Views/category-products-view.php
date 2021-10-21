@@ -5,6 +5,10 @@ $cls = new Functions;  //llamando al objeto
 include 'utils.php';
 
 
+if (isset($VAR_SESSION->permission) && !in_array("PER0003", $VAR_SESSION->permission)) {
+
+    header('location:?view=nopermission');
+}
 $inventory = "active";
 $categoria = "active-sublink";
 

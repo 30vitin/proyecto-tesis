@@ -6,7 +6,10 @@ include 'utils.php';
 
 $configuration="active";
 $actualizarPassword="active-sublink";
+if (isset($VAR_SESSION->permission) && !in_array("PER0005", $VAR_SESSION->permission)) {
 
+    header('location:?view=nopermission');
+}
 ?>
 
 <!DOCTYPE html>

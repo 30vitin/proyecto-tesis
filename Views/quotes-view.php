@@ -6,6 +6,11 @@ include 'utils.php';
 $sales = "active";
 $cotizacion = "active-sublink";
 
+if (isset($VAR_SESSION->permission) && !in_array("PER0011", $VAR_SESSION->permission)) {
+
+    header('location:?view=nopermission');
+}
+
 if (isset($_POST['page'])) {
 
     $page = $_POST['page'];
@@ -13,6 +18,8 @@ if (isset($_POST['page'])) {
 } else {
     $page = 1;
 }
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

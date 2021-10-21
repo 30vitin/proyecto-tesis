@@ -8,6 +8,11 @@ include 'utils.php';
 if (!isset($_GET['id'])) {
     header("Location:javascript:window.history.go(-2);");
 }
+
+if (isset($VAR_SESSION->permission) && !in_array("PER0003", $VAR_SESSION->permission)) {
+
+    header('location:?view=nopermission');
+}
 $id = $_GET['id'];
 
 $sql = "SELECT id, name from products_category where id = '$id' AND status ='ACTIVO'  limit 1";

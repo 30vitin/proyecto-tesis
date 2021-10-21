@@ -6,7 +6,10 @@ include 'utils.php';
 $sales = "active";
 $clientes ="active-sublink";
 
+if (isset($VAR_SESSION->permission) && !in_array("PER0009", $VAR_SESSION->permission)) {
 
+    header('location:?view=nopermission');
+}
 ?>
 
 <!DOCTYPE html>

@@ -11,6 +11,10 @@ $cambiarstatus = "active-sublink";
 if (!isset($_GET['option'])) {
     header("Location:javascript:window.history.go(-2);");
 }
+if (isset($VAR_SESSION->permission) && !in_array("PER0006", $VAR_SESSION->permission)) {
+
+    header('location:?view=nopermission');
+}
 
 $option = $_GET['option'];
 $optionName = "";

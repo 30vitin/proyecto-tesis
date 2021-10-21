@@ -6,7 +6,10 @@ include 'utils.php';
 $almacen = "active";
 $des_mercancia = "active-sublink";
 
+if (isset($VAR_SESSION->permission) && !in_array("PER0004", $VAR_SESSION->permission)) {
 
+    header('location:?view=nopermission');
+}
 ?>
 
 

@@ -7,6 +7,11 @@ include 'utils.php';
 $almacen = "active";
 $rep_mercancia = "active-sublink";
 
+if (isset($VAR_SESSION->permission) && !in_array("PER0004", $VAR_SESSION->permission)) {
+
+    header('location:?view=nopermission');
+}
+
 if (isset($_POST['page'])) {
 
     $page = $_POST['page'];

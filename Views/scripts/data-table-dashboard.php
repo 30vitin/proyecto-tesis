@@ -27,64 +27,7 @@
                     autoWidth: false, // might need this
                     footerCallback: function ( row, data, start, end, display ) {
 
-                        if($('#custom-total').length>0){
-                            console.log('aa')
-                            var col = $('#custom-total').data('colum');
-                            var api = this.api(), data;
-                            // Remove the formatting to get integer data for summation
-                            var intVal = function ( i ) {
-                                return typeof i === 'string' ?
-                                    i.replace(/[\$,]/g, '')*1 :
-                                    typeof i === 'number' ?
-                                        i : 0;
-                            };
 
-                            total = api
-                                .column( col,{filter:'applied'} )
-                                .data()
-                                .reduce( function (a, b) {
-                                    return intVal(a) + intVal(b);
-                                }, 0 );
-                            if($('#custom-total').data('fixed')=="NO"){
-                                $("#custom-total" ).html(Number(total));
-                            }else{
-                                $("#custom-total" ).html(Number(total).toFixed(2));
-                            }
-
-                        }else{
-                            /*var api = this.api(), data;
-
-                            // Remove the formatting to get integer data for summation
-                            var intVal = function ( i ) {
-                                return typeof i === 'string' ?
-                                    i.replace(/[\$,]/g, '')*1 :
-                                    typeof i === 'number' ?
-                                        i : 0;
-                            };
-
-                            // Total over all pages
-                            total = api
-                                .column( 7 )
-                                .data()
-                                .reduce( function (a, b) {
-                                    return intVal(a) + intVal(b);
-                                }, 0 );
-
-                            // Total over this page
-                            pageTotal = api
-                                .column( 7, { page: 'current'} )
-                                .data()
-                                .reduce( function (a, b) {
-                                    return intVal(a) + intVal(b);
-                                }, 0 );
-
-                            // Update footer
-
-                            $( api.column( 7 ).footer() ).html(
-                                '$'+Number(total).toFixed(2)
-                            );*/
-
-                        }
                     }
 
                 });

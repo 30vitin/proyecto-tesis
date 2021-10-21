@@ -7,6 +7,10 @@ include 'utils.php';
 $inventory="active";
 $categoria="active-sublink";
 
+if (isset($VAR_SESSION->permission) && !in_array("PER0003", $VAR_SESSION->permission)) {
+
+    header('location:?view=nopermission');
+}
 ?>
 
 <!DOCTYPE html>
