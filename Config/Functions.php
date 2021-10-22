@@ -173,29 +173,38 @@ class Functions extends dba
     public function chetIfReceiveMerchantIsComplete($id)
     {
 
-        $sql1 = "SELECT sum(t2.units) as units FROM received_merchant t1 join received_merchant_details t2 on t1.id= t2.received WHERE t1.bills='$id'";
+        $sql1 = "SELECT IFNULL(sum(t2.units),0) as units FROM received_merchant t1 join received_merchant_details t2 on t1.id= t2.received WHERE t1.bills='$id'";
         $res1 = $this->consulQuery($sql1);
-        $untis1 = $res1['units'];
+        $untis1 = (int)$res1['units'];
 
 
-        $sql2 = "SELECT sum(t2.units) as units FROM  bills_details t2  WHERE t2.bill='$id'";
+        $sql2 = "SELECT IFNULL(sum(t2.units),0) as units FROM  bills_details t2  WHERE t2.bill='$id'";
         $res2 = $this->consulQuery($sql2);
-        $untis2 = $res2['units'];
+        $untis2 = (int)$res2['units'];
+
         return ($untis1 == $untis2);
+    }
+
+    public function checkIfAlreadyReceived($id){
+
+        $sql="SELECT count(*) as count FROM received_merchant t1 WHERE t1.bills='$id'";
+        $res = $this->consulQuery($sql);
+        return ($res['count'] >0);
+
     }
 
     public function chetIfBillsIsComplete($id)
     {
 
-        $sql1 = "SELECT sum(t2.units) as units FROM received_merchant t1 join received_merchant_details t2 on t1.id= t2.received WHERE t1.id='$id'";
+        $sql1 = "SELECT IFNULL(sum(t2.units),0) as units FROM received_merchant t1 join received_merchant_details t2 on t1.id= t2.received WHERE t1.id='$id'";
         $res1 = $this->consulQuery($sql1);
         $untis1 = $res1['units'];
 
-        $sql2 = "SELECT sum(t2.units_request) as units FROM dispatch_merchant t1 join dispatch_merchant_details t2 on t1.id= t2.dispatch WHERE t1.received='$id'";
+        $sql2 = "SELECT IFNULL(sum(t2.units_request),0) as units FROM dispatch_merchant t1 join dispatch_merchant_details t2 on t1.id= t2.dispatch WHERE t1.received='$id'";
         $res2 = $this->consulQuery($sql2);
         $untis2 = $res2['units'];
 
-        return ($untis1 == $untis2);
+        return ($untis1 == $untis2 && $untis2>0);
     }
 
     public function getPurchaseOrderToOrders($id)

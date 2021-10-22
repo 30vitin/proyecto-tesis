@@ -91,10 +91,17 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-RECEIVE-MERCHANT') {
     if ($cls->chetIfBillsIsComplete($bills)) {
 
         $check = false;
-        $mensaje = array('success' => false, 'mens' => 'La factura # ' . $bills . ' ya fue completada');
+        $mensaje = array('success' => false, 'mens' => 'La factura # ' . $bills . ' ya fue completada ');
 
     }
 
+    //checar que no la hayan recibido
+    if($cls->checkIfAlreadyReceived($bills)){
+
+        $check = false;
+        $mensaje = array('success' => false, 'mens' => 'La factura # ' . $bills . ' ya fue recibida ');
+
+    }
 
     if ($check) {
         $id = $cls->getId_autoincrement("received_merchant");
