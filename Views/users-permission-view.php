@@ -103,6 +103,54 @@ if (!$response) {
                                     <div class="row">
                                         <div class="col-sm-12">
 
+                                            <div class="accordion" id="accordionModuleDashboard">
+                                                <div class="card">
+                                                    <div class="card-header" id="headingOne">
+                                                        <h5 class="mb-0">
+                                                            <button class="btn btn-link" type="button"
+                                                                    data-toggle="collapse"
+                                                                    data-target="#collapseOne" aria-expanded="true"
+                                                                    aria-controls="collapseOne">
+                                                                Dashboard
+                                                            </button>
+                                                        </h5>
+                                                    </div>
+                                                    <div id="collapseOne" class="collapse"
+                                                         aria-labelledby="headingOne"
+                                                         data-parent="#accordionModuleSale">
+                                                        <div class="card-body row pl-5">
+
+                                                            <?php
+                                                            $sql1 = "SELECT permission,name,module FROM permission WHERE module='Dashboard'";
+                                                            $res1 = $cls->consultListQuery($sql1);
+                                                            foreach ($res1 as $item) {
+                                                                $checked = "";
+                                                                if (isset($VAR_SESSION->permission) &&
+                                                                    in_array($item->permission, $VAR_SESSION->permission))
+                                                                {
+                                                                    $checked="checked ='checked'";
+                                                                }
+                                                                ?>
+                                                                <div class="col-md-12">
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                           value="<?php echo $item->permission; ?>"
+                                                                           id="id<?php echo $item->permission; ?>" <?php echo $checked;?> name="permission[]">
+                                                                    <label class="form-check-label"
+                                                                           for="id<?php echo $item->permission; ?>">
+                                                                        <?php echo $item->name; ?>
+                                                                    </label>
+                                                                </div>
+
+
+                                                            <?php } ?>
+
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
 
                                             <div class="accordion" id="accordionModuleSale">
                                                 <div class="card">

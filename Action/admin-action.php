@@ -3,8 +3,8 @@
 //TODO
 
 //TODO CREAR LOS PDF (METODO) NECESARIOS CON PAGINACION
-//TODO CAMBIAR POSICION DE LOS STATUS EN LOS LISTAR ( TAMBIEN CHECAR QUE LOS LISTAR TENGAN EL MISMO NOMBRE)
 //TODO REPORTES (PREGUNTAR PRIMERO)
+//TODO CHECAR EL CHANGE EN LAS FACTURAS Y COTIZACIONES
 //DOCUMENTOS LISTOS PENDIENTES POR CERRAR
 //RECEPCION CON UNIDADES POR DESPACHAR
 //OC CON UNIDADES POR PEDIR Y FACTURAR
@@ -45,6 +45,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-BILLS-TO-RECEIVE-MERCHANT') {
             ));*/
 
         // $mensaje = $inputs;
+        $mensaje = array("id" => $id);
     }
 
 }
@@ -388,6 +389,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-RECEIVED-MERCHANT-TO-DISPATCH-MERC
             ));*/
 
         //$mensaje = $inputs;
+        $mensaje = array("id" => $id);
     }
 
 }
@@ -2475,7 +2477,8 @@ if (isset($_POST['a']) && $_POST['a'] == 'CONVERT-ORDER-TO-QUOTE') {
         $res2 = $cls->exeQuery($sql1);
         if ($res2) {
 
-            $sql = "SELECT t1.product_id as id,t1.costs,t1.units as unit,t1.total,t2.unidad_para_compra,t2.name FROM purchase_orders_details t1 join products t2 on t1.product_id = t2.id WHERE t1.purchase_order = '$purchase_order' ";
+            $sql = "SELECT t1.product_id as id,t1.costs,t1.units as unit,t1.total,t2.unidad_para_compra,t2.name FROM purchase_orders_details t1 join products t2 on t1.product_id = t2.id WHERE t1.purchase_order = '$purchase_order'  and t1.product_id in(SELECT product_id FROM orders_details WHERE order_id ='$order_id') ";
+
             $result_lis = $cls->consultListQuery($sql);//query
             foreach ($result_lis as $result) {
 
@@ -2568,13 +2571,13 @@ if (isset($_POST['a']) && $_POST['a'] == 'CONVERT-ORDER-TO-BILLS') {
         $res2 = $cls->exeQuery($sql1);
         if ($res2) {
 
-            $sql = "SELECT t1.product_id as id,t1.costs,t1.units as unit,t1.total,t2.unidad_para_compra,t2.name FROM purchase_orders_details t1 join products t2 on t1.product_id = t2.id WHERE t1.purchase_order = '$purchase_order' ";
+            $sql = "SELECT t1.product_id as id,t1.costs,t1.units as unit,t1.total,t2.unidad_para_compra,t2.name FROM purchase_orders_details t1 join products t2 on t1.product_id = t2.id WHERE t1.purchase_order = '$purchase_order' and t1.product_id in(SELECT product_id FROM orders_details WHERE order_id ='$order_id')";
             $result_lis = $cls->consultListQuery($sql);//query
             foreach ($result_lis as $result) {
 
                 $units_request = $cls->getUnitsProductsInOrder($order_id, $result->id);
                 if ($units_request > 0) {
-                    $costs = ($result->costs * $units_request);
+                    $costs = ($result->costs * (int)$units_request);
                     $sql21 = "INSERT INTO bills_details (bill,product_id,costs,units,total)values('$id','$result->id','$result->costs','$units_request','$costs')";
                     $res21 = $cls->exeQuery($sql21);
                     if (!$res21) {
@@ -2628,6 +2631,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-ORDER-TO-ORDER') {
              ));*/
 
         //$mensaje = $inputs;
+        $mensaje = array("id" => $id);
     }
 
 }
@@ -4055,6 +4059,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-REQUEST-TO-ORDER') {
             ));*/
 
         //$mensaje = $inputs;
+        $mensaje = array("id" => $id);
     }
 
 }
@@ -4074,6 +4079,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-ORDER-TO-QUOTE') {
              ));*/
 
         // $mensaje = $inputs;
+        $mensaje = array("id" => $id);
     }
 
 }
@@ -4091,6 +4097,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-PURCHASE-ORDER-TO-BILLS') {
             ));
 
         $mensaje = $inputs;*/
+        $mensaje = array("id" => $id);
     }
 
 }
@@ -4103,7 +4110,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-ORDER-DETAILS-TO-QUOTE') {
         $purchase_order = $res1['purchase_order'];
 
         $res = [];
-        $sql = "SELECT t1.product_id as id,t1.costs,t1.units as unit,t1.total,t2.unidad_para_compra,t2.name FROM purchase_orders_details t1 join products t2 on t1.product_id = t2.id WHERE t1.purchase_order = '$purchase_order' ";
+        $sql = "SELECT t1.product_id as id,t1.costs,t1.units as unit,t1.total,t2.unidad_para_compra,t2.name FROM purchase_orders_details t1 join products t2 on t1.product_id = t2.id WHERE t1.purchase_order = '$purchase_order' and t1.product_id in(SELECT product_id FROM orders_details WHERE order_id ='$id')";
         $result_lis = $cls->consultListQuery($sql);//query
         foreach ($result_lis as $result) {
 
@@ -4137,7 +4144,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-ORDER-DETAILS-TO-BILLS') {
         $purchase_order = $res1['purchase_order'];
 
         $res = [];
-        $sql = "SELECT t1.product_id as id,t1.costs,t1.units as unit,t1.total,t2.unidad_para_compra,t2.name FROM purchase_orders_details t1 join products t2 on t1.product_id = t2.id WHERE t1.purchase_order = '$purchase_order' ";
+        $sql = "SELECT t1.product_id as id,t1.costs,t1.units as unit,t1.total,t2.unidad_para_compra,t2.name FROM purchase_orders_details t1 join products t2 on t1.product_id = t2.id WHERE t1.purchase_order = '$purchase_order' and t1.product_id in(SELECT product_id FROM orders_details WHERE order_id ='$id') ";
         $result_lis = $cls->consultListQuery($sql);//query
         foreach ($result_lis as $result) {
 
@@ -4422,10 +4429,39 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-USERS-PERMISSION') {
     if($check){
 
         //delete
-        foreach ($permissions as $per) {
-            //insert
+        $id = $_POST['id'];
+        $sql1="DELETE FROM users_permission WHERE username = '$id'";
+        $res1 = $cls->exeQuery($sql1);
+        if ($res1) {
+            for($i=0;$i<count($permissions);$i++) {
+                //insert
+                $permission = $permissions[$i];
+                $sql2="INSERT INTO users_permission(username,permission,created_at)VALUES('$id','$permission','$datetime')";
+                $res2 = $cls->exeQuery($sql2);
+                if (!$res2) {
+                    $check = false;
+                    $mensaje = array('success' => false, 'mens' => $res2);
+
+                }
+            }
+
+            if ($check) {
+
+                $cls->commitSet();
+                $mensaje = array('success' => true, 'mens' => 'Permisos actualizados con exito.');
+
+            } else {
+                $cls->exeQuery('ROLLBACK');
+
+
+            }
+        }else {
+            $cls->exeQuery('ROLLBACK');
+            $mensaje = array('success' => false, 'mens' => $res1);
 
         }
+
+
 
 
     }

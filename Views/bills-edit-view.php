@@ -326,7 +326,7 @@ if ($response['status'] == 'CERRADO' || $response['status'] == 'APROBADA') {
                                                 </thead>
                                                 <tbody class="table-data-edit disable-button"
                                                        data-action="GET-BILLS-DETAILS-TO-BILLS"
-                                                       data-action-change="GET-ORDER-DETAILS-TO-QUOTE"
+                                                       data-action-change="GET-ORDER-DETAILS-TO-BILLS"
                                                        data-id="<?php echo $id; ?>">
 
                                                 </tbody>

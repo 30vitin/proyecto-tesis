@@ -71,7 +71,7 @@ $dashboard = "active";
                                 </div>
                             <?php } ?>
 
-                            <?php if (isset($VAR_SESSION->permission) && in_array("PER0004", $VAR_SESSION->permission)) { ?>
+                            <?php if (isset($VAR_SESSION->permission) && in_array("PER0013", $VAR_SESSION->permission)) { ?>
                                 <p class="pt-4">Links de acceso rapido</p>
                                 <div class="row d-flex justify-content-center">
                                     <a href="./?view=receive-merchant-create"

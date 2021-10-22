@@ -307,15 +307,6 @@ else
                             <span class="sidebar-normal">Usuarios </span>
                         </a>
                     </li>
-                    <li class="nav-item <?php echo $productos; ?> ">
-                        <a class="nav-link" href="./?view=products">
-                            <span class="sidebar-mini"> <i class="fa fa-arrow-right"></i> </span>
-                            <span class="sidebar-normal"> Asignar Permisos </span>
-                        </a>
-                    </li>
-
-
-
 
                 </ul>
             </div>

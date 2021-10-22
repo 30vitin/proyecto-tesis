@@ -79,10 +79,10 @@ $page=$_POST['page'];
                                 <th>ID</th>
                                 <th>Fecha</th>
                                 <th>O/C</th>
+                                <th>Status</th>
                                 <th>Compradas</th>
                                 <th>Solicitadas</th>
                                 <th>Diferencia</th>
-                                <th>Status</th>
                                 <th>Acción</th>
                             </tr>
                             </tr>
@@ -108,12 +108,13 @@ $page=$_POST['page'];
                                     <td><?php echo $item->id; ?></td>
                                     <td><?php echo $item->date; ?></td>
                                     <td><?php echo $item->purchase_order; ?></td>
-                                    <td><?php echo $item->units_buy; ?></td>
-                                    <td><?php echo $item->units_request; ?></td>
-                                    <td><?php echo $item->units_diff; ?></td>
                                     <td>
                                         <span class="badge <?php echo $cls->getStatusClass($item->status);?>"><?php echo $item->status;?></span>
                                     </td>
+                                    <td><?php echo $item->units_buy; ?></td>
+                                    <td><?php echo $item->units_request; ?></td>
+                                    <td><?php echo $item->units_diff; ?></td>
+
 
                                     <td class="td-actions">
                                         <a href="./?view=orders-edit&id=<?php echo $item->id; ?>"
@@ -130,9 +131,9 @@ $page=$_POST['page'];
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th colspan="4" style="text-align:right">Total:</th>
+                                <th colspan="5" style="text-align:right">Total:</th>
 
-                                <th id="total-unrequest-tbl"></th>
+                                <th id="custom-total" data-colum="5" data-fixed="NO"></th>
                                 <th ></th>
 
                             </tr>

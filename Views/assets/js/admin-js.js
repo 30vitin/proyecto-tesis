@@ -31,7 +31,7 @@ $(document).ready(function () {
                 type: "POST",
                 dataType: "JSON",
                 success: function (data) {
-                    //console.log(data)
+                    console.log(data)
                     if ($("#" + $(instance).data("form")).length > 0) {
                         $("#" + $(instance).data("form"))[0].reset();
                     }
@@ -152,25 +152,29 @@ $(document).ready(function () {
 
                     }
 
-                    if (data.data.length > 0) {
+                    if(data.data){
+                        if (data.data.length > 0) {
 
-                        jQuery(data.data).each(function (index, value) {
+                            jQuery(data.data).each(function (index, value) {
 
-                            if (value.type == 'input') {
-                                if ($('#' + value.id).length > 0) {
-                                    $('#' + value.id).val(value.value)
+                                if (value.type == 'input') {
+                                    if ($('#' + value.id).length > 0) {
+                                        $('#' + value.id).val(value.value)
 
+                                    }
                                 }
-                            }
-                            if (value.type == 'select') {
-                                if ($('#' + value.id).length > 0) {
-                                    $('#' + value.id).val(value.value).change();
+                                if (value.type == 'select') {
+                                    if ($('#' + value.id).length > 0) {
+                                        $('#' + value.id).val(value.value).change();
+                                    }
                                 }
-                            }
 
-                        });
+                            });
 
+                        }
                     }
+
+
                     $(instance).val(data.id)
 
                 },
@@ -629,7 +633,7 @@ $(document).ready(function () {
                 type: "POST",
                 dataType: "JSON",
                 success: function (data) {
-
+                    console.log(data)
                     BtnReset(instance)
 
                     if (data.success) {
@@ -1523,7 +1527,7 @@ $(document).ready(function () {
 
         var check = true;
         $.each($('.validate'), function (index, value) {
-            //console.log(this.id,$(value).val())
+            console.log(this.id,$(value).val())
             if ($(value).val() == '') {
                 $("." + this.id + '-error').html("¡Este campo es obligatorio!");
                 check = false;

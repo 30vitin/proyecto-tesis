@@ -119,7 +119,7 @@ if (isset($_POST['page'])) {
 
                                                 <td><?php echo ucwords($item->name); ?></td>
                                                 <td><?php echo $item->category; ?></td>
-                                                <td class="text-primary">$<?php echo $item->price; ?></td>
+                                                <td class="text-primary"><?php echo $item->price; ?></td>
                                                 <td class="td-actions">
                                                     <a href="./?view=product-edit&id=<?php echo $item->id; ?>"
                                                        rel="tooltip" title="" class="btn btn-primary btn-link btn-sm"

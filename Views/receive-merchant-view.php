@@ -80,10 +80,10 @@ if (isset($_POST['page'])) {
                                             <th>Id</th>
                                             <th>Fecha</th>
                                             <th>Factura</th>
+                                            <th>Status</th>
                                             <th>Unidades</th>
                                             <th>Costo</th>
                                             <th>Total</th>
-                                            <th>Status</th>
                                             <th>Acción</th>
                                         </tr>
                                         </tr>
@@ -107,14 +107,15 @@ if (isset($_POST['page'])) {
                                                 <td><?php echo $item->id; ?></td>
                                                 <td><?php echo $item->date; ?></td>
                                                 <td><?php echo $item->bills; ?></td>
-                                                <td><?php echo $item->units; ?></td>
-                                                <td><?php echo $item->costs; ?></td>
-
-                                                <td><?php echo $item->total ; ?></td>
                                                 <td>
                                                     <span class="badge <?php echo $cls->getStatusClass($item->status);?>">
                                                         <?php echo $item->status;?></span>
                                                 </td>
+                                                <td><?php echo $item->units; ?></td>
+                                                <td><?php echo $item->costs; ?></td>
+
+                                                <td><?php echo $item->total ; ?></td>
+
                                                 <td class="td-actions">
                                                     <a href="./?view=receive-merchant-edit&id=<?php echo $item->id; ?>"
                                                        rel="tooltip" title="" class="btn btn-primary btn-link btn-sm"
@@ -129,9 +130,9 @@ if (isset($_POST['page'])) {
                                         </tbody>
                                         <tfoot>
                                         <tr>
-                                            <th colspan="5" style="text-align:right">Total:</th>
+                                            <th colspan="6" style="text-align:right">Total:</th>
 
-                                            <th id="custom-total" data-colum="5"></th>
+                                            <th id="custom-total" data-colum="6"></th>
                                             <th ></th>
 
                                         </tr>

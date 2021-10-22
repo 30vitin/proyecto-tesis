@@ -85,10 +85,11 @@ if (isset($_POST['page'])) {
                                             <th>Expira</th>
                                             <th>Cliente</th>
                                             <th>Pedido</th>
+                                            <th>Status</th>
                                             <th>Unidades</th>
                                             <th>Costo</th>
                                             <th>Total</th>
-                                            <th>Status</th>
+
                                             <th>Acción</th>
                                         </tr>
                                         </tr>
@@ -116,13 +117,14 @@ if (isset($_POST['page'])) {
                                                 <td><?php echo $item->date_expire; ?></td>
                                                 <td><?php echo $item->customer; ?></td>
                                                 <td><?php echo $item->order_id; ?></td>
-                                                <td><?php echo $item->units; ?></td>
-                                                <td><?php echo $item->costs; ?></td>
-                                                <td><?php echo $item->total ; ?></td>
                                                 <td>
                                                     <span class="badge <?php echo $cls->getStatusClass($item->status);?>">
                                                         <?php echo $item->status;?></span>
                                                 </td>
+                                                <td><?php echo $item->units; ?></td>
+                                                <td><?php echo $item->costs; ?></td>
+                                                <td><?php echo $item->total ; ?></td>
+
 
                                                 <td class="td-actions">
                                                     <a href="./?view=quotes-edit&id=<?php echo $item->id; ?>"
@@ -138,9 +140,9 @@ if (isset($_POST['page'])) {
                                         </tbody>
                                         <tfoot>
                                         <tr>
-                                            <th colspan="7" style="text-align:right">Total:</th>
+                                            <th colspan="8" style="text-align:right">Total:</th>
 
-                                            <th id="custom-total" data-colum="7"></th>
+                                            <th id="custom-total" data-colum="8"></th>
                                             <th ></th>
 
                                         </tr>
