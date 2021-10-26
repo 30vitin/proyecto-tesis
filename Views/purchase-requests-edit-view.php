@@ -135,9 +135,9 @@ $requisicion = "active-sublink";
 
                                         <?php }?>
                                         <?php if ($response['status'] == 'APROBADA' || $response['status'] == 'CERRADO') { ?>
-                                            <button type="button" class="btn btn-secondary pull-right print"
+                                            <a href="./?view=pdf-generate&id=<?php echo $id;?>&section=purchase_request" class="btn btn-secondary pull-right print"
                                                     data-form="form" data-reset="true"> Imprimir
-                                            </button>
+                                            </a>
 
 
 

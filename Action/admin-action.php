@@ -2,9 +2,7 @@
 
 //TODO
 
-//TODO CREAR LOS PDF (METODO) NECESARIOS CON PAGINACION
 //TODO REPORTES (PREGUNTAR PRIMERO)
-//TODO CHECAR EL CHANGE EN LAS FACTURAS Y COTIZACIONES
 //DOCUMENTOS LISTOS PENDIENTES POR CERRAR
 //RECEPCION CON UNIDADES POR DESPACHAR
 //OC CON UNIDADES POR PEDIR Y FACTURAR
@@ -63,6 +61,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-BILLS-DETAILS-TO-RECEIVE-MERCHANT'
 if (isset($_POST['a']) && $_POST['a'] == 'CREATE-RECEIVE-MERCHANT') {
     $cls->autocommitF();
     $check = true;
+
     if (!isset($_POST['date'])) {
         $check = false;
         $mensaje = array('success' => false, 'mens' => 'El campo fecha es obligatorio');
@@ -119,7 +118,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-RECEIVE-MERCHANT') {
             $check = true; // check data table
             foreach ($data_table as $data) {
 
-                if ($data->costs > 0 && $data->total > 0 && $data->unit) {
+                if ($data->costs > 0 && $data->total > 0 && $data->unit>0) {
 
                     $sql2 = "INSERT INTO received_merchant_details (received,product_id,costs,units,total)values('$id','$data->product_id','$data->costs','$data->unit','$data->total')";
                     $res2 = $cls->exeQuery($sql2);
@@ -3033,12 +3032,15 @@ if (isset($_POST['a']) && $_POST['a'] == 'GET-PRODUCTS') {
 
     $whereIds = "";
     if (isset($_POST['ids'])) {
-        $whereIds = "AND t1.id in(" . implode(",", $_POST['ids']) . ")";
+        $whereIds = "AND t1.id in('" . implode("','", $_POST['ids']) . "')";
 
     }
     $sql = "SELECT t1.id as id,t1.name as name,t2.name as category,t1.price as price,t1.status as status,t1.img_portada,t1.unidad_para_compra,t1.unidad_para_almacen FROM products t1 left join products_category t2 on t1.category = t2.id WHERE t1.status = 'ACTIVO' $whereIds order by t1.created_at desc";
     $result_lis = $cls->consultListQuery($sql);//query
+
     $mensaje = $result_lis;
+
+
 }
 
 

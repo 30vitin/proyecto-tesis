@@ -6,6 +6,7 @@ include 'utils.php';
 
 $dashboard = "active";
 
+
 ?>
 
 
@@ -125,7 +126,7 @@ $dashboard = "active";
                                             $sql1 = "SELECT id AS id,sum( units ) AS units,sum( costs ) AS costs,sum( total ) AS total,date,customer,status,order_id 
                                         FROM ( (SELECT t1.id,t3.units,t3.costs,t3.total,t2.name AS customer,t1.status,t1.order_id,DATE_FORMAT( t1.created_at, '%Y-%m-%d' ) AS date 
                                                     FROM bills t1 JOIN customers t2 ON t1.customer = t2.id JOIN bills_details t3 ON t1.id = t3.bill 
-                                                    WHERE t1.STATUS <> 'DELETE'   AND t1.created_at BETWEEN (date_add( curdate(), INTERVAL - DAY ( curdate()) + 1 DAY )) AND curdate()
+                                                    WHERE t1.STATUS <> 'DELETE'   AND t1.date BETWEEN (date_add( curdate(), INTERVAL - DAY ( curdate()) + 1 DAY )) AND DATE_ADD(curdate(), INTERVAL 1 DAY)
                                                     ) AS datas 
                                                 )GROUP BY id ORDER BY date DESC";
 
@@ -149,7 +150,7 @@ $dashboard = "active";
 
                                                     <td>$<?php echo $item->total; ?></td>
                                                     <td class="td-actions">
-                                                        <a href="./?view=purchase-order-edit&id=<?php echo $item->id; ?>"
+                                                        <a href="./?view=bills-edit&id=<?php echo $item->id; ?>"
                                                            rel="tooltip" title=""
                                                            class="btn btn-primary btn-link btn-sm"
                                                            data-original-title="Mostrar Factura">
@@ -204,7 +205,7 @@ $dashboard = "active";
                                                     (SELECT  t1.id,t3.units_buy,t3.units_request,t3.units_diff,DATE_FORMAT(t1.date,'%Y-%m-%d') as date,t1.status,t1.purchase_order
                                                     FROM orders t1 
                                                     join orders_details t3 on t1.id = t3.order_id 
-                                                    WHERE t1.status <>'DELETE'  AND t1.created_at BETWEEN (date_add( curdate(), INTERVAL - DAY ( curdate()) + 1 DAY )) AND curdate()
+                                                    WHERE t1.status <>'DELETE'  AND t1.date BETWEEN (date_add( curdate(), INTERVAL - DAY ( curdate()) + 1 DAY )) AND DATE_ADD(curdate(), INTERVAL 1 DAY)
 																										) as datas
                                                     
                                             ) group by id ORDER BY date desc ";
@@ -283,7 +284,7 @@ $dashboard = "active";
                                             $sql1 = "SELECT id AS id,sum( units ) AS units,sum( costs ) AS costs,sum( total ) AS total,date,provider,purchase_request,status 
                                         FROM ( (SELECT t1.id,t3.units,t3.costs,t3.total,t2.name AS provider,t1.status,t1.purchase_request,DATE_FORMAT( t1.created_at, '%Y-%m-%d' ) AS date 
                                                     FROM purchase_orders t1 JOIN providers t2 ON t1.provider = t2.id JOIN purchase_orders_details t3 ON t1.id = t3.purchase_order 
-                                                    WHERE t1.STATUS <> 'DELETE'   AND t1.created_at BETWEEN (date_add( curdate(), INTERVAL - DAY ( curdate()) + 1 DAY )) AND curdate()
+                                                    WHERE t1.STATUS <> 'DELETE'   AND t1.date BETWEEN (date_add( curdate(), INTERVAL - DAY ( curdate()) + 1 DAY )) AND DATE_ADD(curdate(), INTERVAL 1 DAY)
                                                     ) AS datas 
                                                 )GROUP BY id ORDER BY date DESC";
 
@@ -307,7 +308,7 @@ $dashboard = "active";
 
                                                     <td>$<?php echo $item->total; ?></td>
                                                     <td class="td-actions">
-                                                        <a href="./?view=bills-edit&id=<?php echo $item->id; ?>"
+                                                        <a href="./?view=purchase-order-edit&id=<?php echo $item->id; ?>"
                                                            rel="tooltip" title=""
                                                            class="btn btn-primary btn-link btn-sm"
                                                            data-original-title="Mostrar Factura">
@@ -369,7 +370,7 @@ $dashboard = "active";
                                                     (SELECT   t1.id,t3.units,t3.costs,t3.total,t1.bills as bills,t1.status,DATE_FORMAT(t1.date,'%Y-%m-%d') as date
                                                     FROM received_merchant t1 
                                                     join received_merchant_details t3 on t1.id = t3.received 
-                                                    WHERE t1.status <>'DELETE' AND t1.created_at BETWEEN (date_add( curdate(), INTERVAL - DAY ( curdate()) + 1 DAY )) AND curdate() ) as datas  
+                                                    WHERE t1.status <>'DELETE' AND t1.date BETWEEN (date_add( curdate(), INTERVAL - DAY ( curdate()) + 1 DAY )) AND DATE_ADD(curdate(), INTERVAL 1 DAY) ) as datas  
                                                     
                                             ) group by id ORDER BY date desc";
 
@@ -449,7 +450,7 @@ $dashboard = "active";
                                                     (SELECT  t1.id,t3.units_buy,t3.units_request,t3.units_diff,DATE_FORMAT(t1.date,'%Y-%m-%d') as date,t1.status,t1.received
                                                     FROM dispatch_merchant t1 
                                                     join dispatch_merchant_details t3 on t1.id = t3.dispatch 
-                                                    WHERE t1.status <>'DELETE' 
+                                                    WHERE t1.status <>'DELETE' AND t1.date BETWEEN (date_add( curdate(), INTERVAL - DAY ( curdate()) + 1 DAY )) AND DATE_ADD(curdate(), INTERVAL 1 DAY) )
 																										) as datas
                                                     
                                             ) group by id ORDER BY date desc";

@@ -25,6 +25,8 @@ if (!$response) {
     header("Location:javascript:window.history.go(-2);");
 }
 
+$currentPermission = $cls->getUserPermission($id);
+
 
 ?>
 
@@ -109,15 +111,15 @@ if (!$response) {
                                                         <h5 class="mb-0">
                                                             <button class="btn btn-link" type="button"
                                                                     data-toggle="collapse"
-                                                                    data-target="#collapseOne" aria-expanded="true"
-                                                                    aria-controls="collapseOne">
+                                                                    data-target="#collapseDashboard" aria-expanded="true"
+                                                                    aria-controls="collapseDashboard">
                                                                 Dashboard
                                                             </button>
                                                         </h5>
                                                     </div>
-                                                    <div id="collapseOne" class="collapse"
+                                                    <div id="collapseDashboard" class="collapse"
                                                          aria-labelledby="headingOne"
-                                                         data-parent="#accordionModuleSale">
+                                                         data-parent="#accordionModuleDashboard">
                                                         <div class="card-body row pl-5">
 
                                                             <?php
@@ -125,8 +127,7 @@ if (!$response) {
                                                             $res1 = $cls->consultListQuery($sql1);
                                                             foreach ($res1 as $item) {
                                                                 $checked = "";
-                                                                if (isset($VAR_SESSION->permission) &&
-                                                                    in_array($item->permission, $VAR_SESSION->permission))
+                                                                if (in_array($item->permission, $currentPermission))
                                                                 {
                                                                     $checked="checked ='checked'";
                                                                 }
@@ -174,8 +175,7 @@ if (!$response) {
                                                             $res1 = $cls->consultListQuery($sql1);
                                                             foreach ($res1 as $item) {
                                                                 $checked = "";
-                                                                if (isset($VAR_SESSION->permission) &&
-                                                                    in_array($item->permission, $VAR_SESSION->permission))
+                                                                if (in_array($item->permission, $currentPermission))
                                                                 {
                                                                     $checked="checked ='checked'";
                                                                 }
@@ -223,8 +223,7 @@ if (!$response) {
                                                             $res1 = $cls->consultListQuery($sql1);
                                                             foreach ($res1 as $item) {
                                                                 $checked = "";
-                                                                if (isset($VAR_SESSION->permission) &&
-                                                                    in_array($item->permission, $VAR_SESSION->permission))
+                                                                if (in_array($item->permission, $currentPermission))
                                                                 {
                                                                     $checked="checked ='checked'";
                                                                 }
@@ -272,8 +271,7 @@ if (!$response) {
                                                             $res1 = $cls->consultListQuery($sql1);
                                                             foreach ($res1 as $item) {
                                                                 $checked = "";
-                                                                if (isset($VAR_SESSION->permission) &&
-                                                                    in_array($item->permission, $VAR_SESSION->permission))
+                                                                if (in_array($item->permission, $currentPermission))
                                                                 {
                                                                     $checked="checked ='checked'";
                                                                 }
@@ -321,8 +319,7 @@ if (!$response) {
                                                             $res1 = $cls->consultListQuery($sql1);
                                                             foreach ($res1 as $item) {
                                                                 $checked = "";
-                                                                if (isset($VAR_SESSION->permission) &&
-                                                                    in_array($item->permission, $VAR_SESSION->permission))
+                                                                if (in_array($item->permission, $currentPermission))
                                                                 {
                                                                     $checked="checked ='checked'";
                                                                 }
@@ -370,8 +367,7 @@ if (!$response) {
                                                             $res1 = $cls->consultListQuery($sql1);
                                                             foreach ($res1 as $item) {
                                                                 $checked = "";
-                                                                if (isset($VAR_SESSION->permission) &&
-                                                                    in_array($item->permission, $VAR_SESSION->permission))
+                                                                if (in_array($item->permission, $currentPermission))
                                                                 {
                                                                     $checked="checked ='checked'";
                                                                 }

@@ -1187,8 +1187,7 @@ $(document).ready(function () {
                     type: "POST",
                     dataType: "JSON",
                     success: function (data) {
-
-                        if (data.length > 0) {
+                       if (data.length > 0) {
                             $.each(data, function (index, value) {
                                 var dkey = value.id;
                                 var newdata = {
