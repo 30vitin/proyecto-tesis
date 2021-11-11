@@ -98,7 +98,7 @@ else
 if (isset($rep_mercancia))
     $rep_mercancia = ($rep_mercancia == '' ? '' : $rep_mercancia);
 else
-
+    $rep_mercancia = "";
 
 if (isset($des_mercancia))
     $des_mercancia = ($des_mercancia == '' ? '' : $des_mercancia);

@@ -38,8 +38,8 @@ if (isset($VAR_SESSION->permission) && !in_array("PER0002", $VAR_SESSION->permis
 
         <?php
         $breadcrumbData = array(
-            array("name"=>"Lista de Proveedores","link"=>"./?view=providers","current"=>false),
-            array("name"=>"Crear Proveedor","current"=>true),
+            array("name" => "Lista de Proveedores", "link" => "./?view=providers", "current" => false),
+            array("name" => "Crear Proveedor", "current" => true),
         );
 
         $breadcrumb = json_decode(json_encode($breadcrumbData), FALSE);
@@ -63,20 +63,35 @@ if (isset($VAR_SESSION->permission) && !in_array("PER0002", $VAR_SESSION->permis
 
                                 <div class="row">
                                     <div class="col-md-12 ">
-                                        <button type="button" class="btn btn-primary pull-right btn-send-form" data-form="form" data-reset="true"> Guardar Proveedor</button>
+                                        <button type="button" class="btn btn-primary pull-right btn-send-form"
+                                                data-form="form" data-reset="true"> Guardar Proveedor
+                                        </button>
 
                                     </div>
 
                                 </div>
-                                <form  class="form-horizontal" id="form" onkeydown="return event.key != 'Enter';"  action="">
+                                <form class="form-horizontal" id="form" onkeydown="return event.key != 'Enter';"
+                                      action="">
 
                                     <input type="hidden" name="a" value="CREATE-PROVIDER">
 
-                                    <?php include 'alert-form.php';?>
+                                    <?php include 'alert-form.php'; ?>
 
 
                                     <h4>Datos Generales</h4>
                                     <hr/>
+                                    <?php if (!$cls->enableAutoId()) { ?>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control validate" name="id"
+                                                       value="" id="id" placeholder="Id">
+
+                                                <small class="form-text text-muted id-error"
+                                                       style="color:red !important;"></small>
+                                            </div>
+
+                                        </div>
+                                    <?php } ?>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label class="col-form-label">Nombre</label>
@@ -90,10 +105,10 @@ if (isset($VAR_SESSION->permission) && !in_array("PER0002", $VAR_SESSION->permis
                                         <div class="col-md-6">
                                             <label class="col-form-label">Email</label>
                                             <div class="form-group bmd-form-group">
-                                                    <input type="email" class="form-control " name="email" value=""
-                                                           id="email" placeholder="Email">
+                                                <input type="email" class="form-control " name="email" value=""
+                                                       id="email" placeholder="Email">
 
-                                                </div>
+                                            </div>
 
                                         </div>
 
@@ -115,9 +130,9 @@ if (isset($VAR_SESSION->permission) && !in_array("PER0002", $VAR_SESSION->permis
                                             <label class="col-form-label">Teléfono 2</label>
 
                                             <div class="form-group bmd-form-group">
-                                                    <input type="text" class="form-control " name="telephone2" value=""
-                                                           id="telephone2" placeholder="Teléfono 2">
-                                                </div>
+                                                <input type="text" class="form-control " name="telephone2" value=""
+                                                       id="telephone2" placeholder="Teléfono 2">
+                                            </div>
 
                                         </div>
                                         <div class="col-md-4">
@@ -125,9 +140,9 @@ if (isset($VAR_SESSION->permission) && !in_array("PER0002", $VAR_SESSION->permis
 
                                             <div class="form-group bmd-form-group">
 
-                                                    <input type="text" class="form-control " name="fax" value="" id="fax"
-                                                           placeholder="Fax">
-                                                </div>
+                                                <input type="text" class="form-control " name="fax" value="" id="fax"
+                                                       placeholder="Fax">
+                                            </div>
 
                                         </div>
                                     </div>

@@ -6,12 +6,15 @@ require('Others/fpdf/fpdf.php');
 
 //error_reporting(E_ALL);
 //ini_set('display_errors', '1');
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 class Functions extends dba
 {
     private $maximumFileTam = 2097152;
     private $enableClose = true;
     private $enableCancel = true;
+    private $enableAutoIds = false;
     private $enableControlClosePurchaseOrder = true;
     private $decimalPdf = 2;
     private $importe_parcial_n = 0.00;
@@ -20,6 +23,11 @@ class Functions extends dba
     {
 
     }
+    public function enableAutoId(){
+
+        return $this->enableAutoIds;
+    }
+
 
     public function enableClose()
     {

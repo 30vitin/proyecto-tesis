@@ -95,7 +95,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-RECEIVE-MERCHANT') {
     }
 
     //checar que no la hayan recibido
-    if($cls->checkIfAlreadyReceived($bills)){
+    if ($cls->checkIfAlreadyReceived($bills)) {
 
         $check = false;
         $mensaje = array('success' => false, 'mens' => 'La factura # ' . $bills . ' ya fue recibida ');
@@ -118,7 +118,7 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-RECEIVE-MERCHANT') {
             $check = true; // check data table
             foreach ($data_table as $data) {
 
-                if ($data->costs > 0 && $data->total > 0 && $data->unit>0) {
+                if ($data->costs > 0 && $data->total > 0 && $data->unit > 0) {
 
                     $sql2 = "INSERT INTO received_merchant_details (received,product_id,costs,units,total)values('$id','$data->product_id','$data->costs','$data->unit','$data->total')";
                     $res2 = $cls->exeQuery($sql2);
@@ -3059,9 +3059,21 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PROVIDER') {
         $check = false;
         $mensaje = array('success' => false, 'mens' => 'El campo teléfono 1 es obligatorio');
     }
+    if (!$cls->enableAutoId()) {
+        if (!isset($_POST['id'])) {
+            $check = false;
+            $mensaje = array('success' => false, 'mens' => 'El campo id es obligatorio');
+        }else{
+
+            $id = $_POST['id'];
+
+        }
+    }else{
+        $id = $cls->getId_autoincrement("providers");
+
+    }
 
     if ($check) {
-        $id = $cls->getId_autoincrement("providers");
 
         $name = $_POST['name'];
         $email = $_POST['email'];
@@ -4435,17 +4447,17 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-USERS-PERMISSION') {
     }
     $permissions = $_POST['permission'];
 
-    if($check){
+    if ($check) {
 
         //delete
         $id = $_POST['id'];
-        $sql1="DELETE FROM users_permission WHERE username = '$id'";
+        $sql1 = "DELETE FROM users_permission WHERE username = '$id'";
         $res1 = $cls->exeQuery($sql1);
         if ($res1) {
-            for($i=0;$i<count($permissions);$i++) {
+            for ($i = 0; $i < count($permissions); $i++) {
                 //insert
                 $permission = $permissions[$i];
-                $sql2="INSERT INTO users_permission(username,permission,created_at)VALUES('$id','$permission','$datetime')";
+                $sql2 = "INSERT INTO users_permission(username,permission,created_at)VALUES('$id','$permission','$datetime')";
                 $res2 = $cls->exeQuery($sql2);
                 if (!$res2) {
                     $check = false;
@@ -4464,13 +4476,11 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-USERS-PERMISSION') {
 
 
             }
-        }else {
+        } else {
             $cls->exeQuery('ROLLBACK');
             $mensaje = array('success' => false, 'mens' => $res1);
 
         }
-
-
 
 
     }
