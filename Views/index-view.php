@@ -16,7 +16,7 @@
 <!--===============================================================================================-->
 
 	<link rel="stylesheet" type="text/css" href="Views/assets_login/css/util.css">
-	<link rel="stylesheet" type="text/css" href="Views/assets_login/css/main.css">
+	<link rel="stylesheet" type="text/css" href="Views/assets_login/css/main.css?v=2">
 <!--===============================================================================================-->
 <style>
     #ht-preloader { background: #ffffff; bottom: 0; height: 100%; left: 0; overflow: hidden !important; position: fixed; right: 0; text-align: center; top: 0; width: 100%; z-index: 99999; }
