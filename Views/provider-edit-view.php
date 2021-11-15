@@ -12,7 +12,7 @@ if (isset($VAR_SESSION->permission) && !in_array("PER0002", $VAR_SESSION->permis
     header('location:?view=nopermission');
 }
 $id = $_GET['id'];
-$sql = "SELECT name,email,telephone1,telephone2,fax,account,address FROM providers WHERE id='$id' and status='ACTIVO'";
+$sql = "SELECT name,email,telephone1,telephone2,fax,account,address,dv,ruc FROM providers WHERE id='$id' and status='ACTIVO'";
 $response = $cls->consulQuery($sql);
 if (!$response) {
     header("Location:javascript:window.history.go(-2);");
@@ -111,6 +111,22 @@ $proveedor = "active-sublink";
                                             <div class="form-group bmd-form-group">
                                                 <input type="email" class="form-control " name="email" value="<?php echo $response['email'];?>"
                                                        id="email" placeholder="Email">
+
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="col-form-label">RUC</label>
+                                            <div class="form-group bmd-form-group">
+                                                <input type="text" class="form-control " name="ruc" value="<?php echo $response['ruc'];?>"
+                                                       id="name" placeholder="RUC">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="col-form-label">DV</label>
+                                            <div class="form-group bmd-form-group">
+                                                <input type="text" class="form-control " name="dv" value="<?php echo $response['dv'];?>"
+                                                       id="dv" placeholder="DV">
 
                                             </div>
 

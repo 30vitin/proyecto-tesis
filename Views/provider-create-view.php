@@ -112,6 +112,22 @@ if (isset($VAR_SESSION->permission) && !in_array("PER0002", $VAR_SESSION->permis
 
                                         </div>
 
+                                        <div class="col-md-6">
+                                            <label class="col-form-label">RUC</label>
+                                            <div class="form-group bmd-form-group">
+                                                <input type="text" class="form-control " name="ruc" value=""
+                                                       id="ruc" placeholder="RUC">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="col-form-label">DV</label>
+                                            <div class="form-group bmd-form-group">
+                                                <input type="text" class="form-control " name="dv" value=""
+                                                       id="dv" placeholder="DV">
+
+                                            </div>
+
+                                        </div>
                                     </div>
 
                                     <div class="row">

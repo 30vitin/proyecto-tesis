@@ -31,7 +31,7 @@ $(document).ready(function () {
                 type: "POST",
                 dataType: "JSON",
                 success: function (data) {
-                    console.log(data)
+                    console.log('aqui',data)
                     if ($("#" + $(instance).data("form")).length > 0) {
                         $("#" + $(instance).data("form"))[0].reset();
                     }
@@ -1124,6 +1124,7 @@ $(document).ready(function () {
             return this.value; // $(this).val()
         }).get();
         $('#modalProduct').modal('show')
+       
         $.ajax({
 
             data: {a: 'GET-PRODUCTS'},
@@ -1136,10 +1137,13 @@ $(document).ready(function () {
 
                     if ($('#table')) {
                         var table = $('#table').DataTable();
-                        table.clear();
+                        table.clear().draw();
 
                         $.each(data, function (index, value) {
+                            //console.log(value.id)
+                            //console.log(current_id)
                             if (!(jQuery.inArray(value.id, current_id) !== -1)) {
+                                console.log('entro')
                                 table.row.add([
                                     '<input class="checked-table" type="checkbox" value="' + value.id + '" >',
                                     value.id,
@@ -1148,7 +1152,10 @@ $(document).ready(function () {
                                     value.price
                                 ]).draw(false);
 
+                            }else{
+                                console.log('no entro')
                             }
+
 
                         });
                     }

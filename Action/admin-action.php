@@ -3083,9 +3083,13 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PROVIDER') {
         $fax = $_POST['fax'];
         $account = $_POST['account'];
         $address = $_POST['address'];
+        $ruc = $_POST['ruc'];
+        $dv = $_POST['dv'];
 
         $sql = "INSERT INTO providers (id,
                        name,
+                       ruc,
+                       dv,
                        email,
                        telephone1,
                        telephone2,
@@ -3095,6 +3099,8 @@ if (isset($_POST['a']) && $_POST['a'] == 'CREATE-PROVIDER') {
                        created_at,
                        created_by) values('$id',
                                           '$name',
+                                          '$ruc',
+                                          '$dv',
                                           '$email',
                                           '$telephone1',
                                           '$telephone2',
@@ -3131,6 +3137,8 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PROVIDER') {
         $mensaje = array('success' => false, 'mens' => 'Pongase en contacto con su administrador de sistema #001');
     }
 
+    $id = $_POST['id'];
+    
     $sqlstatus = "SELECT COUNT(*) AS count FROM providers WHERE id='$id' AND status ='ACTIVO'";
     $response = $cls->consulQuery($sqlstatus);
     if ($response['count'] == 0) {
@@ -3148,6 +3156,8 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PROVIDER') {
         $fax = $_POST['fax'];
         $account = $_POST['account'];
         $address = $_POST['address'];
+        $dv = $_POST['dv'];
+        $ruc = $_POST['ruc'];
 
         $sql = "UPDATE providers
                        SET name='$name',
@@ -3158,6 +3168,8 @@ if (isset($_POST['a']) && $_POST['a'] == 'UPDATE-PROVIDER') {
                        account = '$account',
                        address = '$address',
                        updated_at = '$datetime',
+                       dv = '$dv',
+                       ruc = '$ruc',
                        updated_by = '$VAR_SESSION->username' WHERE id ='$id'";
         $res = $cls->exeQuery($sql);
         if ($res) {
