@@ -1,7 +1,7 @@
 <?php
 //error_reporting(E_ALL);
 //ini_set('display_errors', '1');
-require("vars.php");
+include("vars.php");
 
 
 class dba{
